@@ -1,0 +1,12 @@
+CC=g++ -Wall -Wextra -O3 -g -I/cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/python/2.7.14-omkpbe4/include/python2.7 -L/cvmfs/cms.cern.ch/slc6_amd64_gcc700/external/python/2.7.14-omkpbe4/lib -lpython2.7  -lboost_python
+CFLAGS= -Wl,--no-as-needed,-lpthread
+LDFLAGS=`root-config --glibs --cflags`
+SOURCES= main.cc src/*.cc Styles/*.cc
+OBJECTS=$(SOURCES:.cc=.o)
+EXECUTABLE=Stacker
+
+all: 
+	$(CC) $(CFLAGS) $(SOURCES) $(LDFLAGS) -o $(EXECUTABLE)
+	
+clean:
+	rm -rf *o $(EXECUTABLE)
