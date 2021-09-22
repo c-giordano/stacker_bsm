@@ -4,8 +4,11 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TLegend.h>
 
 #include <iostream>
+
+#include "../../Helpers/interface/StringTools.h"
 
 // Processes as linkedlist: first element of list is pointed to by ProcessList
 // Should make it relatively easy to work in a specific order?
@@ -16,6 +19,7 @@ class Process {
         Process* next = nullptr;
 
         TString name;
+        TString cleanedName;
         std::vector<const char*>* subdirectories;
         Color_t color;
         TFile* rootFile;
@@ -24,11 +28,11 @@ class Process {
         ~Process() {};
 
         void setNext(Process* newNext) {next = newNext;}
-        Process* const getNext() {return next;}
+        Process* getNext() const {return next;}
 
         TString const getName() {return name;}
 
-        TH1D* getHistogram(TString& histName);
+        TH1D* getHistogram(TString& histName, TLegend* legend);
 };
 
 #endif

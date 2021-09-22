@@ -19,6 +19,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     // 
 
     TH1::AddDirectory(false);
+    setTDRStyle();
 
     inputfile = new TFile(rootFilename, "read");
     processes = new ProcessList();
@@ -106,14 +107,16 @@ void Stacker::printAllHistograms() {
 
 void Stacker::printHistogram(TString& histID) {
     THStack* histStack = new THStack(histID, histID);
-    processes->fillStack(histStack, histID);
+    TLegend* legend = getLegend();
+    processes->fillStack(histStack, histID, legend);
 
-    TCanvas* canv = getCanvas();
+    TCanvas* canv = getCanvas(histID);
     canv->cd();
-    TPad* pad = getPad();
+    TPad* pad = getPad(histID);
     pad->cd();
 
     histStack->Draw();
+    legend->Draw();
 
     canv->Print(histID + ".png");
     

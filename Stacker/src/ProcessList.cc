@@ -21,10 +21,17 @@ ProcessList::~ProcessList() {
     }
 }
 
-void ProcessList::fillStack(THStack* stack, TString& histogramID) {
+std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, TLegend* legend) {
     Process* current = head;
+    std::vector<TH1D*> histVec;
 
     while (current) {
-        stack->Add(current->getHistogram(histogramID));
+        TH1D* histToAdd = current->getHistogram(histogramID, legend);
+        stack->Add(histToAdd);
+        histVec.push_back(histToAdd);
+
+        current = current->getNext();
     }
+
+    return histVec;
 }

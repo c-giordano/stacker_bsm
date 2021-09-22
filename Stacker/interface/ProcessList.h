@@ -21,7 +21,7 @@ class ProcessList {
         Process* getHead() {return head;}
         Process* getTail() {return tail;}
 
-        void fillStack(THStack* stack, TString& histogramID);
+        std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend);
 
 };
 

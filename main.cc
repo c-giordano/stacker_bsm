@@ -14,7 +14,7 @@ int main(int argc, char const *argv[]) {
     std::string settingsFile = argv[2];
 
     Stacker stacker(rootFile, settingsFile);
-
+    stacker.printAllHistograms();
 
     return 0;
 }

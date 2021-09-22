@@ -19,6 +19,8 @@
 
 #include "../../Helpers/interface/ParseTools.h"
 
+#include "../../Styles/tdrStyle.h"
+
 // Use global setting file which keeps track of colors, order, definitions of components... -> SettingParser
 // Keep track of which files belong to which process with which color -> other class? or linked list with entry for each process and vector for applicable files
 // 
@@ -32,8 +34,8 @@ class Stacker {
         int canvWidthY = 600;
 
         // Build components of histogram based on settings
-        TCanvas* getCanvas();
-        TPad* getPad();
+        TCanvas* getCanvas(TString& histID);
+        TPad* getPad(TString& histID);
         TLegend* getLegend();
 
         // Main root file

@@ -2,6 +2,7 @@
 
 Process::Process(TString& procName, int procColor, TFile* procInputfile) : name(procName), rootFile(procInputfile) {
     color = procColor;
+    cleanedName = cleanTString(name);
 
     if (! rootFile->GetDirectory(procName)) {
         std::cout << "ERROR: Process " << procName << " not found." << std::endl;
@@ -17,7 +18,7 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile) : name(
     }
 }
 
-TH1D* Process::getHistogram(TString& histName) {
+TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
     TH1D* output = new TH1D();// = new TH1D(histName + "_" + name, name)
 
     rootFile->cd(name);
@@ -33,4 +34,15 @@ TH1D* Process::getHistogram(TString& histName) {
 
         gDirectory->cd("..");
     }
+
+    output->SetName(histName + name);
+    output->SetTitle(histName + name);
+    
+    output->SetLineColor(color);
+    output->SetFillColor(color);
+    output->SetMarkerColor(color);
+
+    legend->AddEntry(output, cleanedName);
+    
+    return output;
 }
