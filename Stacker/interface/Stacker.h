@@ -37,6 +37,7 @@ class Stacker {
         TCanvas* getCanvas(TString& histID);
         TPad* getPad(TString& histID);
         TLegend* getLegend();
+        TLatex* getDatasetInfo();
 
         // Main root file
         TFile* inputfile;
@@ -44,6 +45,9 @@ class Stacker {
         TFile* outputfile = nullptr;
 
         // Histograms to consider (of all processes)
+
+        // General settings
+        std::string intLumi = "";
         
 
     public:
@@ -52,6 +56,8 @@ class Stacker {
 
         void printAllHistograms();
         void printHistogram(TString& histID);
+
+        void setLumi(std::string& lumiSetting);
 };
 
 #endif

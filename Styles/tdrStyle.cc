@@ -6,8 +6,8 @@ void setTDRStyle() {
     // For the canvas:
     gStyle->SetCanvasBorderMode(0);
     gStyle->SetCanvasColor(kWhite);
-    gStyle->SetCanvasDefH(600); //Height of canvas
-    gStyle->SetCanvasDefW(600); //Width of canvas
+    gStyle->SetCanvasDefH(800); //Height of canvas
+    gStyle->SetCanvasDefW(800); //Width of canvas
     gStyle->SetCanvasDefX(0);   //POsition on screen
     gStyle->SetCanvasDefY(0);
 
@@ -28,7 +28,7 @@ void setTDRStyle() {
     gStyle->SetFrameFillStyle(0);
     gStyle->SetFrameLineColor(1);
     gStyle->SetFrameLineStyle(1);
-    gStyle->SetFrameLineWidth(1);
+    gStyle->SetFrameLineWidth(2);
 
     // For the histo:
     // gStyle->SetHistFillColor(1);
@@ -152,4 +152,5 @@ void setTDRStyle() {
     //gStyle->SetHatchesSpacing(0.05);
 
     gStyle->SetLegendBorderSize(0);
+    gStyle->SetLegendTextSize(0.035);
 }

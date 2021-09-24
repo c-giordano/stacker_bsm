@@ -9,10 +9,10 @@ TPad* Stacker::getPad(TString& histID) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 0.5;
+    double x1 = 0.45;
     double y1 = 0.75;
-    double x2 = 0.95;
-    double y2 = 0.9;
+    double x2 = 0.94;
+    double y2 = 0.92;
     int nColumns = 3;
 
     TLegend* legend = new TLegend(x1, y1, x2, y2);
@@ -21,4 +21,19 @@ TLegend* Stacker::getLegend() {
     legend->SetColumnSeparation(0.1);
 
     return legend;
+}
+
+TLatex* Stacker::getDatasetInfo() {
+    TLatex* datasetInfo = new TLatex();
+    datasetInfo->SetTextSize(0.034);
+    datasetInfo->SetNDC();
+    datasetInfo->SetTextAlign(33);
+    datasetInfo->SetTextFont(42);
+
+    TString newString = intLumi + " fb^{-1} (13 TeV)";
+    //newString += " fb^{-1} (13 TeV)";
+
+    datasetInfo->DrawLatex(0.975, 0.99, newString);
+
+    return datasetInfo;
 }

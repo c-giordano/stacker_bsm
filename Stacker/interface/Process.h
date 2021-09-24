@@ -23,8 +23,11 @@ class Process {
         std::vector<const char*>* subdirectories;
         Color_t color;
         TFile* rootFile;
+
+        bool isSignal;
+        bool isData;
     public:
-        Process(TString& procName, int procColor, TFile* procInputfile);
+        Process(TString& procName, int procColor, TFile* procInputfile, bool signal, bool data);
         ~Process() {};
 
         void setNext(Process* newNext) {next = newNext;}

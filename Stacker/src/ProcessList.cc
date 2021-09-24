@@ -1,10 +1,10 @@
 #include "../interface/ProcessList.h"
 
-void ProcessList::addProcess(TString& name, int color, TFile* inputfile) {
+void ProcessList::addProcess(TString& name, int color, TFile* inputfile, bool signal, bool data) {
     // TODO: Create new process object
-    Process* brandNewObj = new Process(name, color, inputfile);
+    Process* brandNewObj = new Process(name, color, inputfile, signal, data);
 
-    tail->setNext(brandNewObj);
+    if (tail) tail->setNext(brandNewObj); // check if tail already exists
     tail = brandNewObj;
 
     if (! head) {

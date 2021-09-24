@@ -34,12 +34,13 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
     while (getline(infile, line)) {
         // IF CONTAINS # or only whitespace: ignore line
+        std::cout << line << std::endl;
         if(! considerLine(&line)){
             continue;
         }
-        // TODO: check if some sort of switch command is present. If so, go to other loop for other reading
         
         if (line.find("BROAD SETTINGS") != std::string::npos || line.find("HISTOGRAMS") != std::string::npos) {
+            std::cout << "Parsing BROAD SETTINGS" << std::endl;
             break;
         }
         // first, a processname is read, from this, a processelement is built and for this processname a set of directories is achieved
@@ -47,11 +48,24 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         
         std::string processName;
         std::string colorString;
-        stream >> processName >> colorString;
+        std::string type;
+        stream >> processName >> colorString >> type;
         
         // Color_t currentColor = std::stoi(colorString);
         TString processNameAlt(processName);
-        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile);
+
+        bool signal = false;
+        bool data = false;
+        if (type.find('S') != std::string::npos) {
+            signal = true;
+        } else if (type.find('D') != std::string::npos) {
+            data = true;
+        } else if (type.find('B') == std::string::npos) {
+            std::cerr << "Error: type identifier '" << type << "' unknown" << std::endl;
+            exit(1);
+        }
+
+        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile, signal, data);
     }
 
     while (getline(infile, line)) {
@@ -60,9 +74,15 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         }
 
         if (line.find("HISTOGRAMS") != std::string::npos) {
+            std::cout << "Parsing HISTOGRAMS" << std::endl;
             break;
         }
 
+        std::pair<std::string, std::string> currSetAndVal = splitSettingAndValue(line);
+
+        if (currSetAndVal.first == "Lumi") {
+            setLumi(currSetAndVal.second);
+        }
         // Set gen settings
     }
 
@@ -84,6 +104,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
         for (auto const&& obj : *histogramsAvailable) {
             histogramVec->push_back(TString(obj->GetName()));
+
         }
     }
 
@@ -92,10 +113,10 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
 Stacker::~Stacker() {
     inputfile->Close();
-    outputfile->Close();
+    //outputfile->Close();
 
     delete inputfile;
-    delete outputfile;
+    //delete outputfile;
     delete processes;
 }
 
@@ -108,16 +129,24 @@ void Stacker::printAllHistograms() {
 void Stacker::printHistogram(TString& histID) {
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
-    processes->fillStack(histStack, histID, legend);
+    std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend);
 
     TCanvas* canv = getCanvas(histID);
+    canv->Draw();
     canv->cd();
     TPad* pad = getPad(histID);
+    pad->Draw();
     pad->cd();
 
-    histStack->Draw();
+    histStack->Draw("HIST");
+
+    histStack->GetXaxis()->SetTitle(histVec[0]->GetXaxis()->GetTitle());
+    histStack->GetYaxis()->SetTitle(histVec[0]->GetYaxis()->GetTitle());
+    histStack->SetMaximum(histStack->GetMaximum() * 1.2); // stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.2);
+
     legend->Draw();
 
-    canv->Print(histID + ".png");
-    
+    TLatex* info = getDatasetInfo();
+
+    canv->Print("Output/" + histID + ".png");
 }

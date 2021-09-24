@@ -16,7 +16,7 @@ class ProcessList {
         ProcessList() = default;
         ~ProcessList();
 
-        void addProcess(TString& name, int color, TFile* inputfile);
+        void addProcess(TString& name, int color, TFile* inputfile, bool signal, bool data);
 
         Process* getHead() {return head;}
         Process* getTail() {return tail;}

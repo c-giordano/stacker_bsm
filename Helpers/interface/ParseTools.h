@@ -7,5 +7,7 @@
 #include <sstream>
 
 bool considerLine(std::string* line);
+std::pair<std::string, std::string> splitSettingAndValue(std::string& line);
+
 
 #endif
