@@ -97,7 +97,8 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     
     if (histogramVec->empty()) {
         // walk in inputfile to first process, check all histogram names
-        inputfile->cd(processes->getHead()->getName());
+        inputfile->cd("Nominal");
+        gDirectory->cd(processes->getHead()->getName());
         gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
 
         TList* histogramsAvailable = gDirectory->GetListOfKeys();
@@ -108,15 +109,15 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         }
     }
 
-    //outputfile = new TFile("Combinefile.root", "recreate");
+    outputfile = new TFile("Combinefile.root", "recreate");
 }
 
 Stacker::~Stacker() {
     inputfile->Close();
-    //outputfile->Close();
+    outputfile->Close();
 
     delete inputfile;
-    //delete outputfile;
+    delete outputfile;
     delete processes;
 }
 
@@ -129,7 +130,7 @@ void Stacker::printAllHistograms() {
 void Stacker::printHistogram(TString& histID) {
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
-    std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend);
+    std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend, outputfile);
 
     TCanvas* canv = getCanvas(histID);
     canv->Draw();
@@ -142,7 +143,9 @@ void Stacker::printHistogram(TString& histID) {
 
     histStack->GetXaxis()->SetTitle(histVec[0]->GetXaxis()->GetTitle());
     histStack->GetYaxis()->SetTitle(histVec[0]->GetYaxis()->GetTitle());
-    histStack->SetMaximum(histStack->GetMaximum() * 1.2); // stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.2);
+    histStack->SetMaximum(histStack->GetMaximum() * 1.4); // stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.2);
+    pad->Update();
+    pad->Modified();
 
     legend->Draw();
 

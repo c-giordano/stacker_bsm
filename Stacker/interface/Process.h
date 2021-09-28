@@ -32,8 +32,8 @@ class Process {
 
         void setNext(Process* newNext) {next = newNext;}
         Process* getNext() const {return next;}
-
         TString const getName() {return name;}
+        bool isSignalProcess() {return isSignal;}
 
         TH1D* getHistogram(TString& histName, TLegend* legend);
 };

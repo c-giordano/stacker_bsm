@@ -21,17 +21,33 @@ ProcessList::~ProcessList() {
     }
 }
 
-std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, TLegend* legend) {
+std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile) {
     Process* current = head;
     std::vector<TH1D*> histVec;
+
+    double signalYield = 0.;
+    double bkgYield = 0.;
+
+    outfile->mkdir(histogramID);
 
     while (current) {
         TH1D* histToAdd = current->getHistogram(histogramID, legend);
         stack->Add(histToAdd);
         histVec.push_back(histToAdd);
+        
+        if (current->isSignalProcess()) {
+            signalYield += histToAdd->Integral();
+        } else {
+            bkgYield += histToAdd->Integral();
+        }
+
+        outfile->cd(histogramID);
+        histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
     }
+
+    std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;
 
     return histVec;
 }

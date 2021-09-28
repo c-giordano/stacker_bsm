@@ -5,7 +5,9 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, bool si
     color = procColor;
     cleanedName = cleanTString(name);
 
-    if (! rootFile->GetDirectory(procName)) {
+    rootFile->cd("Nominal");
+
+    if (! gDirectory->GetDirectory(procName)) {
         std::cout << "ERROR: Process " << procName << " not found." << std::endl;
         exit(2);
     }
@@ -16,7 +18,7 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, bool si
         return;
     }
 
-    rootFile->cd(procName);
+    gDirectory->cd(procName);
     subdirectories = new std::vector<const char*>;
 
     TList* folders = gDirectory->GetListOfKeys();
@@ -30,7 +32,9 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, bool si
 TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
-    rootFile->cd(name);
+    rootFile->cd("Nominal");
+
+    gDirectory->cd(name);
 
     for(auto subdir : *subdirectories) {
         gDirectory->cd(subdir);
