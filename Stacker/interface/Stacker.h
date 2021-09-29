@@ -19,6 +19,7 @@
 #include "Histogram.h"
 
 #include "../../Helpers/interface/ParseTools.h"
+#include "../../Helpers/interface/thTools.h"
 
 #include "../../Styles/tdrStyle.h"
 
@@ -49,6 +50,9 @@ class Stacker {
 
         // General settings
         std::string intLumi = "";
+        std::string drawOpt = "HIST";
+        std::string yAxisOverride = "";
+        bool noStack = false;
         
 
     public:
@@ -57,8 +61,14 @@ class Stacker {
 
         void printAllHistograms();
         void printHistogram(Histogram* histID);
+        std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
         void setLumi(std::string& lumiSetting);
+        void setDrawOpt(std::string& drawSetting);
+
+        void stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec);
+        void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1D* first);
+
 };
 
 #endif

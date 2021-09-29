@@ -23,3 +23,26 @@ void Stacker::setLumi(std::string& lumiSetting) {
         exit(1);
     }
 }
+
+void Stacker::setDrawOpt(std::string& drawSetting) {
+    std::stringstream stream(drawSetting);
+    std::string part;
+    drawOpt = "";
+    while (getline(stream, part, ',')) {
+        cleanWhitespace(part);
+
+        // Todo: continue this stuff
+        drawOpt += part + " ";
+
+        if (part == "NOSTACK") {
+            noStack = true;
+            // Fillcolor of all histograms must be set to 0 
+            // Yaxis title must change
+            yAxisOverride += "a.u.";
+            gStyle->SetHistLineWidth(3);
+            gStyle->SetHistFillStyle(0);
+            
+            gROOT->ForceStyle();
+        }
+    }
+}

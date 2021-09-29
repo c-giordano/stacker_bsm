@@ -9,7 +9,15 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, bool si
 
     if (! gDirectory->GetDirectory(procName)) {
         std::cout << "ERROR: Process " << procName << " not found." << std::endl;
-        exit(2);
+        std::cout << "Trying rootfile itself..." << std::endl;
+        rootFile->cd();
+
+        if (! gDirectory->GetDirectory(procName)) {
+            std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
+            exit(2);
+        }
+
+        //exit(2);
     }
 
     if (procName == "nonPrompt") {
@@ -33,7 +41,18 @@ TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
     rootFile->cd("Nominal");
+    if (! gDirectory->GetDirectory(name)) {
+        std::cout << "ERROR: Process " << name << " not found." << std::endl;
+        std::cout << "Trying rootfile itself..." << std::endl;
+        rootFile->cd();
 
+        if (! gDirectory->GetDirectory(name)) {
+            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
+            exit(2);
+        }
+
+        //exit(2);
+    }
     gDirectory->cd(name);
 
     for(auto subdir : *subdirectories) {

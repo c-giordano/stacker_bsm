@@ -4,6 +4,11 @@
 #include <TString.h>
 #include <vector>
 #include <string>
+#include <sstream>
+#include <iostream>
+
+#include "../../Helpers/interface/ParseTools.h"
+#include "../../Helpers/interface/StringTools.h"
 
 class Histogram {
     private:
@@ -16,7 +21,10 @@ class Histogram {
         ~Histogram();
 
         TString getID() const {return id;};
+        bool isLogscale() const {return logScale;};
+        std::vector<std::string>* getBinLabels() const {return binLabels;};
 
+        void readSettings(std::istringstream& settingLine);
 
         static bool searchHist(Histogram*, std::string&);
 };

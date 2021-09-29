@@ -83,11 +83,13 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
         if (currSetAndVal.first == "Lumi") {
             setLumi(currSetAndVal.second);
+        } else if (currSetAndVal.first == "Drawopt") {
+            setDrawOpt(currSetAndVal.second);
         }
         // Set gen settings
     }
 
-    // walk in inputfile to first process, check all histogram names
+    // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
     gDirectory->cd(processes->getHead()->getName());
     gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
@@ -120,6 +122,9 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
             std::cout << "FOUND " << histID << std::endl;
         }
 
+        // Manage settings. Call function in histogram class maybe to parse and fix setting.
+        (*it)->readSettings(stream);
+
     }
     outputfile = new TFile("Combinefile.root", "recreate");
 }
@@ -130,7 +135,6 @@ Stacker::~Stacker() {
 
     delete inputfile;
     delete outputfile;
-    delete processes;
 }
 
 void Stacker::printAllHistograms() {
@@ -146,6 +150,8 @@ void Stacker::printHistogram(Histogram* hist) {
     TLegend* legend = getLegend();
     std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend, outputfile);
 
+    stackSettingsPreDraw(histStack, histVec);
+
     TCanvas* canv = getCanvas(histID);
     canv->Draw();
     canv->cd();
@@ -153,11 +159,10 @@ void Stacker::printHistogram(Histogram* hist) {
     pad->Draw();
     pad->cd();
 
-    histStack->Draw("HIST");
+    histStack->Draw(drawOpt.c_str());
 
-    histStack->GetXaxis()->SetTitle(histVec[0]->GetXaxis()->GetTitle());
-    histStack->GetYaxis()->SetTitle(histVec[0]->GetYaxis()->GetTitle());
-    histStack->SetMaximum(histStack->GetMaximum() * 1.4); // stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.2);
+    stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
+
     pad->Update();
     pad->Modified();
 
