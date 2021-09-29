@@ -16,6 +16,7 @@
 
 #include "ProcessList.h"
 #include "Process.h"
+#include "Histogram.h"
 
 #include "../../Helpers/interface/ParseTools.h"
 
@@ -28,7 +29,7 @@
 class Stacker {
     private:
         ProcessList* processes;
-        std::vector<TString>* histogramVec;
+        std::vector<Histogram*> histogramVec;
         // settings
         int canvWidthX = 600; // Possibly changing directly using gStyle... or save in style object being made. 
         int canvWidthY = 600;
@@ -37,7 +38,7 @@ class Stacker {
         TCanvas* getCanvas(TString& histID);
         TPad* getPad(TString& histID);
         TLegend* getLegend();
-        TLatex* getDatasetInfo();
+        TLatex* getDatasetInfo(TPad* currentPad);
 
         // Main root file
         TFile* inputfile;
@@ -55,7 +56,7 @@ class Stacker {
         ~Stacker();
 
         void printAllHistograms();
-        void printHistogram(TString& histID);
+        void printHistogram(Histogram* histID);
 
         void setLumi(std::string& lumiSetting);
 };

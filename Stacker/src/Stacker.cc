@@ -4,6 +4,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <functional>
 
 Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     // Constructer should either call parser or take output of parser
@@ -86,29 +87,40 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         // Set gen settings
     }
 
-    histogramVec = new std::vector<TString>;
+    // walk in inputfile to first process, check all histogram names
+    inputfile->cd("Nominal");
+    gDirectory->cd(processes->getHead()->getName());
+    gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
+
+    TList* histogramsAvailable = gDirectory->GetListOfKeys();
+
+    for (auto const&& obj : *histogramsAvailable) {
+        Histogram* hist = new Histogram(TString(obj->GetName()));
+        histogramVec.push_back(hist);
+    }
+
     while (getline(infile, line)) {
         if (!considerLine(&line)) {
             continue;
         }
-        
         // Set histograms to check
-    }
-    
-    if (histogramVec->empty()) {
-        // walk in inputfile to first process, check all histogram names
-        inputfile->cd("Nominal");
-        gDirectory->cd(processes->getHead()->getName());
-        gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
 
-        TList* histogramsAvailable = gDirectory->GetListOfKeys();
+        std::string histID;
+        std::istringstream stream(line);
 
-        for (auto const&& obj : *histogramsAvailable) {
-            histogramVec->push_back(TString(obj->GetName()));
+        stream >> histID;
+        
+        std::vector<Histogram*>::iterator it;
+        it = std::find_if(histogramVec.begin(), histogramVec.end(), std::bind(Histogram::searchHist, std::placeholders::_1, histID));
 
+        if (it == histogramVec.end()) {
+            std::cout << histID << " not found!" << std::endl;
+            continue;
+        } else {
+            std::cout << "FOUND " << histID << std::endl;
         }
-    }
 
+    }
     outputfile = new TFile("Combinefile.root", "recreate");
 }
 
@@ -122,12 +134,14 @@ Stacker::~Stacker() {
 }
 
 void Stacker::printAllHistograms() {
-    for (auto histogramID : *histogramVec) {
+    for (auto histogramID : histogramVec) {
         printHistogram(histogramID);
     }
 }
 
-void Stacker::printHistogram(TString& histID) {
+void Stacker::printHistogram(Histogram* hist) {
+    TString histID = hist->getID();
+
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
     std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend, outputfile);
@@ -149,7 +163,7 @@ void Stacker::printHistogram(TString& histID) {
 
     legend->Draw();
 
-    TLatex* info = getDatasetInfo();
+    TLatex* info = getDatasetInfo(pad);
 
     canv->Print("Output/" + histID + ".png");
 }

@@ -1,4 +1,6 @@
 #include "../interface/Stacker.h"
+#include <iomanip>
+#include <sstream>
 
 void Stacker::setLumi(std::string& lumiSetting) {
     try {
@@ -12,7 +14,10 @@ void Stacker::setLumi(std::string& lumiSetting) {
     if(inputfile->GetListOfKeys()->Contains("IntLumi")) {
         TH1F* lumiHist;
         inputfile->GetObject("IntLumi", lumiHist);
-        intLumi = std::to_string(lumiHist->GetBinContent(1));
+
+        std::stringstream stream;
+        stream << std::fixed << std::setprecision(2) << lumiHist->GetBinContent(1);
+        intLumi = stream.str();
     } else {
         std::cout << "Luminosity not found. Are you sure it is supplied?" << std::endl;
         exit(1);
