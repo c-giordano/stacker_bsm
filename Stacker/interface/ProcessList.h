@@ -12,6 +12,7 @@ class ProcessList {
         Process* head = nullptr;
         Process* tail = nullptr;
 
+        bool verbose = false;
     public:
         ProcessList() = default;
         ~ProcessList();
@@ -22,6 +23,8 @@ class ProcessList {
         Process* getTail() {return tail;}
 
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
+
+        void setVerbosity(bool verbosity) {verbose = verbosity;}
 
 };
 

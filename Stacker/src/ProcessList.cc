@@ -30,6 +30,8 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, 
 
     outfile->mkdir(histogramID);
 
+    if (verbose) std::cout << histogramID << std::endl;
+
     while (current) {
         TH1D* histToAdd = current->getHistogram(histogramID, legend);
         stack->Add(histToAdd);
@@ -41,13 +43,17 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, 
             bkgYield += histToAdd->Integral();
         }
 
+        if (verbose) {
+            std::cout << current->getName() << ": " << histToAdd->Integral() << " events" << std::endl;
+        }
+
         outfile->cd(histogramID);
         histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
     }
-
-    std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;
+    
+    if (verbose) std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;
 
     return histVec;
 }

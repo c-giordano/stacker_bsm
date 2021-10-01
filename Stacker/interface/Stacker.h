@@ -29,6 +29,8 @@
 
 class Stacker {
     private:
+        bool verbose = false;
+
         ProcessList* processes;
         std::vector<Histogram*> histogramVec;
         // settings
@@ -59,6 +61,10 @@ class Stacker {
         Stacker(const char* rootFile, std::string& settingFile);
         ~Stacker();
 
+        void setVerbosity(bool verbosity) {
+            verbose = verbosity;
+            processes->setVerbosity(verbosity);
+        }
         void printAllHistograms();
         void printHistogram(Histogram* histID);
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
