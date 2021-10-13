@@ -17,6 +17,7 @@
 #include "ProcessList.h"
 #include "Process.h"
 #include "Histogram.h"
+#include "Histogram2D.h"
 
 #include "../../Helpers/interface/ParseTools.h"
 #include "../../Helpers/interface/thTools.h"
@@ -33,6 +34,7 @@ class Stacker {
 
         ProcessList* processes;
         std::vector<Histogram*> histogramVec;
+        std::vector<Histogram2D*> histogramVec2D;
         // settings
         int canvWidthX = 600; // Possibly changing directly using gStyle... or save in style object being made. 
         int canvWidthY = 600;
@@ -68,6 +70,9 @@ class Stacker {
         void printAllHistograms();
         void printHistogram(Histogram* histID);
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
+        
+        void printAll2DHistograms();
+        void print2DHistogram(Histogram2D* histID);
 
         void setLumi(std::string& lumiSetting);
         void setDrawOpt(std::string& drawSetting);

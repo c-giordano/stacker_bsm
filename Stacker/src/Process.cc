@@ -83,3 +83,48 @@ TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
     
     return output;
 }
+
+TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
+    TH2D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
+
+    rootFile->cd("Nominal");
+    if (! gDirectory->GetDirectory(name)) {
+        std::cout << "ERROR: Process " << name << " not found." << std::endl;
+        std::cout << "Trying rootfile itself..." << std::endl;
+        rootFile->cd();
+
+        if (! gDirectory->GetDirectory(name)) {
+            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
+            exit(2);
+        }
+    }
+    gDirectory->cd(name);
+
+    for(auto subdir : *subdirectories) {
+        gDirectory->cd(subdir);
+        
+        TH2D* inter;
+        gDirectory->GetObject(histName, inter);
+
+        if (output == nullptr) {
+            output = new TH2D(*inter);
+        } else {
+            output->Add(inter);
+        }
+
+        // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
+
+        gDirectory->cd("..");
+    }
+
+    output->SetName(histName + name);
+    output->SetTitle(histName + name);
+    
+    output->SetLineColor(color);
+    output->SetFillColor(color);
+    output->SetMarkerColor(color);
+    
+    legend->AddEntry(output, cleanedName);
+
+    return output;
+}

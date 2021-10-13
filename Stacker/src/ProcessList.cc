@@ -57,3 +57,40 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, 
 
     return histVec;
 }
+
+std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile) {
+    Process* current = head;
+    std::vector<TH2D*> histVec;
+
+    double signalYield = 0.;
+    double bkgYield = 0.;
+
+    outfile->mkdir(histogramID);
+
+    if (verbose) std::cout << histogramID << std::endl;
+
+    while (current) {
+        TH2D* histToAdd = current->get2DHistogram(histogramID, legend);
+        stack->Add(histToAdd);
+        histVec.push_back(histToAdd);
+        
+        if (current->isSignalProcess()) {
+            signalYield += histToAdd->Integral();
+        } else {
+            bkgYield += histToAdd->Integral();
+        }
+
+        if (verbose) {
+            std::cout << current->getName() << ": " << histToAdd->Integral() << " events" << std::endl;
+        }
+
+        outfile->cd(histogramID);
+        histToAdd->Write(current->getName(), TObject::kOverwrite);
+
+        current = current->getNext();
+    }
+    
+    if (verbose) std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;
+
+    return histVec;
+}

@@ -32,9 +32,9 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     pad->SetLogy(hist->isLogscale());
 
     // Set custom bin labels if desired
-    if (hist->getBinLabels()) {
-        std::vector<std::string>* bins = hist->getBinLabels();
-        for (int i = 1; i != bins->size() + 1; i++) {
+    if (hist->getXBinLabels()) {
+        std::vector<std::string>* bins = hist->getXBinLabels();
+        for (unsigned i = 1; i != bins->size() + 1; i++) {
             stack->GetXaxis()->SetBinLabel(i, TString(bins->at(i - 1)));
         }
     }

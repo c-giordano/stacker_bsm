@@ -4,6 +4,7 @@
 #include <TString.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TH2.h>
 #include <TLegend.h>
 
 #include <iostream>
@@ -36,6 +37,8 @@ class Process {
         bool isSignalProcess() {return isSignal;}
 
         TH1D* getHistogram(TString& histName, TLegend* legend);
+        TH2D* get2DHistogram(TString& histName, TLegend* legend);
+
 };
 
 #endif

@@ -23,6 +23,7 @@ class ProcessList {
         Process* getTail() {return tail;}
 
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
+        std::vector<TH2D*> fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
         void setVerbosity(bool verbosity) {verbose = verbosity;}
 

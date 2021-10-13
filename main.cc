@@ -21,6 +21,7 @@ int main(int argc, char const *argv[]) {
     Stacker stacker(rootFile, settingsFile);
     stacker.setVerbosity(verbose);
     stacker.printAllHistograms();
+    stacker.printAll2DHistograms();
 
     return 0;
 }

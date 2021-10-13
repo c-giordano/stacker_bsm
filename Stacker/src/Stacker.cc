@@ -6,6 +6,8 @@
 #include <sstream>
 #include <functional>
 
+#include <TKey.h>
+
 Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     // Constructer should either call parser or take output of parser
     // Constructer should build processlist and set its own settings
@@ -51,7 +53,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         std::string colorString;
         std::string type;
         stream >> processName >> colorString >> type;
-        
+
         // Color_t currentColor = std::stoi(colorString);
         TString processNameAlt(processName);
 
@@ -97,8 +99,13 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     TList* histogramsAvailable = gDirectory->GetListOfKeys();
 
     for (auto const&& obj : *histogramsAvailable) {
-        Histogram* hist = new Histogram(TString(obj->GetName()));
-        histogramVec.push_back(hist);
+        if (std::string(((TKey*) obj)->GetClassName()) == "TH1D") {
+            Histogram* hist = new Histogram(TString(obj->GetName()));
+            histogramVec.push_back(hist);
+        } else {
+            Histogram2D* hist = new Histogram2D(TString(obj->GetName()));
+            histogramVec2D.push_back(hist);
+        }
     }
 
     while (getline(infile, line)) {
@@ -116,16 +123,23 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
         it = std::find_if(histogramVec.begin(), histogramVec.end(), std::bind(Histogram::searchHist, std::placeholders::_1, histID));
 
         if (it == histogramVec.end()) {
-            std::cout << histID << " not found!" << std::endl;
-            continue;
+            std::vector<Histogram2D*>::iterator it2D;
+            it2D = std::find_if(histogramVec2D.begin(), histogramVec2D.end(), std::bind(Histogram2D::searchHist, std::placeholders::_1, histID));
+
+            if (it2D == histogramVec2D.end()) {
+                std::cout << histID << " not found!" << std::endl;
+                continue;
+            }
+
+            (*it2D)->readSettings(stream);
         } else {
-            std::cout << "FOUND " << histID << std::endl;
+            // Manage settings. Call function in histogram class maybe to parse and fix setting.
+            (*it)->readSettings(stream);
         }
 
-        // Manage settings. Call function in histogram class maybe to parse and fix setting.
-        (*it)->readSettings(stream);
-
+        std::cout << "FOUND " << histID << std::endl;
     }
+
     outputfile = new TFile("Combinefile.root", "recreate");
 }
 

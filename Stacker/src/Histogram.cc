@@ -22,20 +22,25 @@ void Histogram::readSettings(std::istringstream& settingLine) {
             currSetAndVal = splitSettingAndValue(setting);
             setting = currSetAndVal.first;
         }
-        
-        if (setting == "logscale") {
-            logScale = true;
-            continue;
-        } //else if ()
 
-        if (setting == "binlabels") {
-            std::istringstream stream(currSetAndVal.second);
-            std::string bin;
-            binLabels = new std::vector<std::string>;
+        readSetting(setting, currSetAndVal);
+    }
+}
 
-            while (getline(stream, bin, ',')) {
-                binLabels->push_back(bin);
-            }
+void Histogram::readSetting(std::string& setting, std::pair<std::string, std::string>& currSetAndVal) {
+    if (setting == "logscale") {
+        logScale = true;
+        return;
+    }
+
+    if (setting == "Xbinlabels") {
+        std::istringstream stream(currSetAndVal.second);
+        std::string bin;
+        xBinLabels = new std::vector<std::string>;
+
+        while (getline(stream, bin, ',')) {
+            xBinLabels->push_back(bin);
         }
+        return;
     }
 }

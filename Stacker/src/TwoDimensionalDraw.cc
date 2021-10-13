@@ -1,0 +1,38 @@
+#include "../interface/Stacker.h"
+
+void Stacker::printAll2DHistograms() {
+    for (auto histogramID : histogramVec2D) {
+        print2DHistogram(histogramID);
+    }
+}
+
+void Stacker::print2DHistogram(Histogram2D* hist) {
+    // 2 goals: print straight up normal 2D hists to outfile
+    // outfile hists: per process
+    // outfig: ratio S/sqrt(B) en S/B (both with total stat error on background?)
+    
+    TString histID = hist->getID();
+
+    THStack* histStack = new THStack(histID, histID);
+    TLegend* legend = getLegend();
+    std::vector<TH2D*> histVec = processes->fill2DStack(histStack, histID, legend, outputfile);
+
+    TCanvas* canv = getCanvas(histID);
+    canv->Draw();
+    canv->cd();
+    TPad* pad = getPad(histID);
+    pad->Draw();
+    pad->cd();
+
+    histStack->Draw();
+
+    pad->Update();
+    pad->Modified();
+
+    legend->Draw();
+
+    TLatex* info = getDatasetInfo(pad);
+
+    canv->Print("Output/" + histID + ".png");
+
+}
