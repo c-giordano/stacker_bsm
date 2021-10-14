@@ -8,7 +8,7 @@ void Stacker::stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec) 
     if (noStack) normalizeHistograms(histVec);
 }
 
-void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1D* first) {
+void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first) {
     // Settings to be applied after drawing the THStack
 
     // Set X axis name

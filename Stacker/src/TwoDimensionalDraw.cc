@@ -26,6 +26,8 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
 
     histStack->Draw();
 
+    stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
+
     pad->Update();
     pad->Modified();
 

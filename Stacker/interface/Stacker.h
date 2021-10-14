@@ -78,7 +78,7 @@ class Stacker {
         void setDrawOpt(std::string& drawSetting);
 
         void stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec);
-        void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1D* first);
+        void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first);
 
 };
 
