@@ -35,6 +35,20 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
 
     TLatex* info = getDatasetInfo(pad);
 
-    canv->Print("Output/" + histID + ".png");
+    std::string fullPath = pathToOutput;
+    if (runT2B) {
+        std::string id = histID.Data();
+        fullPath += getChannel(id);
+        /*
+        if (! boost::filesystem::exists(fullPath)) {
+            boost::filesystem::create_directory(fullPath);
+        }*/
+
+        fullPath += "/";
+    }
+
+    canv->Print(fullPath + histID + ".png");
+
+    delete info;
 
 }

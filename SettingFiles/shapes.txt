@@ -1,0 +1,17 @@
+# Processname       color       -> Processes in order: last to first
+Xgamma              593         B
+ChargeMisID         882         B   
+Rare                906         B   
+TTH                 803         B   
+nonPrompt           801         B   
+TTZ                 407         B   
+TTW                 419         B   
+TTTT                633         S
+
+BROAD SETTINGS
+# general settings
+Lumi=HIST
+Drawopt=HIST, NOSTACK
+
+HISTOGRAMS
+# list of histgorams for which modified conditions are applied, together with the modified conditions

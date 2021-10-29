@@ -20,10 +20,16 @@
 #include "Histogram2D.h"
 
 #include "../../Helpers/interface/ParseTools.h"
+#include "../../Helpers/interface/StringTools.h"
 #include "../../Helpers/interface/thTools.h"
+#include "../../Helpers/interface/Others.h"
 
 #include "../../Styles/tdrStyle.h"
-
+/*
+#include <boost/filesystem/operations.hpp>
+#include <boost/filesystem/path.hpp>
+#include <boost/filesystem.hpp>
+*/
 // Use global setting file which keeps track of colors, order, definitions of components... -> SettingParser
 // Keep track of which files belong to which process with which color -> other class? or linked list with entry for each process and vector for applicable files
 // 
@@ -56,11 +62,14 @@ class Stacker {
         std::string intLumi = "";
         std::string drawOpt = "HIST";
         std::string yAxisOverride = "";
+
         bool noStack = false;
-        
+
+        bool runT2B;
+        std::string pathToOutput;
 
     public:
-        Stacker(const char* rootFile, std::string& settingFile);
+        Stacker(const char* rootFile, std::string& settingFile, bool runT2Btrue);
         ~Stacker();
 
         void setVerbosity(bool verbosity) {

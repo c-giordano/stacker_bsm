@@ -34,3 +34,28 @@ void cleanWhitespace(std::string& str) {
     
     str = str.substr(0, end + 1);
 }
+
+std::string removeExt(std::string& str) {
+    size_t splitPoint = str.find('.');
+    if (splitPoint == std::string::npos) return str;
+    
+    return str.substr(0, splitPoint);
+}
+
+std::string getChannel(std::string& str) {
+    size_t split = str.find_last_of("_");
+
+    return str.substr(split);
+}
+
+std::string getFilename(std::string& str) {
+    size_t split = str.find_last_of("/");
+
+    return str.substr(split);
+}
+
+std::string splitAtUnderscore(std::string& str) {
+    size_t split = str.find('_');
+
+    return str.substr(split + 1);
+}

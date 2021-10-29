@@ -8,7 +8,8 @@
 
 #include <TKey.h>
 
-Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
+
+Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2Btrue) : runT2B(runT2Btrue) {
     // Constructer should either call parser or take output of parser
     // Constructer should build processlist and set its own settings
 
@@ -33,6 +34,22 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     if (! infile.is_open()) {
         std::cout << "ERROR: Settingsfile not found" << std::endl;
         exit(1);
+    }
+
+    if (runT2B) {
+        pathToOutput = "/user/nivanden/public_html/";
+        //std::string dateString = rootFilename;
+        //dateString = getFilename(dateString);
+        //dateString = splitAtUnderscore(dateString);
+        //pathToOutput += removeExt(dateString);
+
+        //boost::filesystem::path currentPath(pathToOutput);
+        //boost::filesystem::create_directory(currentPath);
+        //pathToOutput += "/";
+
+        //copyFileCustom("~/public_html/index.php", (pathToOutput + "index.php").c_str());
+    } else {
+        pathToOutput = "Output/";
     }
 
     while (getline(infile, line)) {
@@ -184,5 +201,19 @@ void Stacker::printHistogram(Histogram* hist) {
 
     TLatex* info = getDatasetInfo(pad);
 
-    canv->Print("Output/" + histID + ".png");
+    std::string fullPath = pathToOutput;
+    if (runT2B) {
+        std::string id = histID.Data();
+        fullPath += getChannel(id);
+        /*
+        if (! boost::filesystem::exists(fullPath)) {
+            boost::filesystem::create_directory(fullPath);
+        }*/
+
+        fullPath += "/";
+    }
+
+    canv->Print(fullPath + histID + ".png");
+
+    delete info;
 }

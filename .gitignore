@@ -40,8 +40,6 @@ analyzer_exec
 plotter_stack_exec
 *_exec
 
-*.txt
-
 *.class.C
 *.weights.xml
 
