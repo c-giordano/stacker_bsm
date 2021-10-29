@@ -37,7 +37,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
     }
 
     if (runT2B) {
-        pathToOutput = "/user/nivanden/public_html/";
+        pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
         //std::string dateString = rootFilename;
         //dateString = getFilename(dateString);
         //dateString = splitAtUnderscore(dateString);
