@@ -41,6 +41,10 @@ void Stacker::setDrawOpt(std::string& drawSetting) {
             yAxisOverride += "a.u.";
             gStyle->SetHistLineWidth(3);
             gStyle->SetHistFillStyle(0);
+
+            if (runT2B) {
+                pathToOutput += "Shapes/";
+            }
             
             gROOT->ForceStyle();
         }

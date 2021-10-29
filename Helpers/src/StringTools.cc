@@ -45,7 +45,7 @@ std::string removeExt(std::string& str) {
 std::string getChannel(std::string& str) {
     size_t split = str.find_last_of("_");
 
-    return str.substr(split);
+    return str.substr(split+1);
 }
 
 std::string getFilename(std::string& str) {
