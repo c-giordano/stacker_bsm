@@ -104,6 +104,8 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
             setLumi(currSetAndVal.second);
         } else if (currSetAndVal.first == "Drawopt") {
             setDrawOpt(currSetAndVal.second);
+        } else if (currSetAndVal.first == "OutFolder" && runT2B) {
+            pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
         }
         // Set gen settings
     }
