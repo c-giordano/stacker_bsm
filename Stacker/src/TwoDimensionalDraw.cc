@@ -1,6 +1,7 @@
 #include "../interface/Stacker.h"
 
 void Stacker::printAll2DHistograms() {
+    isRatioPlot = false;
     for (auto histogramID : histogramVec2D) {
         print2DHistogram(histogramID);
     }
