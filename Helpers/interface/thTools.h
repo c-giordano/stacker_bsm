@@ -13,5 +13,6 @@
 #include <TColor.h>
 
 void normalizeHistograms(std::vector<TH1D*>& histos);
+TH1D* sumVector(std::vector<TH1D*>& histoVec);
 
 #endif

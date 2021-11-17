@@ -1,11 +1,29 @@
 #include "../interface/Stacker.h"
 
 TCanvas* Stacker::getCanvas(TString& histID) {
+	if (isRatioPlot) {
+		gStyle->SetCanvasDefH(1050);
+	}
     return new TCanvas(histID + "_canvas");
 }
 
-TPad* Stacker::getPad(TString& histID) {
-    return new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 1.);
+TPad* Stacker::getPad(TString& histID, int position) {
+	double margin = 0.013;
+	TPad* outputPad;
+	if (position == 0) {
+		if (isRatioPlot) {
+			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0.24, 1., 1.);
+			outputPad->SetBottomMargin(margin);		
+		} else {
+			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 1.);
+		}
+	}  else if (position == 1) {
+		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.24);
+		outputPad->SetTopMargin(margin);
+		outputPad->SetBottomMargin(0.4);
+	}
+
+	return outputPad;
 }
 
 TLegend* Stacker::getLegend() {
@@ -63,7 +81,7 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
 	latex->SetTextFont(61);
 	latex->SetTextAlign(11); 
 	latex->SetTextSize(CMSTextSize);
-	float cmsX = latex->GetXsize();
+	//float cmsX = latex->GetXsize();
 	latex->DrawLatex(l,1  -t + lumiTextOffset,"CMS");
 
 	float extraTextSize = CMSTextSize*0.76;	 

@@ -38,21 +38,12 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
 
     if (runT2B) {
         pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
-        //std::string dateString = rootFilename;
-        //dateString = getFilename(dateString);
-        //dateString = splitAtUnderscore(dateString);
-        //pathToOutput += removeExt(dateString);
-
-        //boost::filesystem::path currentPath(pathToOutput);
-        //boost::filesystem::create_directory(currentPath);
-        //pathToOutput += "/";
-
-        //copyFileCustom("~/public_html/index.php", (pathToOutput + "index.php").c_str());
     } else {
         pathToOutput = "Output/";
     }
 
     while (getline(infile, line)) {
+        // parse processes
         // IF CONTAINS # or only whitespace: ignore line
         std::cout << line << std::endl;
         if(! considerLine(&line)){
@@ -89,6 +80,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
     }
 
     while (getline(infile, line)) {
+        // parse settings
         if (!considerLine(&line)) {
             continue;
         }
@@ -106,6 +98,8 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
             setDrawOpt(currSetAndVal.second);
         } else if (currSetAndVal.first == "OutFolder" && runT2B) {
             pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
+        } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
+            isRatioPlot = true;
         }
         // Set gen settings
     }
@@ -128,6 +122,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
     }
 
     while (getline(infile, line)) {
+        // parse histogramspecific settings
         if (!considerLine(&line)) {
             continue;
         }
@@ -174,48 +169,4 @@ void Stacker::printAllHistograms() {
     for (auto histogramID : histogramVec) {
         printHistogram(histogramID);
     }
-}
-
-void Stacker::printHistogram(Histogram* hist) {
-    TString histID = hist->getID();
-
-    THStack* histStack = new THStack(histID, histID);
-    TLegend* legend = getLegend();
-    std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend, outputfile);
-
-    stackSettingsPreDraw(histStack, histVec);
-
-    TCanvas* canv = getCanvas(histID);
-    canv->Draw();
-    canv->cd();
-    TPad* pad = getPad(histID);
-    pad->Draw();
-    pad->cd();
-
-    histStack->Draw(drawOpt.c_str());
-
-    stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
-
-    pad->Update();
-    pad->Modified();
-
-    legend->Draw();
-
-    TLatex* info = getDatasetInfo(pad);
-
-    std::string fullPath = pathToOutput;
-    if (runT2B) {
-        std::string id = histID.Data();
-        fullPath += getChannel(id);
-        /*
-        if (! boost::filesystem::exists(fullPath)) {
-            boost::filesystem::create_directory(fullPath);
-        }*/
-
-        fullPath += "/";
-    }
-
-    canv->Print(fullPath + histID + ".png");
-
-    delete info;
 }

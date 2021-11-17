@@ -12,7 +12,19 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     // Settings to be applied after drawing the THStack
 
     // Set X axis name
-    stack->GetXaxis()->SetTitle(first->GetXaxis()->GetTitle());
+    if (!isRatioPlot){
+        stack->GetXaxis()->SetTitle(first->GetXaxis()->GetTitle());
+
+        if (hist->getXBinLabels()) {
+            std::vector<std::string>* bins = hist->getXBinLabels();
+            for (unsigned i = 1; i != bins->size() + 1; i++) {
+                stack->GetXaxis()->SetBinLabel(i, TString(bins->at(i - 1)));
+            }
+        }
+    } else {
+        stack->GetXaxis()->SetTitle("");
+        stack->GetXaxis()->SetLabelSize(0);
+    }
 
     // Set Y axis name
     if (yAxisOverride != "") {
@@ -32,10 +44,5 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     pad->SetLogy(hist->isLogscale());
 
     // Set custom bin labels if desired
-    if (hist->getXBinLabels()) {
-        std::vector<std::string>* bins = hist->getXBinLabels();
-        for (unsigned i = 1; i != bins->size() + 1; i++) {
-            stack->GetXaxis()->SetBinLabel(i, TString(bins->at(i - 1)));
-        }
-    }
+    
 }

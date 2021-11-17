@@ -11,6 +11,7 @@
 #include <TLine.h>
 #include <TGaxis.h>
 #include <TColor.h>
+//#include <TRatioPlot.h>
 
 #include <algorithm>
 
@@ -47,7 +48,7 @@ class Stacker {
 
         // Build components of histogram based on settings
         TCanvas* getCanvas(TString& histID);
-        TPad* getPad(TString& histID);
+        TPad* getPad(TString& histID, int position=0);
         TLegend* getLegend();
         TLatex* getDatasetInfo(TPad* currentPad);
 
@@ -68,6 +69,8 @@ class Stacker {
         bool runT2B;
         std::string pathToOutput;
 
+        bool isRatioPlot = false;
+
     public:
         Stacker(const char* rootFile, std::string& settingFile, bool runT2Btrue);
         ~Stacker();
@@ -78,6 +81,8 @@ class Stacker {
         }
         void printAllHistograms();
         void printHistogram(Histogram* histID);
+        void drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec);
+        void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
         
         void printAll2DHistograms();

@@ -21,7 +21,7 @@ ProcessList::~ProcessList() {
     }
 }
 
-std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile) {
+std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile, std::vector<TH1D*>* signalHistograms) {
     Process* current = head;
     std::vector<TH1D*> histVec;
 
@@ -39,6 +39,8 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, TString& histogramID, 
         
         if (current->isSignalProcess()) {
             signalYield += histToAdd->Integral();
+            TH1D* signalHist = new TH1D(*histToAdd);
+            signalHistograms->push_back(signalHist);
         } else {
             bkgYield += histToAdd->Integral();
         }
