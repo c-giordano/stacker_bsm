@@ -37,6 +37,8 @@ void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>&
     pad->Draw();
     pad->cd();
 
+    stackSettingsPreDraw(histStack, histVec);
+
     histStack->Draw(drawOpt.c_str());
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
@@ -66,7 +68,6 @@ void Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::ve
     TH1D* allHistograms = sumVector(histoVec);
     
     signalTotal->Divide(allHistograms);
-
 
     signalTotal->SetTitleSize(0.192, "X");
     signalTotal->SetTitleSize(0.17, "Y");

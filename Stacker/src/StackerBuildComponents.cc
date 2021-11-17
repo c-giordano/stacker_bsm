@@ -2,7 +2,7 @@
 
 TCanvas* Stacker::getCanvas(TString& histID) {
 	if (isRatioPlot) {
-		gStyle->SetCanvasDefH(1050);
+		gStyle->SetCanvasDefH(941);
 	}
     return new TCanvas(histID + "_canvas");
 }
