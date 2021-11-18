@@ -25,7 +25,7 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
     pad->Draw();
     pad->cd();
 
-    histStack->Draw();
+    histStack->Draw("LEGO4");
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
 
