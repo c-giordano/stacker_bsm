@@ -100,6 +100,8 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2B
             pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
+        } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {
+            isSignalLine = true;
         }
         // Set gen settings
     }

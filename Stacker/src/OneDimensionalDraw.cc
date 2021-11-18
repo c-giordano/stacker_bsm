@@ -13,6 +13,8 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->cd();
 
     drawStack(hist, histStack, histVec);
+
+    drawSignalYield(legend, *signalVector);
     legend->Draw();
     
     canv->cd();
@@ -50,6 +52,22 @@ void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>&
 
     delete info;
 }
+
+void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
+    if (! isSignalLine) return;
+
+    TH1D* signalTotal = sumVector(signalVec);
+    signalTotal->SetTitle("Signal yield");
+
+    legend->AddEntry(signalTotal, "Signal yield");
+    
+    signalTotal->SetFillColor(0);
+    signalTotal->SetLineColor(1);
+    signalTotal->SetLineWidth(3);
+    signalTotal->SetMarkerStyle(0);
+    signalTotal->Draw("SAME HIST");
+}
+
 
 void Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec) {
     /* 

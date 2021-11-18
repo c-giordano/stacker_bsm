@@ -70,6 +70,7 @@ class Stacker {
         std::string pathToOutput;
 
         bool isRatioPlot = false;
+        bool isSignalLine = false;
 
     public:
         Stacker(const char* rootFile, std::string& settingFile, bool runT2Btrue);
@@ -82,6 +83,7 @@ class Stacker {
         void printAllHistograms();
         void printHistogram(Histogram* histID);
         void drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec);
+        void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
         void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
         

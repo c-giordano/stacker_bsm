@@ -2,6 +2,7 @@
 
 void Stacker::printAll2DHistograms() {
     isRatioPlot = false;
+    isSignalLine = false;
     for (auto histogramID : histogramVec2D) {
         print2DHistogram(histogramID);
     }
