@@ -1,18 +1,29 @@
 #include "../interface/Stacker.h"
 
+void Stacker::printAllHistograms() {
+    int tempCount =0 ;
+    for (auto histogramID : histogramVec) {
+        tempCount++;
+        //if (tempCount == 25) break;
+        printHistogram(histogramID);
+    }
+}
+
 void Stacker::printHistogram(Histogram* hist) {
     TString histID = hist->getID();
 
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
     std::vector<TH1D*>* signalVector = new std::vector<TH1D*>;
-    std::vector<TH1D*> histVec = processes->fillStack(histStack, histID, legend, outputfile, signalVector);
+    TH1D** sysUnc = new TH1D*();
+    *sysUnc = nullptr; 
+    std::vector<TH1D*> histVec = processes->fillStack(histStack, hist, legend, outputfile, signalVector, sysUnc);
 
     TCanvas* canv = getCanvas(histID);
     canv->Draw();
     canv->cd();
 
-    drawStack(hist, histStack, histVec);
+    drawStack(hist, histStack, histVec, sysUnc);
 
     drawSignalYield(legend, *signalVector);
     legend->Draw();
@@ -31,7 +42,7 @@ void Stacker::printHistogram(Histogram* hist) {
 }
 
 
-void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec) {
+void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc) {
     stackSettingsPreDraw(histStack, histVec);
     TString histID = hist->getID();
     TPad* pad = getPad(histID, 0);
@@ -44,6 +55,25 @@ void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>&
     histStack->Draw(drawOpt.c_str());
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
+
+    TH1D* allHistograms = sumVector(histVec);
+    TH1D* totalUnc = nullptr;
+    if (*sysUnc) {
+        totalUnc = new TH1D(*allHistograms);
+        
+        for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
+            double statError = allHistograms->GetBinError(bin);
+            double systError = (*sysUnc)->GetBinContent(bin); // is already squared
+            //totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
+            totalUnc->SetBinError(bin, sqrt(systError) );
+
+        }
+
+        totalUnc->SetFillStyle(3244); //3005  3244
+        totalUnc->SetFillColor(kGray+2);
+        totalUnc->SetMarkerStyle(0); //1
+        totalUnc->Draw("E2 SAME");
+    }
 
     pad->Update();
     pad->Modified();

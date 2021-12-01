@@ -11,6 +11,7 @@
 #include <TLine.h>
 #include <TGaxis.h>
 #include <TColor.h>
+#include <TString.h>
 //#include <TRatioPlot.h>
 
 #include <algorithm>
@@ -37,7 +38,6 @@
 
 class Stacker {
     private:
-        bool verbose = false;
 
         ProcessList* processes;
         std::vector<Histogram*> histogramVec;
@@ -66,23 +66,38 @@ class Stacker {
 
         bool noStack = false;
 
-        bool runT2B;
+        bool verbose = false;
+        bool uncertainties = false;
+        bool useData = false;
+        bool fakeData = false;
+
+        bool runT2B = true;
         std::string pathToOutput;
 
         bool isRatioPlot = false;
         bool isSignalLine = false;
 
     public:
-        Stacker(const char* rootFile, std::string& settingFile, bool runT2Btrue);
+        Stacker(const char* rootFile, std::string& settingFile);
         ~Stacker();
 
         void setVerbosity(bool verbosity) {
             verbose = verbosity;
             processes->setVerbosity(verbosity);
         }
+        //void useUncertainties(bool isUncertainties) {uncertainties = isUncertainties;}
+        void readUncertaintyFile(std::string& filename);
+        void useT2B(bool isT2B) {
+            runT2B = isT2B;
+            if (runT2B) pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
+            else pathToOutput = "Output/";
+        }
+        void isData(bool dataExists) {useData = dataExists;}
+        void useFakeData(bool isFD) {fakeData = isFD;}
+
         void printAllHistograms();
         void printHistogram(Histogram* histID);
-        void drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec);
+        void drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc);
         void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
         void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);

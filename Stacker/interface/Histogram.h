@@ -14,6 +14,7 @@ class Histogram {
     private:
         TString id;
         bool logScale; // 0 for lin, 1 for log
+        bool drawUncertainties = false;
         std::vector<std::string>* xBinLabels = nullptr;
     public:
         Histogram(TString histID);
@@ -22,6 +23,10 @@ class Histogram {
 
         TString getID() const {return id;};
         bool isLogscale() const {return logScale;};
+
+        bool getDrawUncertainties() {return drawUncertainties;}
+        void setDrawUncertainties(bool draw) {drawUncertainties = draw;}
+        
         std::vector<std::string>* getXBinLabels() const {return xBinLabels;};
 
         void setXBinLabels(std::vector<std::string>& binlabels) {

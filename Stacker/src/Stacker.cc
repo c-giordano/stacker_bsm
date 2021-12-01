@@ -9,7 +9,7 @@
 #include <TKey.h>
 
 
-Stacker::Stacker(const char* rootFilename, std::string& settingFile, bool runT2Btrue) : runT2B(runT2Btrue) {
+Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     // Constructer should either call parser or take output of parser
     // Constructer should build processlist and set its own settings
 
@@ -167,8 +167,108 @@ Stacker::~Stacker() {
     delete outputfile;
 }
 
-void Stacker::printAllHistograms() {
-    for (auto histogramID : histogramVec) {
-        printHistogram(histogramID);
+void Stacker::readUncertaintyFile(std::string& filename) {
+    uncertainties = true;
+
+    // read file:
+    // eerst flats, dan shapes,
+    // entry per uncertainty,
+    // per entry: which processes (or all, or allNonData (excludes fakes)), uncorrelated or correlated across processes?, uncorrelated and correlated across years?
+    // each process should keep track of uncertainties
+
+    std::ifstream infile(filename);
+    std::string line;
+
+    if (! infile.is_open()) {
+        std::cout << "ERROR: Settingsfile not found" << std::endl;
+        exit(1);
+    }
+    bool histSpecified = false;
+    std::vector<TString> allProcesses = processes->getAllProcessNames();
+
+    while (getline(infile, line)) {
+        if (!considerLine(&line)) {
+            continue;
+        }
+
+        if (line.find("UNCERTAINTIES") != std::string::npos) {
+            std::cout << "Parsing HISTOGRAMS" << std::endl;
+            break;
+        }
+
+        TString histIDComp = line;
+        
+        for (auto hist : histogramVec) {
+            if (hist->getID() == histIDComp) {
+                hist->setDrawUncertainties(true);
+                histSpecified = true;
+                break;
+            }
+        }
+    }
+
+    if (!histSpecified) {
+        for (auto hist : histogramVec) {
+            hist->setDrawUncertainties(true);
+        }
+    }
+
+    while (getline(infile, line)) {
+        if (!considerLine(&line)) {
+            continue;
+        }
+        
+        // read name, build class
+        std::string name; 
+        bool flat = false;
+        bool corrProcess = false;
+        bool corrEra = false;
+        double flatTot = 0.;
+        double flatUncertaintyEra = 0.;
+        double flatUncertaintyAll = 0.;
+        double flatUncertainty1718 = 0.;
+        std::vector<TString> relProcess = allProcesses;
+
+        std::istringstream uncLine(line);
+        uncLine >> name;
+
+        std::string part;
+
+        for (; uncLine >> part;) {
+            std::pair<std::string, std::string> currSetAndVal;
+            if (stringContains(part, '=')) {
+                currSetAndVal = splitSettingAndValue(part);
+            }
+            if (currSetAndVal.first == "flat") {
+                flat = true;
+                flatTot = std::stod(currSetAndVal.second);
+            }
+            if (part == "correlated") corrProcess = true;
+            if (part == "corrEra") corrEra = true;
+            if (currSetAndVal.first == "process") {
+                if (currSetAndVal.second == "AllMC") {
+                    relProcess = allProcesses;
+                    relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("nonPrompt")));
+                    relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("ChargeMisID")));
+                    continue;
+                } else {
+                    std::vector<TString> newProcess;
+                    newProcess.push_back(TString(currSetAndVal.second));
+                    relProcess = newProcess;
+                    continue;
+                }
+            }
+
+            if (currSetAndVal.first == "Era") flatUncertaintyEra = std::stod(currSetAndVal.second);
+            if (currSetAndVal.first == "AllEra") flatUncertaintyAll = std::stod(currSetAndVal.second);
+            if (currSetAndVal.first == "1718") flatUncertainty1718 = std::stod(currSetAndVal.second);
+            
+        }
+
+
+        Uncertainty* newUnc = processes->addUncertainty(name, flat, corrProcess, corrEra, relProcess);
+        if (flat) {
+            newUnc->setFlatRate(flatTot);
+        }
     }
 }

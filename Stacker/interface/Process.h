@@ -34,9 +34,12 @@ class Process {
         void setNext(Process* newNext) {next = newNext;}
         Process* getNext() const {return next;}
         TString const getName() {return name;}
+        TString const getCleanedName()  {return cleanedName;}
         bool isSignalProcess() {return isSignal;}
 
-        TH1D* getHistogram(TString& histName, TLegend* legend);
+        TH1D* getHistogram(TString& histName);
+        TH1D* getHistogramUncertainty(TString& uncName, TString& histName);
+
         TH2D* get2DHistogram(TString& histName, TLegend* legend);
 
 };

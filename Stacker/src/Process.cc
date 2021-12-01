@@ -37,7 +37,7 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, bool si
 
 }
 
-TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
+TH1D* Process::getHistogram(TString& histName) {
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
     rootFile->cd("Nominal");
@@ -78,8 +78,48 @@ TH1D* Process::getHistogram(TString& histName, TLegend* legend) {
     output->SetLineColor(color);
     output->SetFillColor(color);
     output->SetMarkerColor(color);
+    
+    return output;
+}
 
-    legend->AddEntry(output, cleanedName);
+TH1D* Process::getHistogramUncertainty(TString& uncName, TString& histName) {
+    TH1D* output = nullptr;
+
+    rootFile->cd("Uncertainties");
+    gDirectory->cd(uncName);
+    if (! gDirectory->GetDirectory(name)) {
+        std::cout << "ERROR: Process " << name << " not found." << std::endl;
+        std::cout << "Trying rootfile itself..." << std::endl;
+        rootFile->cd();
+
+        if (! gDirectory->GetDirectory(name)) {
+            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
+            exit(2);
+        }
+
+        //exit(2);
+    }
+    gDirectory->cd(name);
+
+    for(auto subdir : *subdirectories) {
+        gDirectory->cd(subdir);
+        
+        TH1D* inter;
+        gDirectory->GetObject(histName, inter);
+
+        if (output == nullptr) {
+            output = new TH1D(*inter);
+        } else {
+            output->Add(inter);
+        }
+
+        gDirectory->cd("..");
+    }
+
+    output->SetName(histName + name + uncName);
+    output->SetTitle(histName + name + uncName);
+
+    // fix writingOutput
     
     return output;
 }

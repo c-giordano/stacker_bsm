@@ -1,0 +1,13 @@
+#HT_DL
+UNCERTAINTIES
+# shapes of interest: Define here which shapes should actually be written to combinefile
+# unc  Flat or shape    correlationProc     yearCorrelations
+Lumi:   flat=1.025        correlated          corrEra Era=1.01 AllEra=1.006      process=AllMC
+TTWNorm: flat=1.3   corrEra AllEra=1.3 process=TTW
+TTZNorm: flat=1.3   corrEra AllEra=1.3 process=TTZ
+TTHNorm: flat=1.1   corrEra AllEra=1.1 process=TTH
+RareNorm: flat=1.05   corrEra AllEra=1.05 process=Rare
+nonPromptNorm: flat=1.3   corrEra AllEra=1.3 process=nonPrompt
+ChargeMisIDNorm: flat=1.3   corrEra AllEra=1.3 process=ChargeMisID
+TTVVNorm: flat=1.05   corrEra AllEra=1.05 process=TTVV
+XgammaNorm: flat=1.05   corrEra AllEra=1.05 process=Xgamma
