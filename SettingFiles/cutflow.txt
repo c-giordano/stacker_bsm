@@ -1,0 +1,21 @@
+# Processname       color       -> Processes in order: last to first
+#TTVV                851         B
+#Xgamma              593         B
+#ChargeMisID         882         B   
+#Rare                906         B   
+#nonPrompt           801         B   
+#TTH                 803         B   
+#TTZ                 407         B   
+#TTW                 419         B   
+TTTT                633         S
+
+BROAD SETTINGS
+# general settings
+Lumi=HIST
+Drawopt=HIST
+
+HISTOGRAMS
+# list of histgorams for which modified conditions are applied, together with the modified conditions
+#Cutflow_DL Xbinlabels=Baseline,Medium_WP,p_{T}_req.,Low_M_{ll}_veto,M_{Z}_veto,N_{jets}#geq_4,N_{b}#geq_2,H_{T}>300_GeV,MET>25_GeV
+Cutflow_3L Xbinlabels=Baseline,Medium_WP,p_{T}_req.,Low_M_{ll}_veto,M_{Z}_veto,N_{jets}#geq_4,N_{b}#geq_2,H_{T}>300_GeV,MET>25_GeV
+Cutflow_4L Xbinlabels=Baseline,Medium_WP,p_{T}_req.,Low_M_{ll}_veto,M_{Z}_veto,N_{jets}#geq_4,N_{b}#geq_2,H_{T}>300_GeV,MET>25_GeV

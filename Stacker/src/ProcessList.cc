@@ -74,23 +74,36 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
         current = current->getNext();
     }
     
-
+    //std::cout << "start unc read" << std::endl;
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
     //TH1D* totalUncSq = nullptr;
+
     std::vector<TH1D*> uncVec;
     while (currUnc && hist->getDrawUncertainties()) {
         // getShapeUncertainty or apply flat uncertainty
+        //std::cout << "read from file" << std::endl;
         TH1D* newUncertainty = currUnc->getUncertainty(histogramID, head, histVec);
+
+        //std::cout << "reading done" << std::endl;
+
         uncVec.push_back(newUncertainty);
+        //std::cout << "push back done" << std::endl;
         if (*sysUnc == nullptr) {
+            //std::cout << "new unc" << std::endl;
+
             *sysUnc = new TH1D(*newUncertainty);
         } else {
+            //std::cout << "existing unc" << std::endl;
+
             (*sysUnc)->Add(newUncertainty);
         }
 
+        //std::cout << "ask next" << std::endl;
+
         currUnc = currUnc->getNext();
     }
+    //std::cout << "end unc read" << std::endl;
     
     
     if (verbose) std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;

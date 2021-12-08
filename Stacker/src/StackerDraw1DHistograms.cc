@@ -4,7 +4,7 @@ void Stacker::printAllHistograms() {
     int tempCount =0 ;
     for (auto histogramID : histogramVec) {
         tempCount++;
-        //if (tempCount == 25) break;
+        //if (tempCount == 50) break;
         printHistogram(histogramID);
     }
 }

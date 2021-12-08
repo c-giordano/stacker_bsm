@@ -28,11 +28,11 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
 
 
     //correlated case : linearly add up and down variations
-    std::vector<double> varDown(histVec[0]->GetNbinsX() - 2, 0.);
-    std::vector<double> varUp(histVec[0]->GetNbinsX() - 2, 0.);
+    std::vector<double> varDown(histVec[0]->GetNbinsX(), 0.);
+    std::vector<double> varUp(histVec[0]->GetNbinsX(), 0.);
 
     //uncorrelated case : quadratically add the maximum of the up and down variations
-    std::vector<double> var(histVec[0]->GetNbinsX() - 2, 0.);
+    std::vector<double> var(histVec[0]->GetNbinsX(), 0.);
 
     int histCount = 0;
     int procCount = 0;
@@ -50,7 +50,7 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
 
         // do stuff
         // anyway
-        for (int bin = 1; bin < histNominal->GetNbinsX() - 1; bin++) {
+        for (int bin = 1; bin < histNominal->GetNbinsX() + 1; bin++) {
 
             double nominalContent = histNominal->GetBinContent( bin );
             double downVariedContent = histUp->GetBinContent( bin );
@@ -76,7 +76,7 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
         procCount++;
     } 
 
-    for (int bin = 1; bin < histVec[0]->GetNbinsX() - 1; bin++) {
+    for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
         //correlated case :
         if(correlated ){
             var[bin - 1] = std::max( varDown[bin - 1], varUp[bin - 1] );
@@ -102,7 +102,7 @@ TH1D* Uncertainty::getFlatUncertainty(TString& histogramID, Process* head, std::
     ret->SetName(histogramID + name);
     ret->SetTitle(histogramID + name);
 
-    std::vector<double> var(histVec[0]->GetNbinsX() - 2, 0.);
+    std::vector<double> var(histVec[0]->GetNbinsX(), 0.);
     int procCount = 0;
 
     for (unsigned histCount = 0; histCount < histVec.size(); histCount++) {
@@ -111,15 +111,15 @@ TH1D* Uncertainty::getFlatUncertainty(TString& histogramID, Process* head, std::
             continue;
         }
 
-        for (int bin = 1; bin < histVec[0]->GetNbinsX() - 1; bin++) {
-
+        for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
+            double variation = 0.;
             if (correlated) {
                 double binContent = histVec[histCount]->GetBinContent( bin );
-                double variation = binContent * (flatUncertainty - 1.);
+                variation = binContent * (flatUncertainty - 1.);
                 var[bin - 1] += variation;
             } else {
-                double variation = histVec[histCount]->GetBinContent( bin )*( flatUncertainty - 1. );
-                var[bin - 1] += variation * variation;
+                variation = histVec[histCount]->GetBinContent( bin )*( flatUncertainty - 1. );
+                var[bin - 1] = variation * variation;
             }
         }
 
@@ -127,10 +127,16 @@ TH1D* Uncertainty::getFlatUncertainty(TString& histogramID, Process* head, std::
         procCount++;
     }
 
-    for (int bin = 1; bin < histVec[0]->GetNbinsX() - 1; bin++) {
+    for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
         //correlated case :
-        if (correlated) ret->SetBinContent(bin, var[bin - 1] * var[bin - 1]);
-        else ret->SetBinContent(bin, var[bin - 1]);
+        
+        if (correlated) {
+            ret->SetBinContent(bin, var[bin - 1] * var[bin - 1]);
+            //std::cout << "bin: " << bin << " error " << var[bin - 1] << std::endl;
+        } else {
+            ret->SetBinContent(bin, var[bin - 1]);
+            //std::cout << "bin: " << bin << " error " << sqrt(var[bin - 1]) << std::endl;
+        }
     }
 
     return ret;

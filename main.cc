@@ -13,24 +13,22 @@ int main(int argc, char const *argv[]) {
     const char* rootFile = argv[1];
     std::string settingsFile = argv[2];
 
-    bool runT2B = true;
+    std::vector< std::string > argvStr( &argv[0], &argv[0] + argc );
+    
+    Stacker stacker(rootFile, settingsFile);
 
-    bool verbose = false;
-/*
-    if (argc == 4) {
-        std::string argFour = argv[3];
-        if (argFour == "-v") {
-
+    for (int i = 1; i < argc; i++) {
+        std::string currentElement = argvStr[i];
+        std::cout << "checking elements. Current one: " << currentElement << std::endl;
+        if (currentElement == "-v") stacker.setVerbosity(true);
+        if (currentElement == "-local") stacker.useT2B(false);
+        if (currentElement == "-unc") stacker.readUncertaintyFile(argvStr[i+1]);
+        if (currentElement == "-FD") {
+            stacker.useFakeData(true);
+            stacker.isData(true);
         }
-    }*/
-    if (argc == 4 && strcmp(argv[3], "-v") == 0) {
-        verbose = true;
-    } else if ((argc == 4 && strcmp(argv[3], "-local") == 0) || (argc == 5 && strcmp(argv[4], "-local") == 0)) {
-        runT2B = false;
     }
 
-    Stacker stacker(rootFile, settingsFile, runT2B);
-    stacker.setVerbosity(verbose);
     stacker.printAllHistograms();
     stacker.printAll2DHistograms();
 

@@ -17,6 +17,9 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
 
         if (hist->getXBinLabels()) {
             std::vector<std::string>* bins = hist->getXBinLabels();
+
+            //stack->GetXaxis()->SetLabelSize(0.06);
+
             for (unsigned i = 1; i != bins->size() + 1; i++) {
                 stack->GetXaxis()->SetBinLabel(i, TString(bins->at(i - 1)));
             }

@@ -251,6 +251,8 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                     relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("nonPrompt")));
                     relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("ChargeMisID")));
                     continue;
+                } else if (currSetAndVal.second == "All") {
+                    continue;
                 } else {
                     std::vector<TString> newProcess;
                     newProcess.push_back(TString(currSetAndVal.second));
