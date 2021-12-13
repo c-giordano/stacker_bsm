@@ -1,15 +1,14 @@
 #!/bin/bash
 
-# hadd files
+# hadd files -> todo
 # other stuff
 # en generalize this
 
 # combine datacards
-file_16Pre=$(ls -t ../ewkino/_FourTopAnalysis/*2016Pre* | head -1)
-file_16Post=$(ls -t ../ewkino/_FourTopAnalysis/*2016Post* | head -1)
-file_17=$(ls -t ../ewkino/_FourTopAnalysis/*2017* | head -1)
-file_18=$(ls -t ../ewkino/_FourTopAnalysis/*2018* | head -1)
-
+file_16Pre=$(ls -t ../ewkino/_FourTopAnalysis/Output/*2016Pre* | head -1)
+file_16Post=$(ls -t ../ewkino/_FourTopAnalysis/Output/*2016Post* | head -1)
+file_17=$(ls -t ../ewkino/_FourTopAnalysis/Output/*2017* | head -1)
+file_18=$(ls -t ../ewkino/_FourTopAnalysis/Output/*2018* | head -1)
 
 ./stacker_exec $file_16Pre SettingFiles/main.txt -unc UncertaintyFiles/2016PreVFP.txt -DC
 ./stacker_exec $file_16Post SettingFiles/main.txt -unc UncertaintyFiles/2016PostVFP.txt -DC
