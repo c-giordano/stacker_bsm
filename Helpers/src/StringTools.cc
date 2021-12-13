@@ -36,7 +36,7 @@ void cleanWhitespace(std::string& str) {
 }
 
 std::string removeExt(std::string& str) {
-    size_t splitPoint = str.find('.');
+    size_t splitPoint = str.find_last_of('.');
     if (splitPoint == std::string::npos) return str;
     
     return str.substr(0, splitPoint);
