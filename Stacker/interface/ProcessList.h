@@ -19,12 +19,16 @@ class ProcessList {
         Uncertainty* tailUnc = nullptr;
 
         bool verbose = false;
+        bool veryVerbose = false;
+
     public:
         ProcessList() = default;
         ~ProcessList();
 
-        void addProcess(TString& name, int color, TFile* inputfile, bool signal, bool data);
-        Uncertainty* addUncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes);
+        void addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data);
+        Uncertainty* addUncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile);
+        
+        Uncertainty* getUncHead() {return headUnc;}
 
         Process* getHead() {return head;}
         Process* getTail() {return tail;}
@@ -35,6 +39,8 @@ class ProcessList {
         std::vector<TH2D*> fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
         void setVerbosity(bool verbosity) {verbose = verbosity;}
+        void setVeryVerbosity(bool verbosity) {veryVerbose = verbosity;}
+
 
 };
 

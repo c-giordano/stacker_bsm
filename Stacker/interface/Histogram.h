@@ -13,6 +13,8 @@
 class Histogram {
     private:
         TString id;
+        std::string cleanName;
+        bool printToFile = false;
         bool logScale; // 0 for lin, 1 for log
         bool drawUncertainties = false;
         std::vector<std::string>* xBinLabels = nullptr;
@@ -39,6 +41,12 @@ class Histogram {
         virtual bool is2D() {return false;}
 
         static bool searchHist(Histogram*, std::string&);
+
+        void setPrintToFile(bool set) {printToFile = set;}
+        bool getPrintToFile() {return printToFile;}
+        
+        std::string getCleanName() const {return cleanName;}
+        void setCleanName(std::string& newCleanName) {cleanName = newCleanName;}
 };
 
 //bool searchHist(Histogram*, std::string&);

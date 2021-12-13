@@ -4,7 +4,9 @@ void Stacker::printAll2DHistograms() {
     isRatioPlot = false;
     isSignalLine = false;
     for (auto histogramID : histogramVec2D) {
-        print2DHistogram(histogramID);
+        if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
+            print2DHistogram(histogramID);
+        }
     }
 }
 

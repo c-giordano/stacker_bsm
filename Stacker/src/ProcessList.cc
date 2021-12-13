@@ -1,10 +1,10 @@
 #include "../interface/ProcessList.h"
+#include <iomanip>
 
-void ProcessList::addProcess(TString& name, int color, TFile* inputfile, bool signal, bool data) {
+void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
-
-    Process* brandNewObj = new Process(name, color, inputfile, signal, data);
+    Process* brandNewObj = new Process(name, color, inputfile, outputfile, signal, data);
 
     if (tail) tail->setNext(brandNewObj); // check if tail already exists
     tail = brandNewObj;
@@ -14,8 +14,8 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, bool si
     }
 }
 
-Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes) {
-    Uncertainty* brandNewObj = new Uncertainty(name, flat, corrProcess, eraSpec, processes);
+Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
+    Uncertainty* brandNewObj = new Uncertainty(name, flat, corrProcess, eraSpec, processes, outputfile);
 
     if (tailUnc) tailUnc->setNext(brandNewObj); // check if tail already exists
     tailUnc = brandNewObj;
@@ -46,11 +46,12 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     double signalYield = 0.;
     double bkgYield = 0.;
 
-    outfile->mkdir(histogramID);
+    outfile->mkdir(hist->getCleanName().c_str());
 
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
+
         TH1D* histToAdd = current->getHistogram(histogramID);
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
@@ -65,48 +66,57 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
         }
 
         if (verbose) {
-            std::cout << current->getName() << ": " << histToAdd->Integral() << " events" << std::endl;
+            std::cout << current->getName();
+            if (veryVerbose) {
+                std::cout << " & ";
+                for (int i=1; i < histToAdd->GetNbinsX() + 1; i++) {
+                    std::cout << histToAdd->GetBinContent(i) << " & ";
+                }
+                std::cout << std::endl;
+            } else {
+                std::cout << ": " << histToAdd->Integral() << " events" << std::endl;
+            }
         }
 
-        outfile->cd(histogramID);
+        outfile->cd(hist->getCleanName().c_str());
         histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
     }
+
     
-    //std::cout << "start unc read" << std::endl;
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
-    //TH1D* totalUncSq = nullptr;
-
     std::vector<TH1D*> uncVec;
     while (currUnc && hist->getDrawUncertainties()) {
         // getShapeUncertainty or apply flat uncertainty
-        //std::cout << "read from file" << std::endl;
-        TH1D* newUncertainty = currUnc->getUncertainty(histogramID, head, histVec);
-
-        //std::cout << "reading done" << std::endl;
+        TH1D* newUncertainty = currUnc->getUncertainty(hist, head, histVec);
 
         uncVec.push_back(newUncertainty);
-        //std::cout << "push back done" << std::endl;
-        if (*sysUnc == nullptr) {
-            //std::cout << "new unc" << std::endl;
 
+        if (*sysUnc == nullptr) {
             *sysUnc = new TH1D(*newUncertainty);
         } else {
-            //std::cout << "existing unc" << std::endl;
-
             (*sysUnc)->Add(newUncertainty);
         }
 
-        //std::cout << "ask next" << std::endl;
-
         currUnc = currUnc->getNext();
     }
-    //std::cout << "end unc read" << std::endl;
-    
     
     if (verbose) std::cout << "S/B = " << signalYield << "/" << bkgYield << std::endl;
+
+    if (veryVerbose) {
+        std::cout << " & Signal & Bkg & S/B\\\\" << std::endl;
+        for (int i=1; i < histVec[0]->GetNbinsX() + 1; i++) {
+            double sig = 0.;
+            double all = 0.;
+            for (unsigned j=0; j < signalHistograms->size(); j++) sig += signalHistograms->at(j)->GetBinContent(i);
+            for (unsigned j=0; j < histVec.size(); j++) all += histVec[j]->GetBinContent(i);
+            
+            std::cout << " & " << std::fixed << std::setprecision(2) << sig << " & " << all - sig << " & " << sig / (all - sig) << "\\\\" << std::endl;
+        }
+        //std::cout << std::endl;
+    }
 
     return histVec;
 }

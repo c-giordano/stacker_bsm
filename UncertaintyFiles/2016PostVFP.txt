@@ -1,5 +1,5 @@
 # unc  Flat or shape    correlationProc     yearCorrelations
-Lumi:   flat=1.016        correlated          corrEra Era=1.01 AllEra=1.006      process=AllMC
+Lumi:   flat=1.012        correlated          corrEra Era=1.01 AllEra=1.006      process=AllMC
 TTWNorm: flat=1.2   corrEra AllEra=1.2 process=TTW
 TTZNorm: flat=1.2   corrEra AllEra=1.2 process=TTZ
 TTHNorm: flat=1.1   corrEra AllEra=1.1 process=TTH

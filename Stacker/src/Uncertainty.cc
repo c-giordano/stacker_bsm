@@ -1,28 +1,29 @@
 #include "../interface/Uncertainty.h"
 
-Uncertainty::Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes) : 
-    name(name), flat(flat), correlated(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes) {
+Uncertainty::Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) : 
+    name(name), flat(flat), correlated(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
 
     nameUp = name + "Up";
     nameDown = name + "Down";
 }
 
 
-TH1D* Uncertainty::getUncertainty(TString& histogramID, Process* head, std::vector<TH1D*>& histVec) {
+TH1D* Uncertainty::getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
     if (flat) {
-        return getFlatUncertainty(histogramID, head, histVec);
+        return getFlatUncertainty(histogram, head, histVec);
     } else {
-        return getShapeUncertainty(histogramID, head, histVec);
+        return getShapeUncertainty(histogram, head, histVec);
     }
 }
 
 
-TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std::vector<TH1D*>& histVec) {
+TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
     // Loop processes, ask to add stuff
 
     // create one final TH1D to return
     Process* current = head;
     TH1D* ret = new TH1D(*histVec[0]);
+    TString histogramID = histogram->getID();
     ret->SetName(histogramID + name);
     ret->SetTitle(histogramID + name);
 
@@ -37,6 +38,16 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
     int histCount = 0;
     int procCount = 0;
 
+    if (histogram->getPrintToFile()) {
+        outfile->cd(histogram->getCleanName().c_str());
+        gDirectory->mkdir(nameUp);
+        gDirectory->mkdir(nameDown);
+    }
+
+    std::string up = "Up";
+    std::string down = "Down";
+
+
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
         if (current->getName() != relevantProcesses[procCount]) {
@@ -45,8 +56,8 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
         }
 
         TH1D* histNominal = histVec[histCount];
-        TH1D* histUp = current->getHistogramUncertainty(nameUp, histogramID);
-        TH1D* histDown = current->getHistogramUncertainty(nameDown, histogramID);
+        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram);
+        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram);
 
         // do stuff
         // anyway
@@ -94,11 +105,12 @@ TH1D* Uncertainty::getShapeUncertainty(TString& histogramID, Process* head, std:
 
 }
 
-TH1D* Uncertainty::getFlatUncertainty(TString& histogramID, Process* head, std::vector<TH1D*>& histVec) {
+TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {
     Process* current = head;
     //int histCount = 0;
 
     TH1D* ret = new TH1D(*histVec[0]);
+    TString histogramID = histogram->getID();
     ret->SetName(histogramID + name);
     ret->SetTitle(histogramID + name);
 

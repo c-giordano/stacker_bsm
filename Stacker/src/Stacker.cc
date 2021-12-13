@@ -25,6 +25,12 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     TH1::AddDirectory(false);
     setTDRStyle();
 
+    std::string outputfilename = rootFilename;
+    yearID = getYearFromRootFile(outputfilename);
+    outputfilename = yearID + ".root";
+    
+    outputfile = new TFile(outputfilename.c_str(), "recreate");
+
     inputfile = new TFile(rootFilename, "read");
     processes = new ProcessList();
 
@@ -76,7 +82,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
             exit(1);
         }
 
-        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile, signal, data);
+        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile, outputfile, signal, data);
     }
 
     while (getline(infile, line)) {
@@ -155,8 +161,6 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
         std::cout << "FOUND " << histID << std::endl;
     }
-
-    outputfile = new TFile("Combinefile.root", "recreate");
 }
 
 Stacker::~Stacker() {
@@ -183,9 +187,11 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         std::cout << "ERROR: Settingsfile not found" << std::endl;
         exit(1);
     }
-    bool histSpecified = false;
-    std::vector<TString> allProcesses = processes->getAllProcessNames();
 
+    std::vector<TString> allProcesses = processes->getAllProcessNames();
+    std::cout << allProcesses.size() << std::endl;
+    /*
+    bool histSpecified = false;
     while (getline(infile, line)) {
         if (!considerLine(&line)) {
             continue;
@@ -205,22 +211,28 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                 break;
             }
         }
-    }
+    }*/
 
-    if (!histSpecified) {
-        for (auto hist : histogramVec) {
-            hist->setDrawUncertainties(true);
-        }
+    for (auto hist : histogramVec) {
+        hist->setDrawUncertainties(true);
     }
+    
 
     while (getline(infile, line)) {
         if (!considerLine(&line)) {
             continue;
         }
+
+        if (line.find("HISTOGRAMS") != std::string::npos) {
+            std::cout << "Parsing histograms to print" << std::endl;
+            break;
+        }
         
         // read name, build class
         std::string name; 
         bool flat = false;
+        bool eraSpec = false;
+        bool allEras = false;
         bool corrProcess = false;
         bool corrEra = false;
         double flatTot = 0.;
@@ -231,6 +243,8 @@ void Stacker::readUncertaintyFile(std::string& filename) {
 
         std::istringstream uncLine(line);
         uncLine >> name;
+        size_t splitPoint = name.find(':');
+        name = name.substr(0, splitPoint);
 
         std::string part;
 
@@ -261,16 +275,59 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                 }
             }
 
-            if (currSetAndVal.first == "Era") flatUncertaintyEra = std::stod(currSetAndVal.second);
-            if (currSetAndVal.first == "AllEra") flatUncertaintyAll = std::stod(currSetAndVal.second);
+            if (currSetAndVal.first == "Era") {
+                flatUncertaintyEra = std::stod(currSetAndVal.second);
+                eraSpec = true;
+            }
+            if (currSetAndVal.first == "AllEra") {
+                allEras = true;
+                flatUncertaintyAll = std::stod(currSetAndVal.second);
+            }
             if (currSetAndVal.first == "1718") flatUncertainty1718 = std::stod(currSetAndVal.second);
             
         }
 
 
-        Uncertainty* newUnc = processes->addUncertainty(name, flat, corrProcess, corrEra, relProcess);
+        Uncertainty* newUnc = processes->addUncertainty(name, flat, corrProcess, corrEra, relProcess, outputfile);
         if (flat) {
             newUnc->setFlatRate(flatTot);
+            newUnc->setFlatRateAll(flatUncertaintyAll);
+            newUnc->setFlatRateEra(flatUncertaintyEra);
+            newUnc->setFlatRate1718(flatUncertainty1718);
+            newUnc->setEraSpec(eraSpec);
+            newUnc->setBoth(eraSpec && allEras);
         }
     }
+
+    std::vector<Histogram*> histForDC;
+
+    while (getline(infile, line)) {
+        if (!considerLine(&line)) {
+            continue;
+        }
+
+        std::istringstream stream(line);
+
+        std::string histogramID;
+        std::string cleanName;
+
+        stream >> histogramID >> cleanName;
+
+        // search histogram and fix stuff
+        std::vector<Histogram*>::iterator it;
+        it = std::find_if(histogramVec.begin(), histogramVec.end(), std::bind(Histogram::searchHist, std::placeholders::_1, histogramID));
+
+        if (it != histogramVec.end()) {
+            (*it)->setPrintToFile(true);
+            (*it)->setCleanName(cleanName);
+            histForDC.push_back(*it);
+        } else {
+            std::cerr << "HISTOGRAM NOT FOUND FOR UNCERTAINTY" << std::endl;
+            exit(1);
+        }
+        std::cout << "FOUND " << histogramID << std::endl;
+    }
+    std::cout << histForDC.size() << std::endl;
+    dcwriter = new DatacardWriter(yearID, allProcesses, histForDC);
+    dcwriter->writeUncertainties(processes->getUncHead());
 }

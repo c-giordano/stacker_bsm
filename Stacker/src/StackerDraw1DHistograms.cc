@@ -5,7 +5,10 @@ void Stacker::printAllHistograms() {
     for (auto histogramID : histogramVec) {
         tempCount++;
         //if (tempCount == 50) break;
-        printHistogram(histogramID);
+
+        if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
+            printHistogram(histogramID);
+        }
     }
 }
 

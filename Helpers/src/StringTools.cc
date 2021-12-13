@@ -59,3 +59,10 @@ std::string splitAtUnderscore(std::string& str) {
 
     return str.substr(split + 1);
 }
+
+std::string getYearFromRootFile(std::string& rootfile) {
+    std::string year = removeExt(rootfile);
+    size_t split = year.find_last_of('_');
+
+    return year.substr(split + 1);
+}

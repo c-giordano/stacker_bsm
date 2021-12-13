@@ -20,6 +20,7 @@
 #include "Process.h"
 #include "Histogram.h"
 #include "Histogram2D.h"
+#include "DatacardWriter.h"
 
 #include "../../Helpers/interface/ParseTools.h"
 #include "../../Helpers/interface/StringTools.h"
@@ -39,6 +40,7 @@
 class Stacker {
     private:
 
+        DatacardWriter* dcwriter;
         ProcessList* processes;
         std::vector<Histogram*> histogramVec;
         std::vector<Histogram2D*> histogramVec2D;
@@ -63,13 +65,16 @@ class Stacker {
         std::string intLumi = "";
         std::string drawOpt = "HIST";
         std::string yAxisOverride = "";
+        std::string yearID;
 
         bool noStack = false;
 
         bool verbose = false;
+        bool veryVerbose = false;
         bool uncertainties = false;
         bool useData = false;
         bool fakeData = false;
+        bool onlyDC = false;
 
         bool runT2B = true;
         std::string pathToOutput;
@@ -85,6 +90,10 @@ class Stacker {
             verbose = verbosity;
             processes->setVerbosity(verbosity);
         }
+        void setVeryVerbosity(bool verbosity) {
+            veryVerbose = verbosity;
+            processes->setVeryVerbosity(veryVerbose);
+        }
         //void useUncertainties(bool isUncertainties) {uncertainties = isUncertainties;}
         void readUncertaintyFile(std::string& filename);
         void useT2B(bool isT2B) {
@@ -94,6 +103,9 @@ class Stacker {
         }
         void isData(bool dataExists) {useData = dataExists;}
         void useFakeData(bool isFD) {fakeData = isFD;}
+
+        void setOnlyDC(bool set) {onlyDC = set;}
+        bool getOnlyDC() {return onlyDC;}
 
         void printAllHistograms();
         void printHistogram(Histogram* histID);

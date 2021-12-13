@@ -12,4 +12,6 @@ std::string getChannel(std::string& str);
 std::string getFilename(std::string& str);
 std::string splitAtUnderscore(std::string& str);
 
+std::string getYearFromRootFile(std::string& rootfile);
+
 #endif

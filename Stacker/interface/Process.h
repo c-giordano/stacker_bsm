@@ -10,6 +10,7 @@
 #include <iostream>
 
 #include "../../Helpers/interface/StringTools.h"
+#include "Histogram.h"
 
 // Processes as linkedlist: first element of list is pointed to by ProcessList
 // Should make it relatively easy to work in a specific order?
@@ -24,11 +25,12 @@ class Process {
         std::vector<const char*>* subdirectories;
         Color_t color;
         TFile* rootFile;
+        TFile* outputFile;
 
         bool isSignal;
         bool isData;
     public:
-        Process(TString& procName, int procColor, TFile* procInputfile, bool signal, bool data);
+        Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data);
         ~Process() {};
 
         void setNext(Process* newNext) {next = newNext;}
@@ -38,7 +40,7 @@ class Process {
         bool isSignalProcess() {return isSignal;}
 
         TH1D* getHistogram(TString& histName);
-        TH1D* getHistogramUncertainty(TString& uncName, TString& histName);
+        TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist);
 
         TH2D* get2DHistogram(TString& histName, TLegend* legend);
 

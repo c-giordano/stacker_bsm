@@ -1,7 +1,7 @@
 #include "../interface/Process.h"
 
-Process::Process(TString& procName, int procColor, TFile* procInputfile, bool signal, bool data) : name(procName), rootFile(procInputfile),
-    isSignal(signal), isData(data) {
+Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data) : name(procName), rootFile(procInputfile),
+    outputFile(outputFile), isSignal(signal), isData(data) {
     color = procColor;
     cleanedName = cleanTString(name);
 
@@ -82,27 +82,23 @@ TH1D* Process::getHistogram(TString& histName) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(TString& uncName, TString& histName) {
+TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist) {
+    TString histName = hist->getID() + "_" + uncName + "_" + upOrDown;
+    std::cout << histName << std::endl;
     TH1D* output = nullptr;
 
     rootFile->cd("Uncertainties");
-    gDirectory->cd(uncName);
-    if (! gDirectory->GetDirectory(name)) {
-        std::cout << "ERROR: Process " << name << " not found." << std::endl;
-        std::cout << "Trying rootfile itself..." << std::endl;
-        rootFile->cd();
-
-        if (! gDirectory->GetDirectory(name)) {
-            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
-            exit(2);
-        }
-
-        //exit(2);
-    }
     gDirectory->cd(name);
 
     for(auto subdir : *subdirectories) {
         gDirectory->cd(subdir);
+        std::cout << subdir << std::endl;
+        if (! gDirectory->GetDirectory(uncName.c_str())) {
+            std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found." << std::endl;
+            exit(2);
+        }
+        gDirectory->cd(uncName.c_str());
+        gDirectory->cd(upOrDown.c_str());
         
         TH1D* inter;
         gDirectory->GetObject(histName, inter);
@@ -114,10 +110,21 @@ TH1D* Process::getHistogramUncertainty(TString& uncName, TString& histName) {
         }
 
         gDirectory->cd("..");
+        gDirectory->cd("..");
+        gDirectory->cd("..");
     }
 
-    output->SetName(histName + name + uncName);
-    output->SetTitle(histName + name + uncName);
+    if (hist->getPrintToFile()) {
+        outputFile->cd();
+        outputFile->cd((hist->getCleanName()).c_str());
+
+        gDirectory->cd((uncName + upOrDown).c_str());
+
+        output->Write(name);
+    }
+
+    output->SetName(histName + name + TString(uncName + upOrDown));
+    output->SetTitle(histName + name + TString(uncName + upOrDown));
 
     // fix writingOutput
     
