@@ -21,12 +21,17 @@ int main(int argc, char const *argv[]) {
         std::string currentElement = argvStr[i];
         std::cout << "checking elements. Current one: " << currentElement << std::endl;
         if (currentElement == "-v") stacker.setVerbosity(true);
+        if (currentElement == "-vv") {
+            stacker.setVerbosity(true);
+            stacker.setVeryVerbosity(true);
+        }
         if (currentElement == "-local") stacker.useT2B(false);
         if (currentElement == "-unc") stacker.readUncertaintyFile(argvStr[i+1]);
         if (currentElement == "-FD") {
             stacker.useFakeData(true);
             stacker.isData(true);
         }
+        if (currentElement == "-DC") stacker.setOnlyDC(true);
     }
 
     stacker.printAllHistograms();

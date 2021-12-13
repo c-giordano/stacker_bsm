@@ -21,6 +21,8 @@ void Stacker::printHistogram(Histogram* hist) {
     TH1D** sysUnc = new TH1D*();
     *sysUnc = nullptr; 
     std::vector<TH1D*> histVec = processes->fillStack(histStack, hist, legend, outputfile, signalVector, sysUnc);
+    
+    if (onlyDC) return;
 
     TCanvas* canv = getCanvas(histID);
     canv->Draw();

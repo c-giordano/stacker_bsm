@@ -10,7 +10,7 @@ DatacardWriter::DatacardWriter(std::string yearID, std::vector<TString> allProc,
 
 
 void DatacardWriter::initDatacard() {
-    datacard.open(datacardName + ".txt");
+    datacard.open("combineFiles/" + datacardName + ".txt");
 
     writeInit();
     writeShapeSource();
@@ -61,7 +61,7 @@ void DatacardWriter::writeDataObs() {
 }
 
 void DatacardWriter::writeProcessHeader() {
-    datacard << std::setw(30) << "bin"<< "\t";
+    datacard << std::setw(30) << "bin"<< "\t" << std::setw(15) << "\t";;
 
     // loop histograms, 
     std::stringstream processline;

@@ -5,6 +5,7 @@
 #include "Uncertainty.h"
 #include "Histogram.h"
 
+#include "../../Helpers/interface/thTools.h"
 #include <TString.h>
 #include <TFile.h>
 #include <THStack.h>

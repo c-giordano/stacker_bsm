@@ -83,7 +83,12 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
 
         current = current->getNext();
     }
-
+    
+    TH1D* allHistograms = sumVector(histVec);
+    allHistograms->SetName("data_obs");
+    allHistograms->SetTitle("data_obs");
+    outfile->cd(hist->getCleanName().c_str());
+    allHistograms->Write("data_obs", TObject::kOverwrite);
     
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;

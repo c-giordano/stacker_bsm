@@ -27,7 +27,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
 
     std::string outputfilename = rootFilename;
     yearID = getYearFromRootFile(outputfilename);
-    outputfilename = yearID + ".root";
+    outputfilename = "combineFiles/" + yearID + ".root";
     
     outputfile = new TFile(outputfilename.c_str(), "recreate");
 
