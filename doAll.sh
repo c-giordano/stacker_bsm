@@ -15,6 +15,7 @@ file_18=$(ls -t ../ewkino/_FourTopAnalysis/Output/*2018* | head -1)
 ./stacker_exec $file_17 SettingFiles/main.txt -unc UncertaintyFiles/2017.txt -DC
 ./stacker_exec $file_18 SettingFiles/main.txt -unc UncertaintyFiles/2018.txt -DC
 
-combineCards.py y16Pre=combineFiles/DC_2016PreVFP.txt y16Post=combineFiles/DC_2016PostVFP.txt y17=combineFiles/DC_2017.txt y18=combineFiles/DC_2018.txt > combineFiles/combinedDatacard.txt
+cd combineFiles
+combineCards.py y16Pre=DC_2016PreVFP.txt y16Post=DC_2016PostVFP.txt y17=DC_2017.txt y18=DC_2018.txt > combinedDatacard.txt
 
 #./stacker_exec AnalysisOutput/AnalysisOutput_13_12_2021-11_All.root SettingFiles/main.txt -unc UncertaintyFiles/full.txt -DC
