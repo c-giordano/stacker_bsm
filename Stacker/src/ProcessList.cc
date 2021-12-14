@@ -79,6 +79,9 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
         }
 
         outfile->cd(hist->getCleanName().c_str());
+        if (histToAdd->Integral() == 0) {
+            histToAdd->SetBinContent(histToAdd->GetNbinsX() / 2, 0.00001);
+        }
         histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
