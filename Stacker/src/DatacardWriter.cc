@@ -144,6 +144,7 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
 
     if (eraSpecific) return;
     else if (uncertainty->getNext() != nullptr) writeUncertainties(uncertainty->getNext());
+    else writeMCStats();
 
 }
 
