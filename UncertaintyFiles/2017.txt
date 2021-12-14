@@ -23,3 +23,7 @@ BDT_FinalresultTTBar_TriClass_3L bdt_3L_ttbar
 BDT_FinalresultSignal_TriClass_4L bdt_4L_sig
 BDT_FinalresultTTW_TriClass_4L bdt_4L_ttw
 BDT_FinalresultTTBar_TriClass_4L bdt_4L_ttbar
+
+N_jets_CRW crw
+N_jets_CRO cro
+N_jets_CRZ crz
