@@ -45,8 +45,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
 
     double signalYield = 0.;
     double bkgYield = 0.;
-
-    outfile->mkdir(hist->getCleanName().c_str());
+    if (hist->getPrintToFile()) outfile->mkdir(hist->getCleanName().c_str());
 
     if (verbose) std::cout << histogramID << std::endl;
 
@@ -78,20 +77,25 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
             }
         }
 
-        outfile->cd(hist->getCleanName().c_str());
-        for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
-            if (histToAdd->GetBinContent(j) <= 0.) histToAdd->SetBinContent(j, 0.00001);
+        if (hist->getPrintToFile()) {
+            outfile->cd(hist->getCleanName().c_str());
+            for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+                if (histToAdd->GetBinContent(j) <= 0.) histToAdd->SetBinContent(j, 0.00001);
+            }
+            histToAdd->Write(current->getName(), TObject::kOverwrite);
         }
-        histToAdd->Write(current->getName(), TObject::kOverwrite);
-
         current = current->getNext();
     }
-    
-    TH1D* allHistograms = sumVector(histVec);
-    allHistograms->SetName("data_obs");
-    allHistograms->SetTitle("data_obs");
-    outfile->cd(hist->getCleanName().c_str());
-    allHistograms->Write("data_obs", TObject::kOverwrite);
+    if (hist->getPrintToFile()) {
+        TH1D* allHistograms = sumVector(histVec);
+        allHistograms->SetName("data_obs");
+        allHistograms->SetTitle("data_obs");
+        outfile->cd(hist->getCleanName().c_str());
+        for (int j=1; j<allHistograms->GetNbinsX() + 1; j++) {
+            allHistograms->SetBinError(j, sqrt(allHistograms->GetBinContent(j)));
+        }
+        allHistograms->Write("data_obs", TObject::kOverwrite);
+    }
     
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
@@ -136,7 +140,7 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     double signalYield = 0.;
     double bkgYield = 0.;
 
-    outfile->mkdir(histogramID);
+    //outfile->mkdir(histogramID);
 
     if (verbose) std::cout << histogramID << std::endl;
 
@@ -155,8 +159,8 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
             std::cout << current->getName() << ": " << histToAdd->Integral() << " events" << std::endl;
         }
 
-        outfile->cd(histogramID);
-        histToAdd->Write(current->getName(), TObject::kOverwrite);
+        //outfile->cd(histogramID);
+        //histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
     }

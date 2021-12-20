@@ -16,7 +16,7 @@ class Uncertainty {
         TString nameUp;
         TString nameDown;
         bool flat;
-        bool correlated;
+        bool correlatedAmongProcesses;
         bool eraSpecific;
         bool isBoth;
 
@@ -43,6 +43,8 @@ class Uncertainty {
         void setEraSpec(bool newEraSpec) {eraSpecific = newEraSpec;}
         void setBoth(bool newBoth) {isBoth = newBoth;}
 
+        void setCorrProcess(bool newCorr) {correlatedAmongProcesses = newCorr;}
+
 
         bool isFlat() {return flat;}
 
@@ -63,6 +65,7 @@ class Uncertainty {
         double getFlatRateEra() const {return flatUncertaintyEra;}
         double getFlatRate1718() const {return flatUncertainty1718;}
 
+        bool getCorrelatedAmongProcesses() const {return correlatedAmongProcesses;}
 
 };
 

@@ -84,7 +84,7 @@ TH1D* Process::getHistogram(TString& histName) {
 
 TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist) {
     TString histName = hist->getID() + "_" + uncName + "_" + upOrDown;
-    std::cout << histName << std::endl;
+    // std::cout << histName << std::endl;
     TH1D* output = nullptr;
 
     rootFile->cd("Uncertainties");
@@ -92,7 +92,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
 
     for(auto subdir : *subdirectories) {
         gDirectory->cd(subdir);
-        std::cout << subdir << std::endl;
+        // std::cout << subdir << std::endl;
         if (! gDirectory->GetDirectory(uncName.c_str())) {
             std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found." << std::endl;
             exit(2);

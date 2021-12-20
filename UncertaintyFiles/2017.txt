@@ -1,14 +1,21 @@
 # unc  Flat or shape    correlationProc     yearCorrelations
 Lumi:   flat=1.023        correlated          corrEra Era=1.02 AllEra=1.009 1718=1.006      process=AllMC
-TTWNorm: flat=1.2   corrEra AllEra=1.2 process=TTW
-TTZNorm: flat=1.2   corrEra AllEra=1.2 process=TTZ
-TTHNorm: flat=1.1   corrEra AllEra=1.1 process=TTH
-RareNorm: flat=1.05   corrEra AllEra=1.05 process=Rare
-nonPromptNorm: flat=1.3   corrEra AllEra=1.3 process=nonPrompt
-ChargeMisIDNorm: flat=1.3   corrEra AllEra=1.3 process=ChargeMisID
-TTVVNorm: flat=1.05   corrEra AllEra=1.05 process=TTVV
-XgammaNorm: flat=1.05   corrEra AllEra=1.05 process=Xgamma
-#pileup: shape process=AllMC
+TTWNorm: flat=1.2 AllEra=1.2 process=TTW
+TTZNorm: flat=1.2 AllEra=1.2 process=TTZ
+TTHNorm: flat=1.1 AllEra=1.1 process=TTH
+RareNorm: flat=1.05 AllEra=1.05 process=Rare
+nonPromptNorm: flat=1.3 AllEra=1.3 process=nonPrompt
+ChargeMisIDNorm: flat=1.3 AllEra=1.3 process=ChargeMisID
+TTVVNorm: flat=1.05 AllEra=1.05 process=TTVV
+XgammaNorm: flat=1.05 AllEra=1.05 process=Xgamma
+isrShape: shape process=AllMC uncorrelated
+fsrShape: shape process=AllMC uncorrelated
+electronReco: shape process=AllMC correlated
+muonIDStat: shape process=AllMC correlated corrEra
+muonIDSyst: shape process=AllMC correlated
+electronIDStat: shape process=AllMC correlated corrEra
+electronIDSyst: shape process=AllMC correlated
+pileup: shape process=AllMC correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
@@ -20,9 +27,9 @@ BDT_FinalresultSignal_TriClass_3L bdt_3L_sig
 BDT_FinalresultTTW_TriClass_3L bdt_3L_ttw
 BDT_FinalresultTTBar_TriClass_3L bdt_3L_ttbar
 
-#BDT_FinalresultSignal_TriClass_4L bdt_4L_sig
-#BDT_FinalresultTTW_TriClass_4L bdt_4L_ttw
-#BDT_FinalresultTTBar_TriClass_4L bdt_4L_ttbar
+BDT_FinalresultSignal_TriClass_4L bdt_4L_sig
+BDT_FinalresultTTW_TriClass_4L bdt_4L_ttw
+BDT_FinalresultTTBar_TriClass_4L bdt_4L_ttbar
 
 N_jets_CRW crw
 N_jets_CRO cro

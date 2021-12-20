@@ -233,7 +233,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         bool flat = false;
         bool eraSpec = false;
         bool allEras = false;
-        bool corrProcess = false;
+        bool corrProcess = true;
         bool corrEra = false;
         double flatTot = 0.;
         double flatUncertaintyEra = 0.;
@@ -257,8 +257,9 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                 flat = true;
                 flatTot = std::stod(currSetAndVal.second);
             }
+            if (part == "uncorrelated") corrProcess = false;
             if (part == "correlated") corrProcess = true;
-            if (part == "corrEra") corrEra = true;
+            if (part == "corrEra") eraSpec = true;
             if (currSetAndVal.first == "process") {
                 if (currSetAndVal.second == "AllMC") {
                     relProcess = allProcesses;
@@ -294,6 +295,9 @@ void Stacker::readUncertaintyFile(std::string& filename) {
             newUnc->setFlatRateAll(flatUncertaintyAll);
             newUnc->setFlatRateEra(flatUncertaintyEra);
             newUnc->setFlatRate1718(flatUncertainty1718);
+            newUnc->setEraSpec(eraSpec);
+            newUnc->setBoth(eraSpec && allEras);
+        } else {
             newUnc->setEraSpec(eraSpec);
             newUnc->setBoth(eraSpec && allEras);
         }

@@ -100,52 +100,61 @@ bool DatacardWriter::containsProcess(std::vector<TString>& vector, TString& proc
 
 void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecific) {
     // consider switching to just 4 bools for era or just naming it erawise
+    std::cout << uncertainty->getName() << " " <<uncertainty->isEraSpecific() << eraSpecific << std::endl;
     if (uncertainty->isEraSpecific() && ! eraSpecific && uncertainty->isBothEraAndFull()) {
         writeUncertainties(uncertainty, true);
-    } else if (! uncertainty->isBothEraAndFull() && uncertainty->isEraSpecific()) {
+    } else if (! uncertainty->isBothEraAndFull() && uncertainty->isEraSpecific() && ! eraSpecific) {
         writeUncertainties(uncertainty, true);
         if (uncertainty->getNext() != nullptr) writeUncertainties(uncertainty->getNext());
         return;
     }
     if (uncertainty->is1718Specific() && ! eraSpecific) write1718Uncertainty(uncertainty);
 
-    std::cout << "past initial unc stuff " << std::endl;
     // write name
     std::string name = uncertainty->getName();
-    if (eraSpecific) name += yearID;
-    datacard << std::setw(30) << name << "\t";
 
-    double errorValue = 1.0;
-
-    if (uncertainty->isFlat()) {
-        datacard << std::setw(15) << "lnN" << "\t";
-        if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
-        else errorValue = uncertainty->getFlatRateAll();
-    } else {
-        datacard << std::setw(15) << "shape" << "\t";
-    }
-
-    std::stringstream interString;
     std::vector<TString> relevantProcesses = uncertainty->getRelevantProcesses();
 
-    for (unsigned i = 0; i < allProcNames.size(); i++) {
-        if (! containsProcess(relevantProcesses, allProcNames[i])) {
-            interString << std::setw(15) << "-" << "\t";
-            continue;
+    unsigned k = 1;
+    if (! uncertainty->getCorrelatedAmongProcesses()) k = relevantProcesses.size();
+
+    for (unsigned j=0; j<k; j++) {
+        std::string tempName = name;
+        if (k > 1) tempName += relevantProcesses[j].Data();
+        if (eraSpecific) tempName += yearID;
+        datacard << std::setw(30) << tempName << "\t";
+
+        double errorValue = 1.0;
+
+        if (uncertainty->isFlat()) {
+            datacard << std::setw(15) << "lnN" << "\t";
+            if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
+            else errorValue = uncertainty->getFlatRateAll();
+        } else {
+            datacard << std::setw(15) << "shape" << "\t";
         }
-        interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-    }
 
-    // loop over number of histograms we consider
-    for (unsigned i=0; i < allHistograms.size(); i++) {
-        datacard << interString.str();
-    }
-    datacard << std::endl;
+        std::stringstream interString;
 
+        for (unsigned i = 0; i < allProcNames.size(); i++) {
+            if (! containsProcess(relevantProcesses, allProcNames[i])
+                || (k != 1 && relevantProcesses[j] != allProcNames[i])) {
+                interString << std::setw(15) << "-" << "\t";
+                continue;
+            }
+            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+        }
+
+        // loop over number of histograms we consider
+        for (unsigned i=0; i < allHistograms.size(); i++) {
+            datacard << interString.str();
+        }
+        datacard << std::endl;
+    }
+    
     if (eraSpecific) return;
     else if (uncertainty->getNext() != nullptr) writeUncertainties(uncertainty->getNext());
     else writeMCStats();
-
 }
 
 void DatacardWriter::write1718Uncertainty(Uncertainty* uncertainty) {

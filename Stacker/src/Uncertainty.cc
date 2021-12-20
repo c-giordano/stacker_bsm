@@ -1,7 +1,7 @@
 #include "../interface/Uncertainty.h"
 
 Uncertainty::Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) : 
-    name(name), flat(flat), correlated(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
+    name(name), flat(flat), correlatedAmongProcesses(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
 
     nameUp = name + "Up";
     nameDown = name + "Down";
@@ -70,7 +70,7 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
             double up = fabs( upVariedContent - nominalContent );
 
             //uncorrelated case : 
-            if(! correlated ){
+            if(! correlatedAmongProcesses ){
                 double variation = std::max( down, up );
                 var[bin - 1] += variation*variation;
             
@@ -89,7 +89,7 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
 
     for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
         //correlated case :
-        if(correlated ){
+        if(correlatedAmongProcesses ){
             var[bin - 1] = std::max( varDown[bin - 1], varUp[bin - 1] );
             var[bin - 1] = var[bin - 1] * var[bin - 1];
         }
@@ -125,7 +125,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
 
         for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
             double variation = 0.;
-            if (correlated) {
+            if (correlatedAmongProcesses) {
                 double binContent = histVec[histCount]->GetBinContent( bin );
                 variation = binContent * (flatUncertainty - 1.);
                 var[bin - 1] += variation;
@@ -142,7 +142,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
         //correlated case :
         
-        if (correlated) {
+        if (correlatedAmongProcesses) {
             ret->SetBinContent(bin, var[bin - 1] * var[bin - 1]);
             //std::cout << "bin: " << bin << " error " << var[bin - 1] << std::endl;
         } else {
