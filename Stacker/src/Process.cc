@@ -114,6 +114,10 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         gDirectory->cd("..");
     }
 
+    for (int j=1; j < output->GetNbinsX() + 1; j++) {
+        if (output->GetBinContent(j) <= 0.) output->SetBinContent(j, 0.00001);
+    }
+
     if (hist->getPrintToFile()) {
         outputFile->cd();
         outputFile->cd((hist->getCleanName()).c_str());
