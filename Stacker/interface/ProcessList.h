@@ -34,9 +34,11 @@ class ProcessList {
         Process* getHead() {return head;}
         Process* getTail() {return tail;}
         std::vector<TString> getAllProcessNames() {return allProcessNames;};
+        std::vector<Process*> getAllProcess();
 
 
         std::vector<TH1D*> fillStack(THStack* stack, Histogram* hist, TLegend* legend, TFile* outfile, std::vector<TH1D*>* signalHistograms, TH1D** sysUnc);
+        std::map<TString, bool> printHistograms(Histogram* hist, TFile* outfile);
         std::vector<TH2D*> fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
         void setVerbosity(bool verbosity) {verbose = verbosity;}

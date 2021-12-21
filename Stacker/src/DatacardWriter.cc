@@ -1,9 +1,8 @@
 #include "../interface/DatacardWriter.h"
 
-DatacardWriter::DatacardWriter(std::string yearID, std::vector<TString> allProc, std::vector<Histogram*> histVec) :
-    yearID(yearID), allProcNames(allProc), allHistograms(histVec)
+DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile) :
+    yearID(yearID), allProc(allProc), allHistograms(histVec), outfile(outfile)
 {   
-    std::reverse(allProcNames.begin(), allProcNames.end());
     datacardName = "DC_" + yearID;
     initDatacard();
 }
@@ -74,11 +73,24 @@ void DatacardWriter::writeProcessHeader() {
 
     for (unsigned i=0; i < allHistograms.size(); i++) {
         // loop histograms
-        for (unsigned j=0; j < allProcNames.size(); j++) {
+        std::map<TString, bool> relevance = allProc->printHistograms(allHistograms[i], outfile);
+        allHistograms[i]->setRelevance(relevance);
+        Process* proc = allProc->getTail();
+        int j = -1;
+        while (proc) {
+            j++;
+
+            if (! relevance[proc->getName()]) {
+                proc = proc->getPrev();
+                continue;
+            }
+
             datacard << std::setw(15) << allHistograms[i]->getCleanName() << "\t";
-            processline << std::setw(15) << allProcNames[j].Data() << "\t";
+            processline << std::setw(15) << proc->getName().Data() << "\t";
             processNumbers << std::setw(15) << j << "\t";
             rates << std::setw(15) << "-1" << "\t";
+
+            proc = proc->getPrev();
         }
     }
 
@@ -87,7 +99,6 @@ void DatacardWriter::writeProcessHeader() {
     datacard << processNumbers.str() << std::endl;
     datacard << rates.str() << std::endl;
     writeEmptyLine(500);
-
 }
 
 bool DatacardWriter::containsProcess(std::vector<TString>& vector, TString& process) {
@@ -126,27 +137,40 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
 
         double errorValue = 1.0;
 
+        
         if (uncertainty->isFlat()) {
             datacard << std::setw(15) << "lnN" << "\t";
             if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
             else errorValue = uncertainty->getFlatRateAll();
         } else {
             datacard << std::setw(15) << "shape" << "\t";
+            uncertainty->setOutputName(tempName);
         }
 
-        std::stringstream interString;
+        for (unsigned i=0; i < allHistograms.size(); i++) {
+            if (! uncertainty->isFlat()) uncertainty->printOutShapeUncertainty(allHistograms[i], allProc->getHead());
 
-        for (unsigned i = 0; i < allProcNames.size(); i++) {
-            if (! containsProcess(relevantProcesses, allProcNames[i])
-                || (k != 1 && relevantProcesses[j] != allProcNames[i])) {
-                interString << std::setw(15) << "-" << "\t";
-                continue;
+            std::stringstream interString;
+
+            Process* proc = allProc->getTail();
+            while (proc) {
+                TString currentName = proc->getName();
+                if (! allHistograms[i]->isRelevant(currentName)) {
+                    proc = proc->getPrev();
+                    continue;
+                }
+                if (! containsProcess(relevantProcesses, currentName)
+                    || (k != 1 && currentName != relevantProcesses[j])) {
+                    interString << std::setw(15) << "-" << "\t";
+                    proc = proc->getPrev();
+                    continue;
+                }
+                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                proc = proc->getPrev();
             }
-            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-        }
 
         // loop over number of histograms we consider
-        for (unsigned i=0; i < allHistograms.size(); i++) {
             datacard << interString.str();
         }
         datacard << std::endl;
@@ -162,38 +186,59 @@ void DatacardWriter::write1718Uncertainty(Uncertainty* uncertainty) {
     // write name
     std::string name = uncertainty->getName() + "1718";
 
-    datacard << std::setw(30) << name << "\t";
-    double errorValue = 1.0;
-
-    if (uncertainty->isFlat()) {
-        datacard << std::setw(15) << "lnN" << "\t";
-        errorValue = uncertainty->getFlatRate1718();
-    } else {
-        datacard << std::setw(15) << "shape" << "\t";
-    }
-
-    std::stringstream interString;
     std::vector<TString> relevantProcesses = uncertainty->getRelevantProcesses();
 
-    for (unsigned i = 0; i < allProcNames.size(); i++) {
-        if (! containsProcess(relevantProcesses, allProcNames[i])) {
-            interString << std::setw(15) << "-" << "\t";
-            continue;
-        }
-        interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-    }
+    unsigned k = 1;
+    if (! uncertainty->getCorrelatedAmongProcesses()) k = relevantProcesses.size();
 
-    // loop over number of histograms we consider
-    for (unsigned i=0; i < allHistograms.size(); i++) {
-        datacard << interString.str();
+    for (unsigned j=0; j<k; j++) {
+        std::string tempName = name;
+        if (k > 1) tempName += relevantProcesses[j].Data();
+        datacard << std::setw(30) << tempName << "\t";
+
+        double errorValue = 1.0;
+
+        if (uncertainty->isFlat()) {
+        datacard << std::setw(15) << "lnN" << "\t";
+        errorValue = uncertainty->getFlatRate1718();
+        } else {
+            datacard << std::setw(15) << "shape" << "\t";
+        }
+
+        for (unsigned i=0; i < allHistograms.size(); i++) {
+            if (! uncertainty->isFlat()) uncertainty->printOutShapeUncertainty(allHistograms[i], allProc->getHead());
+
+            std::stringstream interString;
+
+            Process* proc = allProc->getTail();
+            while (proc) {
+                TString currentName = proc->getName();
+                if (! allHistograms[i]->isRelevant(currentName)) {
+                    proc = proc->getPrev();
+                    continue;
+                }
+                if (! containsProcess(relevantProcesses, currentName)
+                    || (k != 1 && currentName != relevantProcesses[j])) {
+                    interString << std::setw(15) << "-" << "\t";
+                    proc = proc->getPrev();
+                    continue;
+                }
+                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                proc = proc->getPrev();
+            }
+
+        // loop over number of histograms we consider
+            datacard << interString.str();
+        }
+        datacard << std::endl;
     }
-    datacard << std::endl;
 
 }
 
 
 void DatacardWriter::writeMCStats() {
-    writeEmptyLine(50);
+    writeEmptyLine(500);
     datacard << "* autoMCStats 0 1 1" << std::endl;
     // double check these numbers
 }

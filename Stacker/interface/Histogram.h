@@ -6,6 +6,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <map>
 
 #include "../../Helpers/interface/ParseTools.h"
 #include "../../Helpers/interface/StringTools.h"
@@ -18,6 +19,8 @@ class Histogram {
         bool logScale; // 0 for lin, 1 for log
         bool drawUncertainties = false;
         std::vector<std::string>* xBinLabels = nullptr;
+
+        std::map<TString, bool> relevance;
     public:
         Histogram(TString histID);
         Histogram(TString histID, bool requireLogScale);
@@ -47,6 +50,11 @@ class Histogram {
         
         std::string getCleanName() const {return cleanName;}
         void setCleanName(std::string& newCleanName) {cleanName = newCleanName;}
+
+        void setRelevance(std::map<TString, bool> newRelevance) {relevance = newRelevance;}
+        std::map<TString, bool> getRelevance() {return relevance;}
+        bool isRelevant(TString& entry) {return relevance[entry];}
+
 };
 
 //bool searchHist(Histogram*, std::string&);

@@ -2,7 +2,7 @@
 
 Uncertainty::Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) : 
     name(name), flat(flat), correlatedAmongProcesses(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
-
+    outputName = name;
     nameUp = name + "Up";
     nameDown = name + "Down";
 }
@@ -56,8 +56,8 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
         }
 
         TH1D* histNominal = histVec[histCount];
-        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram);
-        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram);
+        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, outputName);
+        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, outputName);
 
         // do stuff
         // anyway
@@ -103,6 +103,48 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
     
     // set return value
 
+}
+
+void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) {
+    // Loop processes, ask to add stuff
+    Process* current = head;
+    TString histogramID = histogram->getID();
+
+    int histCount = 0;
+    int procCount = 0;
+
+    TString outputNameUp = outputName + "Up";
+    TString outputNameDown = outputName + "Down";
+
+    if (histogram->getPrintToFile()) {
+        outfile->cd(histogram->getCleanName().c_str());
+        gDirectory->mkdir(outputNameUp);
+        gDirectory->mkdir(outputNameDown);
+    }
+
+    std::string up = "Up";
+    std::string down = "Down";
+
+    while (current) {
+        // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
+        if (relevantProcesses.size() == 0) return;
+        if (current->getName() != relevantProcesses[procCount]) {
+            histCount++;
+            current = current->getNext();
+        }
+        current->getHistogramUncertainty(name, up, histogram, outputName);
+        current->getHistogramUncertainty(name, down, histogram, outputName);
+
+        current = current->getNext();
+
+        //if (! correlatedAmongProcesses) {
+        //    relevantProcesses.erase(relevantProcesses.begin() + procCount);
+        //    return;
+        //}
+
+        histCount++;
+        procCount++;
+    } 
 }
 
 TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec) {

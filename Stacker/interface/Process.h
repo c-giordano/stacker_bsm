@@ -19,6 +19,7 @@
 class Process {
     private:
         Process* next = nullptr;
+        Process* prev = nullptr;
 
         TString name;
         TString cleanedName;
@@ -34,13 +35,15 @@ class Process {
         ~Process() {};
 
         void setNext(Process* newNext) {next = newNext;}
+        void setPrev(Process* newPrev) {prev = newPrev;}
         Process* getNext() const {return next;}
+        Process* getPrev() const {return prev;}
         TString const getName() {return name;}
         TString const getCleanedName()  {return cleanedName;}
         bool isSignalProcess() {return isSignal;}
 
         TH1D* getHistogram(TString& histName);
-        TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist);
+        TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder);
 
         TH2D* get2DHistogram(TString& histName, TLegend* legend);
 

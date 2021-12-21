@@ -7,23 +7,28 @@
 #include <sstream>
 #include <iomanip>
 #include <algorithm>
+#include <map>
 
 #include "Uncertainty.h"
 #include "Histogram.h"
+#include "ProcessList.h"
 
 class DatacardWriter
 {
 private:
     std::ofstream datacard;
     std::string datacardName;
-
     std::string yearID;
 
-    std::vector<TString> allProcNames;
+    TFile* outfile;
+    ProcessList* allProc;
+    //std::vector<Process*> allProc;
     std::vector<Histogram*> allHistograms;
+
+    Process* head;
     /* data */
 public:
-    DatacardWriter(std::string yearID, std::vector<TString> allProc, std::vector<Histogram*> histVec);
+    DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile);
     ~DatacardWriter();
 
     void initDatacard();

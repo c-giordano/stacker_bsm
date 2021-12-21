@@ -2,6 +2,8 @@
 
 void Stacker::printAllHistograms() {
     int tempCount =0 ;
+
+    if (onlyDC) return;
     for (auto histogramID : histogramVec) {
         tempCount++;
         //if (tempCount == 50) break;

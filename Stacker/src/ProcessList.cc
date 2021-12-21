@@ -6,7 +6,10 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* 
     allProcessNames.push_back(name);
     Process* brandNewObj = new Process(name, color, inputfile, outputfile, signal, data);
 
-    if (tail) tail->setNext(brandNewObj); // check if tail already exists
+    if (tail) {
+        brandNewObj->setPrev(tail);
+        tail->setNext(brandNewObj); // check if tail already exists
+    }
     tail = brandNewObj;
 
     if (! head) {
@@ -132,6 +135,61 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
 
     return histVec;
 }
+
+std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* outfile) {
+    Process* current = head;
+    std::vector<TH1D*> histVec;
+    std::map<TString, bool> output;
+
+    TString histogramID = hist->getID();
+
+    if (hist->getPrintToFile()) outfile->mkdir(hist->getCleanName().c_str());
+
+    if (verbose) std::cout << histogramID << std::endl;
+
+    while (current) {
+
+        TH1D* histToAdd = current->getHistogram(histogramID);
+        histVec.push_back(histToAdd);
+
+        output[current->getName()] = (histToAdd->Integral() > 0);
+
+        if (verbose) {
+            std::cout << current->getName();
+            if (veryVerbose) {
+                std::cout << " & ";
+                for (int i=1; i < histToAdd->GetNbinsX() + 1; i++) {
+                    std::cout << histToAdd->GetBinContent(i) << " & ";
+                }
+                std::cout << std::endl;
+            } else {
+                std::cout << ": " << histToAdd->Integral() << " events" << std::endl;
+            }
+        }
+
+        if (hist->getPrintToFile()) {
+            outfile->cd(hist->getCleanName().c_str());
+            for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+                if (histToAdd->GetBinContent(j) <= 0.) histToAdd->SetBinContent(j, 0.00001);
+            }
+            histToAdd->Write(current->getName(), TObject::kOverwrite);
+        }
+        current = current->getNext();
+    }
+    if (hist->getPrintToFile()) {
+        TH1D* allHistograms = sumVector(histVec);
+        allHistograms->SetName("data_obs");
+        allHistograms->SetTitle("data_obs");
+        outfile->cd(hist->getCleanName().c_str());
+        for (int j=1; j<allHistograms->GetNbinsX() + 1; j++) {
+            allHistograms->SetBinError(j, sqrt(allHistograms->GetBinContent(j)));
+        }
+        allHistograms->Write("data_obs", TObject::kOverwrite);
+    }
+
+    return output;
+}
+
 
 std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile) {
     Process* current = head;

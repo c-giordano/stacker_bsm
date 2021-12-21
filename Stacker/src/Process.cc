@@ -82,7 +82,7 @@ TH1D* Process::getHistogram(TString& histName) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist) {
+TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder) {
     TString histName = hist->getID() + "_" + uncName + "_" + upOrDown;
     // std::cout << histName << std::endl;
     TH1D* output = nullptr;
@@ -118,7 +118,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         outputFile->cd();
         outputFile->cd((hist->getCleanName()).c_str());
 
-        gDirectory->cd((uncName + upOrDown).c_str());
+        gDirectory->cd((outputFolder + upOrDown).c_str());
 
         output->Write(name);
     }
