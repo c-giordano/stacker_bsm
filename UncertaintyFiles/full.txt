@@ -8,7 +8,16 @@ nonPromptNorm: flat=1.3   corrEra AllEra=1.3 process=nonPrompt
 ChargeMisIDNorm: flat=1.3   corrEra AllEra=1.3 process=ChargeMisID
 TTVVNorm: flat=1.05   corrEra AllEra=1.05 process=TTVV
 XgammaNorm: flat=1.05   corrEra AllEra=1.05 process=Xgamma
-#pileup: shape process=AllMC
+isrShape: shape process=AllMC uncorrelated
+fsrShape: shape process=AllMC uncorrelated
+electronReco: shape process=AllMC correlated
+muonIDStat: shape process=AllMC correlated corrEra
+muonIDSyst: shape process=AllMC correlated
+electronIDStat: shape process=AllMC correlated corrEra
+electronIDSyst: shape process=AllMC correlated
+pileup: shape process=AllMC correlated
+JER: shape process=All correlated corrEra
+JEC: shape process=All correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
