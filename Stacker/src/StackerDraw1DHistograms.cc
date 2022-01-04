@@ -6,6 +6,7 @@ void Stacker::printAllHistograms() {
     if (onlyDC) return;
     for (auto histogramID : histogramVec) {
         tempCount++;
+        histogramID->setPrintToFile(false);
         //if (tempCount == 50) break;
 
         if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
@@ -68,14 +69,17 @@ void Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>&
     if (*sysUnc) {
         totalUnc = new TH1D(*allHistograms);
         
+        //std::cout << "printing uncertainties:\t";
         for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
             double statError = allHistograms->GetBinError(bin);
             double systError = (*sysUnc)->GetBinContent(bin); // is already squared
-            //totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
-            totalUnc->SetBinError(bin, sqrt(systError) );
+            totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
+            //totalUnc->SetBinError(bin, sqrt(systError) );
+
+            //std::cout << totalUnc->GetBinError(bin) << "\t";
 
         }
-
+        //std::cout << std::endl;
         totalUnc->SetFillStyle(3244); //3005  3244
         totalUnc->SetFillColor(kGray+2);
         totalUnc->SetMarkerStyle(0); //1

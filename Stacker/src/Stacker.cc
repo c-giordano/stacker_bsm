@@ -231,6 +231,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         // read name, build class
         std::string name; 
         bool flat = false;
+        bool envelope = false;
         bool eraSpec = false;
         bool allEras = false;
         bool corrProcess = true;
@@ -257,14 +258,22 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                 flat = true;
                 flatTot = std::stod(currSetAndVal.second);
             }
+            if (part == "envelope") envelope = true;
             if (part == "uncorrelated") corrProcess = false;
             if (part == "correlated") corrProcess = true;
             if (part == "corrEra") eraSpec = true;
             if (currSetAndVal.first == "process") {
                 if (currSetAndVal.second == "AllMC") {
                     relProcess = allProcesses;
-                    relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("nonPrompt")));
-                    relProcess.erase(std::find(relProcess.begin(), relProcess.end(), TString("ChargeMisID")));
+                    std::vector<TString>::iterator it = std::find(relProcess.begin(), relProcess.end(), TString("nonPrompt"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
+                    
+                    it = std::find(relProcess.begin(), relProcess.end(), TString("ChargeMisID"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
                     continue;
                 } else if (currSetAndVal.second == "All") {
                     continue;
@@ -289,7 +298,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         }
 
 
-        Uncertainty* newUnc = processes->addUncertainty(name, flat, corrProcess, corrEra, relProcess, outputfile);
+        Uncertainty* newUnc = processes->addUncertainty(name, flat, envelope, corrProcess, corrEra, relProcess, outputfile);
         if (flat) {
             newUnc->setFlatRate(flatTot);
             newUnc->setFlatRateAll(flatUncertaintyAll);

@@ -82,19 +82,23 @@ TH1D* Process::getHistogram(TString& histName) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder) {
+TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
     TString histName = hist->getID() + "_" + uncName + "_" + upOrDown;
+    TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
     TH1D* output = nullptr;
 
     rootFile->cd("Uncertainties");
     gDirectory->cd(name);
 
-    for(auto subdir : *subdirectories) {
-        gDirectory->cd(subdir);
+    //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
+
+    for (auto subdir : *subdirectories) {
+        if (! envelope) gDirectory->cd(subdir);
+        
         // std::cout << subdir << std::endl;
         if (! gDirectory->GetDirectory(uncName.c_str())) {
-            std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found." << std::endl;
+            std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found. Should it?" << std::endl;
             exit(2);
         }
         gDirectory->cd(uncName.c_str());
@@ -102,21 +106,36 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         
         TH1D* inter;
         gDirectory->GetObject(histName, inter);
-
-        if (output == nullptr) {
-            output = new TH1D(*inter);
+        if (inter != nullptr) {
+            if (output == nullptr) {
+                output = new TH1D(*inter);
+            } else {
+                output->Add(inter);
+            }
         } else {
-            output->Add(inter);
+            //std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
         }
 
+        //std::cout << output->Integral() << "\t";
+
         gDirectory->cd("..");
         gDirectory->cd("..");
         gDirectory->cd("..");
+        
+        if (envelope) break;
     }
 
+    if (output == nullptr) return nullptr;
+    
+
+    //std::cout << std::endl;
+    //std::cout << "bin content in process:\t";
     for (int j=1; j < output->GetNbinsX() + 1; j++) {
         if (output->GetBinContent(j) <= 0.) output->SetBinContent(j, 0.00001);
+
+        //std::cout << output->GetBinContent(j) << "\t";
     }
+    //std::cout << std::endl;
 
     if (hist->getPrintToFile()) {
         outputFile->cd();

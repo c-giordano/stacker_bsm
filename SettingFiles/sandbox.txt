@@ -13,7 +13,7 @@ BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST
-SignalYield=True
+RatioPlots=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions

@@ -17,8 +17,8 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* 
     }
 }
 
-Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
-    Uncertainty* brandNewObj = new Uncertainty(name, flat, corrProcess, eraSpec, processes, outputfile);
+Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
+    Uncertainty* brandNewObj = new Uncertainty(name, flat, envelope, corrProcess, eraSpec, processes, outputfile);
 
     if (tailUnc) tailUnc->setNext(brandNewObj); // check if tail already exists
     tailUnc = brandNewObj;
@@ -89,6 +89,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
         }
         current = current->getNext();
     }
+    
     if (hist->getPrintToFile()) {
         TH1D* allHistograms = sumVector(histVec);
         allHistograms->SetName("data_obs");

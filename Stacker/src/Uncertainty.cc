@@ -1,7 +1,7 @@
 #include "../interface/Uncertainty.h"
 
-Uncertainty::Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) : 
-    name(name), flat(flat), correlatedAmongProcesses(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
+Uncertainty::Uncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) : 
+    name(name), flat(flat), envelope(envelope), correlatedAmongProcesses(corrProcess), eraSpecific(eraSpec), relevantProcesses(processes), outfile(outputfile) {
     outputName = name;
     nameUp = name + "Up";
     nameDown = name + "Down";
@@ -23,6 +23,11 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
     // create one final TH1D to return
     Process* current = head;
     TH1D* ret = new TH1D(*histVec[0]);
+
+    for (int bin = 1; bin < ret->GetNbinsX() + 1; bin++) {
+        ret->SetBinContent(bin, 0.);
+    }
+
     TString histogramID = histogram->getID();
     ret->SetName(histogramID + name);
     ret->SetTitle(histogramID + name);
@@ -56,16 +61,22 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
         }
 
         TH1D* histNominal = histVec[histCount];
-        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, outputName);
-        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, outputName);
+        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
 
+        if (histUp == nullptr && histDown == nullptr) {
+            current = current->getNext();
+            histCount++;
+            procCount++;
+            continue;
+        }
         // do stuff
         // anyway
         for (int bin = 1; bin < histNominal->GetNbinsX() + 1; bin++) {
 
             double nominalContent = histNominal->GetBinContent( bin );
-            double downVariedContent = histUp->GetBinContent( bin );
-            double upVariedContent = histDown->GetBinContent( bin );
+            double upVariedContent = histUp->GetBinContent( bin );
+            double downVariedContent = histDown->GetBinContent( bin );
             double down = fabs( downVariedContent - nominalContent );
             double up = fabs( upVariedContent - nominalContent );
 
@@ -87,22 +98,24 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
         procCount++;
     } 
 
+    //std::cout << "bin content in Uncertainty:\t";
+
     for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
         //correlated case :
         if(correlatedAmongProcesses ){
-            var[bin - 1] = std::max( varDown[bin - 1], varUp[bin - 1] );
-            var[bin - 1] = var[bin - 1] * var[bin - 1];
+            double varLocal = std::max( varDown[bin - 1], varUp[bin - 1] );
+            var[bin - 1] = varLocal * varLocal;
         }
 
         ret->SetBinContent(bin, var[bin - 1]);
+        //std::cout << ret->GetBinContent(bin) << "\t";
     }
-
+    //std::cout << std::endl;
     // writeout uncertainty
 
     return ret;
     
     // set return value
-
 }
 
 void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) {
@@ -132,8 +145,8 @@ void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) 
             histCount++;
             current = current->getNext();
         }
-        current->getHistogramUncertainty(name, up, histogram, outputName);
-        current->getHistogramUncertainty(name, down, histogram, outputName);
+        current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
 
         current = current->getNext();
 

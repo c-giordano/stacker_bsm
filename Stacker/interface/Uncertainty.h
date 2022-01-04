@@ -17,6 +17,7 @@ class Uncertainty {
         TString nameUp;
         TString nameDown;
         bool flat;
+        bool envelope;
         bool correlatedAmongProcesses;
         bool eraSpecific;
         bool isBoth;
@@ -33,7 +34,7 @@ class Uncertainty {
         Uncertainty* next = nullptr;
 
     public:
-        Uncertainty(std::string& name, bool flat, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile);
+        Uncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile);
         ~Uncertainty();
 
         void setFlatRate(double rate) {flatUncertainty = rate;}
@@ -49,6 +50,7 @@ class Uncertainty {
 
 
         bool isFlat() {return flat;}
+        bool isEnvelope() {return envelope;}
 
         Uncertainty* getNext() {return next;}
         void setNext(Uncertainty* newNext) {next = newNext;}

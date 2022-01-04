@@ -43,7 +43,7 @@ class Process {
         bool isSignalProcess() {return isSignal;}
 
         TH1D* getHistogram(TString& histName);
-        TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder);
+        TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope);
 
         TH2D* get2DHistogram(TString& histName, TLegend* legend);
 
