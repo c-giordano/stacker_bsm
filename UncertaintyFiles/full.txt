@@ -16,8 +16,9 @@ muonIDSyst: shape process=AllMC correlated
 electronIDStat: shape process=AllMC correlated corrEra
 electronIDSyst: shape process=AllMC correlated
 pileup: shape process=AllMC correlated
-JER: shape process=All correlated corrEra
-JEC: shape process=All correlated
+JER_1p93: shape process=AllMC correlated corrEra
+JER_2p5: shape process=AllMC correlated corrEra
+JEC: shape process=AllMC correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name

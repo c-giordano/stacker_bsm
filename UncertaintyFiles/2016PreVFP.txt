@@ -19,7 +19,7 @@ pileup: shape process=AllMC correlated
 JER_1p93: shape process=AllMC correlated corrEra
 JER_2p5: shape process=AllMC correlated corrEra
 JEC: shape process=AllMC correlated
-
+qcdScale: envelope process=allMC
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name

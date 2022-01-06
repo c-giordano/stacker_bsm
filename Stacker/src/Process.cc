@@ -125,7 +125,10 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         if (envelope) break;
     }
 
-    if (output == nullptr) return nullptr;
+    if (output == nullptr) {
+        //std::cout << "Histogram " << histName << " has no uncertainty " << uncName << std::endl;
+        return nullptr;
+    }
     
 
     //std::cout << std::endl;

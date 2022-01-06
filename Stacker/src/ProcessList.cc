@@ -137,7 +137,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     return histVec;
 }
 
-std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* outfile) {
+std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* outfile, bool isData, Process* dataProc) {
     Process* current = head;
     std::vector<TH1D*> histVec;
     std::map<TString, bool> output;
@@ -177,7 +177,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         }
         current = current->getNext();
     }
-    if (hist->getPrintToFile()) {
+    if (! isData && hist->getPrintToFile()) {
         TH1D* allHistograms = sumVector(histVec);
         allHistograms->SetName("data_obs");
         allHistograms->SetTitle("data_obs");
@@ -186,6 +186,12 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
             allHistograms->SetBinError(j, sqrt(allHistograms->GetBinContent(j)));
         }
         allHistograms->Write("data_obs", TObject::kOverwrite);
+    } else if (isData && hist->getPrintToFile()) {
+        TH1D* data = dataProc->getHistogram(histogramID);
+        data->SetName("data_obs");
+        data->SetTitle("data_obs");
+        outfile->cd(hist->getCleanName().c_str());
+        data->Write("data_obs", TObject::kOverwrite);
     }
 
     return output;

@@ -1,9 +1,15 @@
 #include "../interface/DatacardWriter.h"
 
-DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile) :
+DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew) :
     yearID(yearID), allProc(allProc), allHistograms(histVec), outfile(outfile)
 {   
     datacardName = "DC_" + yearID;
+
+    if (dataProcNew != nullptr) {
+        dataProc = dataProcNew;
+        isData == true;
+    }
+
     initDatacard();
 }
 
@@ -73,7 +79,7 @@ void DatacardWriter::writeProcessHeader() {
 
     for (unsigned i=0; i < allHistograms.size(); i++) {
         // loop histograms
-        std::map<TString, bool> relevance = allProc->printHistograms(allHistograms[i], outfile);
+        std::map<TString, bool> relevance = allProc->printHistograms(allHistograms[i], outfile, isData, dataProc);
         allHistograms[i]->setRelevance(relevance);
         Process* proc = allProc->getTail();
         int j = -1;

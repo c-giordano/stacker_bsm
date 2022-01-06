@@ -42,6 +42,7 @@ class Stacker {
 
         DatacardWriter* dcwriter;
         ProcessList* processes;
+        Process* dataProcess = nullptr;
         std::vector<Histogram*> histogramVec;
         std::vector<Histogram2D*> histogramVec2D;
         // settings
@@ -101,17 +102,23 @@ class Stacker {
             if (runT2B) pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
             else pathToOutput = "Output/";
         }
-        void isData(bool dataExists) {useData = dataExists;}
-        void useFakeData(bool isFD) {fakeData = isFD;}
+        void setData(bool dataExists) {useData = dataExists;}
+        bool getData() {return useData;}
+        void readData(std::string& dataFile);
+
+        void setFakeData(bool isFD) {fakeData = isFD;}
+        bool getFakeData() {return fakeData;}
 
         void setOnlyDC(bool set) {onlyDC = set;}
         bool getOnlyDC() {return onlyDC;}
 
         void printAllHistograms();
         void printHistogram(Histogram* histID);
-        void drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc);
+        TH1D* drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data);
         void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
         void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
+        void drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data);
+        
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
         
         void printAll2DHistograms();

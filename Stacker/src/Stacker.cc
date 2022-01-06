@@ -163,6 +163,16 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     }
 }
 
+void Stacker::readData(std::string& dataFile) {
+    setData(true);
+    inputfile = new TFile(dataFile.c_str(), "read");
+
+    TString name = "Data";
+
+    dataProcess = new Process(name, kBlack, inputfile, outputfile, false, true);
+}
+
+
 Stacker::~Stacker() {
     inputfile->Close();
     outputfile->Close();
@@ -341,6 +351,6 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         std::cout << "FOUND " << histogramID << std::endl;
     }
     std::cout << histForDC.size() << std::endl;
-    dcwriter = new DatacardWriter(yearID, processes, histForDC, outputfile);
+    dcwriter = new DatacardWriter(yearID, processes, histForDC, outputfile, dataProcess);
     dcwriter->writeUncertainties(processes->getUncHead());
 }

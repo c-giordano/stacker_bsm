@@ -39,7 +39,7 @@ void setTDRStyle() {
     // gStyle->SetLegoInnerR(Float_t rad = 0.5);
     // gStyle->SetNumberContours(Int_t number = 20);
 
-    gStyle->SetEndErrorSize(2);
+    gStyle->SetEndErrorSize(4);
     // gStyle->SetErrorMarker(20);
     //gStyle->SetErrorX(0.);
 

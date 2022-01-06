@@ -27,9 +27,9 @@ TPad* Stacker::getPad(TString& histID, int position) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 0.45;
-    double y1 = 0.75;
-    double x2 = 0.94;
+    double x1 = 0.2;
+    double y1 = 0.73;
+    double x2 = 0.93;
     double y2 = 0.92;
     int nColumns = 3;
 

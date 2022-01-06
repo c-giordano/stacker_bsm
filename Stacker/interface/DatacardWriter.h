@@ -26,10 +26,19 @@ private:
     std::vector<Histogram*> allHistograms;
 
     Process* head;
-    /* data */
+    
+    bool isData = false;
+    Process* dataProc = nullptr;
 public:
-    DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile);
+    DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew);
     ~DatacardWriter();
+
+    void addData(Process* dataProcNew) {
+        if (dataProcNew != nullptr) {
+            dataProc = dataProcNew;
+            isData == true;
+        }
+    }
 
     void initDatacard();
 
