@@ -66,3 +66,38 @@ std::string getYearFromRootFile(std::string& rootfile) {
 
     return year.substr(split + 1);
 }
+
+std::string replace( const std::string& s, const std::string& oldstring, const std::string& newstring ){
+    std::string ret( s );
+    std::string::size_type pos;
+    while( ( pos = ret.find( oldstring ) ) != std::string::npos ){
+        ret.erase( pos, oldstring.size() );
+        ret.insert( pos, newstring );
+    }
+    return ret;
+}
+
+//remove all occurences of a substring from a string
+std::string removeOccurencesOf( const std::string& s, const std::string& substring ){
+    return replace( s, substring, "" );
+}
+
+std::vector< std::string > split( const std::string& s, const std::string& substring ){
+    std::vector< std::string > ret;
+    std::string remainingString( s );
+    std::string::size_type pos;
+    do{
+        pos = remainingString.find( substring );
+        ret.push_back( remainingString.substr( 0, pos ) );
+
+        //if the split string occurs several times in a row all occurences should be removed
+        while( ( pos != std::string::npos ) && ( remainingString.substr( pos + substring.size(), substring.size() ) == substring ) ){
+            remainingString.erase( 0, pos + substring.size() );
+            pos = remainingString.find( substring );
+        }
+
+        remainingString.erase( 0, pos + substring.size() );
+    } while( pos != std::string::npos );
+
+    return ret;
+}

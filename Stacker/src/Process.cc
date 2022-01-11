@@ -101,7 +101,15 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
             std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found. Should it?" << std::endl;
             exit(2);
         }
-        gDirectory->cd(uncName.c_str());
+
+        std::vector<std::string> tempWorkaround = split( uncName, "_" );
+        if (tempWorkaround[0] == "bTagShape") {
+            std::string tempName = removeOccurencesOf(uncName, "_");
+            gDirectory->cd(tempName.c_str());
+        } else {
+            gDirectory->cd(uncName.c_str());
+        }
+
         gDirectory->cd(upOrDown.c_str());
         
         TH1D* inter;

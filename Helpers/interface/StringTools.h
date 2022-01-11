@@ -14,4 +14,8 @@ std::string splitAtUnderscore(std::string& str);
 
 std::string getYearFromRootFile(std::string& rootfile);
 
+std::string replace( const std::string& s, const std::string& oldstring, const std::string& newstring );
+std::string removeOccurencesOf( const std::string& s, const std::string& substring );
+std::vector< std::string > split( const std::string& s, const std::string& substring );
+
 #endif

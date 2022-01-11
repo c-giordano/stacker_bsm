@@ -21,14 +21,14 @@ JER_2p5: shape process=AllMC correlated corrEra
 JEC: shape process=AllMC correlated
 qcdScale: envelope process=AllMC correlated
 pdfShapeVar: envelope process=AllMC correlated 
-bTagShapecferr1: shape process=AllMC correlated
-bTagShapecferr2: shape process=AllMC correlated
-bTagShapehf: shape process=AllMC correlated
-bTagShapehfstats1: shape process=AllMC correlated corrEra
-bTagShapehfstats2: shape process=AllMC correlated corrEra
-bTagShapelf: shape process=AllMC correlated
-bTagShapelfstats1: shape process=AllMC correlated corrEra
-bTagShapelfstats2: shape process=AllMC correlated corrEra
+bTagShape_cferr1: shape process=AllMC correlated
+bTagShape_cferr2: shape process=AllMC correlated
+bTagShape_hf: shape process=AllMC correlated
+bTagShape_hfstats1: shape process=AllMC correlated corrEra
+bTagShape_hfstats2: shape process=AllMC correlated corrEra
+bTagShape_lf: shape process=AllMC correlated
+bTagShape_lfstats1: shape process=AllMC correlated corrEra
+bTagShape_lfstats2: shape process=AllMC correlated corrEra
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
