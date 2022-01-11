@@ -7,7 +7,7 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
 
     if (dataProcNew != nullptr) {
         dataProc = dataProcNew;
-        isData == true;
+        isData = true;
     }
 
     initDatacard();

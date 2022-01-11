@@ -36,7 +36,7 @@ public:
     void addData(Process* dataProcNew) {
         if (dataProcNew != nullptr) {
             dataProc = dataProcNew;
-            isData == true;
+            isData = true;
         }
     }
 
