@@ -13,7 +13,7 @@ BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST, NOSTACK
-OutFolder=Most_recent_plots/Cutflow/shapes
+OutFolder=Most_recent_plots/Cutflow/shapes/
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
