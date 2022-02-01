@@ -118,6 +118,9 @@ class Stacker {
         void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
         void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
         void drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data);
+
+        void drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& uncToDraw);
+        void drawAllUncertaintyImpacts();
         
         std::vector<TH1D*> fillStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
         

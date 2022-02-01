@@ -47,6 +47,7 @@ class Uncertainty {
 
         void setCorrProcess(bool newCorr) {correlatedAmongProcesses = newCorr;}
         void setOutputName(std::string newName) {outputName = newName;}
+        std::string getOutputName() const {return outputName;}
 
 
         bool isFlat() {return flat;}
@@ -56,6 +57,7 @@ class Uncertainty {
         void setNext(Uncertainty* newNext) {next = newNext;}
 
         TH1D* getShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+        std::pair<TH1D*, TH1D*> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head);
         TH1D* getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
         TH1D* getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
 

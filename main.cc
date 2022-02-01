@@ -31,8 +31,11 @@ int main(int argc, char const *argv[]) {
             stacker.setFakeData(true);
             stacker.setData(true);
         }
-        if (currentElement == "-DC") stacker.setOnlyDC(true);
         if (currentElement == "-RD") stacker.readData(argvStr[i+1]);
+        
+        if (currentElement == "-DC") stacker.setOnlyDC(true);
+        
+        if (currentElement == "-IP") stacker.drawAllUncertaintyImpacts();
     }
 
     stacker.printAllHistograms();

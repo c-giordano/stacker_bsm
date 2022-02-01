@@ -29,6 +29,7 @@ bTagShape_hfstats2: shape process=AllMC correlated corrEra
 bTagShape_lf: shape process=AllMC correlated
 bTagShape_lfstats1: shape process=AllMC correlated corrEra
 bTagShape_lfstats2: shape process=AllMC correlated corrEra
+prefire: shape process=AllMC correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name

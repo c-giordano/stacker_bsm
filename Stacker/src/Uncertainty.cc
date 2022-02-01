@@ -30,8 +30,7 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
 
     TString histogramID = histogram->getID();
     ret->SetName(histogramID + name);
-    ret->SetTitle(histogramID + name);
-
+    ret->SetTitle(name.c_str());
 
     //correlated case : linearly add up and down variations
     std::vector<double> varDown(histVec[0]->GetNbinsX(), 0.);
@@ -207,4 +206,67 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     }
 
     return ret;
+}
+
+std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head) {
+    // Loop processes, ask to add stuff
+    Process* current = head;
+    TString histogramID = histogram->getID();
+
+    int histCount = 0;
+    int procCount = 0;
+
+    TString outputNameUp = outputName + "Up";
+    TString outputNameDown = outputName + "Down";
+
+    if (histogram->getPrintToFile()) {
+        outfile->cd(histogram->getCleanName().c_str());
+        gDirectory->mkdir(outputNameUp);
+        gDirectory->mkdir(outputNameDown);
+    }
+
+    std::string up = "Up";
+    std::string down = "Down";
+
+    TH1D* upVarReturn = nullptr;
+    TH1D* downVarReturn = nullptr;
+
+
+    while (current) {
+        // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
+        if (current->getName() != relevantProcesses[procCount]) {
+            histCount++;
+            current = current->getNext();
+        }
+        TH1D* upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        TH1D* downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+
+        if (upVarReturn == nullptr) {
+            upVarReturn = new TH1D(*upVar);
+            downVarReturn = new TH1D(*downVar);
+
+            if(! correlatedAmongProcesses ){
+                upVarReturn->Multiply(upVarReturn);
+                downVarReturn->Multiply(downVarReturn);
+            }
+        } else {
+            if(! correlatedAmongProcesses ){
+                upVar->Multiply(upVar);
+                downVar->Multiply(downVar);
+
+                upVarReturn->Add(upVar);
+                downVarReturn->Add(downVar);
+            } else {
+                upVarReturn->Add(upVar);
+                downVarReturn->Add(downVar);
+            }
+        }
+
+        current = current->getNext();
+
+        histCount++;
+        procCount++;
+    }
+
+    return {upVarReturn, downVarReturn};
 }

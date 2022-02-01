@@ -234,3 +234,39 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
 
     return histVec;
 }
+
+std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(Histogram* hist) {
+    // loop uncertainties as well if required
+    Uncertainty* currUnc = headUnc;
+    std::map<std::string, std::pair<TH1D*, TH1D*>> returnValue;
+    while (currUnc && hist->getDrawUncertainties()) {
+        if (currUnc->isFlat()) {
+            currUnc = currUnc->getNext();
+            continue;
+        }
+        // getShapeUncertainty or apply flat uncertainty
+        std::pair<TH1D*, TH1D*> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head);
+
+        returnValue[currUnc->getName()] = newUncertainty;
+
+        currUnc = currUnc->getNext();
+    }
+
+    return returnValue;
+}
+
+std::vector<TH1D*> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
+    Process* current = getHead();
+    std::vector<TH1D*> histVec;
+
+    TString histogramID = hist->getID();
+
+    while (current) {
+        TH1D* histToAdd = current->getHistogram(histogramID);
+        histVec.push_back(histToAdd);
+
+        current = current->getNext();
+    }
+
+    return histVec;
+}

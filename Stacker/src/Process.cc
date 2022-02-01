@@ -102,14 +102,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
             exit(2);
         }
 
-        std::vector<std::string> tempWorkaround = split( uncName, "_" );
-        if (tempWorkaround[0] == "bTagShape") {
-            std::string tempName = removeOccurencesOf(uncName, "_");
-            gDirectory->cd(tempName.c_str());
-        } else {
-            gDirectory->cd(uncName.c_str());
-        }
-
+        gDirectory->cd(uncName.c_str());
         gDirectory->cd(upOrDown.c_str());
         
         TH1D* inter;
@@ -121,7 +114,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
                 output->Add(inter);
             }
         } else {
-            //std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
+            std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
         }
 
         //std::cout << output->Integral() << "\t";
@@ -138,15 +131,9 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         return nullptr;
     }
     
-
-    //std::cout << std::endl;
-    //std::cout << "bin content in process:\t";
     for (int j=1; j < output->GetNbinsX() + 1; j++) {
         if (output->GetBinContent(j) <= 0.) output->SetBinContent(j, 0.00001);
-
-        //std::cout << output->GetBinContent(j) << "\t";
     }
-    //std::cout << std::endl;
 
     if (hist->getPrintToFile()) {
         outputFile->cd();
