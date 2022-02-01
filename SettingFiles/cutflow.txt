@@ -13,7 +13,7 @@ BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST
-OutFolder=Most_recent_plots/Cutflow
+OutFolder=Most_recent_plots/Cutflow/
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
@@ -41,3 +41,21 @@ nTightLeptons_4L logscale
 pt_TrailingLooseLepton_DL logscale
 pt_TrailingLooseLepton_3L logscale
 pt_TrailingLooseLepton_4L logscale
+nJets_At2LooseBs_DL logscale
+nJets_At2MediumBs_DL logscale
+HT_AtSel_DL logscale
+nJets_AtSel_DL logscale
+nLooseBjet_AtSel_DL logscale
+nMediumBjet_AtSel_DL logscale
+nJets_At2LooseBs_3L logscale
+nJets_At2MediumBs_3L logscale
+HT_AtSel_3L logscale
+nJets_AtSel_3L logscale
+nLooseBjet_AtSel_3L logscale
+nMediumBjet_AtSel_3L logscale
+nJets_At2LooseBs_4L logscale
+nJets_At2MediumBs_4L logscale
+HT_AtSel_4L logscale
+nJets_AtSel_4L logscale
+nLooseBjet_AtSel_4L logscale
+nMediumBjet_AtSel_4L logscale
