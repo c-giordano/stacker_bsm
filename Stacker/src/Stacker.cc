@@ -345,7 +345,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
             (*it)->setCleanName(cleanName);
             histForDC.push_back(*it);
         } else {
-            std::cerr << "HISTOGRAM NOT FOUND FOR UNCERTAINTY" << std::endl;
+            std::cerr << "HISTOGRAM " << histogramID << " NOT FOUND FOR UNCERTAINTY" << std::endl;
             exit(1);
         }
         std::cout << "FOUND " << histogramID << std::endl;
