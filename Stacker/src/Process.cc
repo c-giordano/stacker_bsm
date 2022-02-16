@@ -20,11 +20,11 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
         //exit(2);
     }
 
-    if (procName == "nonPrompt") {
-        subdirectories = new std::vector<const char*>;
-        subdirectories->push_back("../nonPrompt");
-        return;
-    }
+    //if (procName == "nonPrompt") {
+    //    subdirectories = new std::vector<const char*>;
+    //    subdirectories->push_back("../nonPrompt");
+    //    return;
+    //}
 
     gDirectory->cd(procName);
     subdirectories = new std::vector<const char*>;
