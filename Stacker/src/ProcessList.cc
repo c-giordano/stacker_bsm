@@ -17,6 +17,22 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* 
     }
 }
 
+void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data) {
+    // TODO: Create new process object
+    allProcessNames.push_back(name);
+    Process* brandNewObj = new Process(name, color, inputfiles, outputfile, signal, data);
+
+    if (tail) {
+        brandNewObj->setPrev(tail);
+        tail->setNext(brandNewObj); // check if tail already exists
+    }
+    tail = brandNewObj;
+
+    if (! head) {
+        head = brandNewObj;
+    }
+}
+
 Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
     Uncertainty* brandNewObj = new Uncertainty(name, flat, envelope, corrProcess, eraSpec, processes, outputfile);
 

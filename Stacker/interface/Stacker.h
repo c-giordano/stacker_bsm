@@ -57,6 +57,7 @@ class Stacker {
 
         // Main root file
         TFile* inputfile;
+        std::vector<TFile*> inputfiles;
         // outputfile (structured for combine)
         TFile* outputfile = nullptr;
 
@@ -85,6 +86,9 @@ class Stacker {
 
     public:
         Stacker(const char* rootFile, std::string& settingFile);
+        Stacker(std::vector<std::string>& cmdArgs);
+
+        void ReadSettingFile(std::string& settingFile);
         ~Stacker();
 
         void setVerbosity(bool verbosity) {

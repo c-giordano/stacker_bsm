@@ -15,6 +15,14 @@ void Stacker::setLumi(std::string& lumiSetting) {
         TH1F* lumiHist;
         inputfile->GetObject("IntLumi", lumiHist);
 
+        for (unsigned i = 1; i < inputfiles.size(); i++) {
+            TFile* it = inputfiles[i];
+            it->cd();
+            TH1F* inter;
+            it->GetObject("IntLumi", inter);
+            lumiHist->Add(inter);
+        }
+
         std::stringstream stream;
         stream << std::fixed << std::setprecision(2) << lumiHist->GetBinContent(1);
         intLumi = stream.str();

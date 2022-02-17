@@ -1,4 +1,4 @@
-CC=g++ -g -Wall -Wno-reorder -Wextra
+CC=g++ -O3 -g -Wall -Wno-reorder -Wextra
 CFLAGS= -Wl,--no-as-needed
 CXXFLAGS = -std=gnu++17
 LDFLAGS=`root-config --glibs --cflags`

@@ -5,71 +5,101 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
     color = procColor;
     cleanedName = cleanTString(name);
 
-    rootFile->cd("Nominal");
+    inputfiles.push_back(rootFile);
 
-    if (! gDirectory->GetDirectory(procName)) {
-        std::cout << "ERROR: Process " << procName << " not found." << std::endl;
-        std::cout << "Trying rootfile itself..." << std::endl;
-        rootFile->cd();
+    for (auto it : inputfiles) {
+        it->cd("Nominal");
 
         if (! gDirectory->GetDirectory(procName)) {
-            std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
-            exit(2);
+            std::cout << "ERROR: Process " << procName << " not found." << std::endl;
+            std::cout << "Trying rootfile itself..." << std::endl;
+            it->cd();
+
+            if (! gDirectory->GetDirectory(procName)) {
+                std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
+                exit(2);
+            }
         }
 
-        //exit(2);
+        gDirectory->cd(procName);
+        std::vector<const char*>* subdirectories = new std::vector<const char*>;
+
+        TList* folders = gDirectory->GetListOfKeys();
+
+        for(const auto&& obj: *folders) {
+            subdirectories->push_back(obj->GetName());
+        }
+        subdirectoriesPerFile.push_back(subdirectories);
     }
+}
 
-    //if (procName == "nonPrompt") {
-    //    subdirectories = new std::vector<const char*>;
-    //    subdirectories->push_back("../nonPrompt");
-    //    return;
-    //}
+Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data) : name(procName), rootFile(inputfiles[0]),
+    inputfiles(inputfiles), outputFile(outputFile), isSignal(signal), isData(data) {
+    color = procColor;
+    cleanedName = cleanTString(name);
 
-    gDirectory->cd(procName);
-    subdirectories = new std::vector<const char*>;
+    for (auto it : inputfiles) {
+        it->cd("Nominal");
 
-    TList* folders = gDirectory->GetListOfKeys();
+        if (! gDirectory->GetDirectory(procName)) {
+            std::cout << "ERROR: Process " << procName << " not found." << std::endl;
+            std::cout << "Trying rootfile itself..." << std::endl;
+            it->cd();
 
-    for(const auto&& obj: *folders) {
-        subdirectories->push_back(obj->GetName());
+            if (! gDirectory->GetDirectory(procName)) {
+                std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
+                exit(2);
+            }
+        }
+
+        gDirectory->cd(procName);
+        std::vector<const char*>* subdirectories = new std::vector<const char*>;
+
+        TList* folders = gDirectory->GetListOfKeys();
+
+        for(const auto&& obj: *folders) {
+            subdirectories->push_back(obj->GetName());
+        }
+        subdirectoriesPerFile.push_back(subdirectories);
     }
-
 }
 
 TH1D* Process::getHistogram(TString& histName) {
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
-    rootFile->cd("Nominal");
-    if (! gDirectory->GetDirectory(name)) {
-        std::cout << "ERROR: Process " << name << " not found." << std::endl;
-        std::cout << "Trying rootfile itself..." << std::endl;
-        rootFile->cd();
+    for (unsigned i = 0; i < inputfiles.size(); i++) {
+        TFile* currFile = inputfiles[i];
+        std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
 
+        currFile->cd("Nominal");
         if (! gDirectory->GetDirectory(name)) {
-            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
-            exit(2);
+            std::cout << "ERROR: Process " << name << " not found." << std::endl;
+            std::cout << "Trying rootfile itself..." << std::endl;
+            currFile->cd();
+
+            if (! gDirectory->GetDirectory(name)) {
+                std::cout << "ERROR: Process still " << name << " not found." << std::endl;
+                exit(2);
+            }
         }
+        gDirectory->cd(name);
 
-        //exit(2);
-    }
-    gDirectory->cd(name);
+        for(auto subdir : *subdirectories) {
+            gDirectory->cd(subdir);
+            
+            TH1D* inter;
+            gDirectory->GetObject(histName, inter);
 
-    for(auto subdir : *subdirectories) {
-        gDirectory->cd(subdir);
-        
-        TH1D* inter;
-        gDirectory->GetObject(histName, inter);
+            if (output == nullptr) {
+                output = new TH1D(*inter);
+            } else {
+                output->Add(inter);
+            }
 
-        if (output == nullptr) {
-            output = new TH1D(*inter);
-        } else {
-            output->Add(inter);
+            // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
+
+            gDirectory->cd("..");
         }
-
-        // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
-
-        gDirectory->cd("..");
     }
 
     output->SetName(histName + name);
@@ -88,42 +118,47 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
     // std::cout << histName << std::endl;
     TH1D* output = nullptr;
 
-    rootFile->cd("Uncertainties");
-    gDirectory->cd(name);
-
-    //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
-
-    for (auto subdir : *subdirectories) {
-        if (! envelope) gDirectory->cd(subdir);
+    for (unsigned i = 0; i < inputfiles.size(); i++) {
+        TFile* currFile = inputfiles[i];
+        std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
         
-        // std::cout << subdir << std::endl;
-        if (! gDirectory->GetDirectory(uncName.c_str())) {
-            std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found. Should it?" << std::endl;
-            exit(2);
-        }
+        currFile->cd("Uncertainties");
+        gDirectory->cd(name);
 
-        gDirectory->cd(uncName.c_str());
-        gDirectory->cd(upOrDown.c_str());
-        
-        TH1D* inter;
-        gDirectory->GetObject(histName, inter);
-        if (inter != nullptr) {
-            if (output == nullptr) {
-                output = new TH1D(*inter);
-            } else {
-                output->Add(inter);
+        //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
+
+        for (auto subdir : *subdirectories) {
+            if (! envelope) gDirectory->cd(subdir);
+            
+            // std::cout << subdir << std::endl;
+            if (! gDirectory->GetDirectory(uncName.c_str())) {
+                std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found. Should it?" << std::endl;
+                exit(2);
             }
-        } else {
-            std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
+
+            gDirectory->cd(uncName.c_str());
+            gDirectory->cd(upOrDown.c_str());
+            
+            TH1D* inter;
+            gDirectory->GetObject(histName, inter);
+            if (inter != nullptr) {
+                if (output == nullptr) {
+                    output = new TH1D(*inter);
+                } else {
+                    output->Add(inter);
+                }
+            } else {
+                std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
+            }
+
+            //std::cout << output->Integral() << "\t";
+
+            gDirectory->cd("..");
+            gDirectory->cd("..");
+            gDirectory->cd("..");
+            
+            if (envelope) break;
         }
-
-        //std::cout << output->Integral() << "\t";
-
-        gDirectory->cd("..");
-        gDirectory->cd("..");
-        gDirectory->cd("..");
-        
-        if (envelope) break;
     }
 
     if (output == nullptr) {
@@ -155,34 +190,40 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
 TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
     TH2D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
-    rootFile->cd("Nominal");
-    if (! gDirectory->GetDirectory(name)) {
-        std::cout << "ERROR: Process " << name << " not found." << std::endl;
-        std::cout << "Trying rootfile itself..." << std::endl;
-        rootFile->cd();
+    for (unsigned i = 0; i < inputfiles.size(); i++) {
+        TFile* currFile = inputfiles[i];
+        std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
 
+        currFile->cd("Nominal");
         if (! gDirectory->GetDirectory(name)) {
-            std::cout << "ERROR: Process still " << name << " not found." << std::endl;
-            exit(2);
+            std::cout << "ERROR: Process " << name << " not found." << std::endl;
+            std::cout << "Trying rootfile itself..." << std::endl;
+            currFile->cd();
+
+            if (! gDirectory->GetDirectory(name)) {
+                std::cout << "ERROR: Process still " << name << " not found." << std::endl;
+                exit(2);
+            }
         }
-    }
-    gDirectory->cd(name);
+        gDirectory->cd(name);
 
-    for(auto subdir : *subdirectories) {
-        gDirectory->cd(subdir);
-        
-        TH2D* inter;
-        gDirectory->GetObject(histName, inter);
+        for(auto subdir : *subdirectories) {
+            gDirectory->cd(subdir);
+            
+            TH2D* inter;
+            gDirectory->GetObject(histName, inter);
 
-        if (output == nullptr) {
-            output = new TH2D(*inter);
-        } else {
-            output->Add(inter);
+            if (output == nullptr) {
+                output = new TH2D(*inter);
+            } else {
+                output->Add(inter);
+            }
+
+            // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
+
+            gDirectory->cd("..");
         }
 
-        // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
-
-        gDirectory->cd("..");
     }
 
     output->SetName(histName + name);

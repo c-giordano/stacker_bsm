@@ -6,6 +6,7 @@
 // Takes TString and makes it prettier (e.g. tt-> t#Bar{t}) for legend
 TString cleanTString(TString& toClean);
 bool stringContains(std::string& str, char toFind);
+bool stringContainsSubstr( const std::string& s, const std::string& substring );
 void cleanWhitespace(std::string& str);
 std::string removeExt(std::string& str);
 std::string getChannel(std::string& str);

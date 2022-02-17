@@ -24,6 +24,10 @@ bool stringContains(std::string& str, char toFind) {
     }
 }
 
+bool stringContainsSubstr( const std::string& s, const std::string& substring ){
+    return ( s.find( substring ) != std::string::npos );
+}
+
 void cleanWhitespace(std::string& str) {
     size_t start = str.find_first_not_of(" \t");
     if (start == std::string::npos) {

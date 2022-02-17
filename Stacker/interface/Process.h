@@ -23,15 +23,18 @@ class Process {
 
         TString name;
         TString cleanedName;
-        std::vector<const char*>* subdirectories;
+        std::vector<std::vector<const char*>*> subdirectoriesPerFile;
         Color_t color;
         TFile* rootFile;
+        std::vector<TFile*> inputfiles;
         TFile* outputFile;
 
         bool isSignal;
         bool isData;
     public:
         Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data);
+        Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data);
+        
         ~Process() {};
 
         void setNext(Process* newNext) {next = newNext;}
