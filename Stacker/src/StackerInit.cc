@@ -34,6 +34,12 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     inputfile = new TFile(cmdArgs[0].c_str(), "read");
     processes = new ProcessList();
 
+    if (runT2B) {
+        pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
+    } else {
+        pathToOutput = "Output/";
+    }
+
     ReadSettingFile(cmdArgs[settingFileNb]);
 }
 
