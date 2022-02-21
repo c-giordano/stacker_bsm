@@ -10,7 +10,7 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
         isData = true;
     }
 
-    initDatacard();
+    //initDatacard();
 }
 
 

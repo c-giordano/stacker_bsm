@@ -70,7 +70,10 @@ int main(int argc, char const *argv[])
         }
         if (currentElement == "-RD") stacker.readData(argvStr[i+1]);
         
-        if (currentElement == "-DC") stacker.setOnlyDC(true);
+        if (currentElement == "-DC") {
+            stacker.initDatacard();
+            stacker.setOnlyDC(true);
+        }
         
         if (currentElement == "-IP") stacker.drawAllUncertaintyImpacts();
     }
