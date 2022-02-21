@@ -354,7 +354,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
     }
     std::cout << histForDC.size() << std::endl;
     dcwriter = new DatacardWriter(yearID, processes, histForDC, outputfile, dataProcess);
-    dcwriter->writeUncertainties(processes->getUncHead());
+    //dcwriter->writeUncertainties(processes->getUncHead());
 }
 
 void Stacker::SaveToVault(std::string& filename) {

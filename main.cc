@@ -71,11 +71,15 @@ int main(int argc, char const *argv[])
         if (currentElement == "-RD") stacker.readData(argvStr[i+1]);
         
         if (currentElement == "-DC") {
-            stacker.initDatacard();
             stacker.setOnlyDC(true);
+            stacker.initDatacard();
         }
         
-        if (currentElement == "-IP") stacker.drawAllUncertaintyImpacts();
+        if (currentElement == "-IP") {
+            stacker.drawAllUncertaintyImpacts();
+            stacker.SaveToVault(argvStr[0]);
+            exit(0);
+        }
     }
 
     stacker.printAllHistograms();

@@ -158,7 +158,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
                     output->Add(inter);
                 }
             } else {
-                std::cout << "Histogram " << histName << "not found for uncertainty " << uncName << " in " << subdir << ". Should it exist?" << std::endl;
+                std::cout << "Histogram " << histName << " not found for uncertainty " << uncName << " in " << subdir << " for process" << getName().Data() << ". Should it exist?" << std::endl;
             }
 
             //std::cout << output->Integral() << "\t";
