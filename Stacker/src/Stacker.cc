@@ -8,6 +8,7 @@
 
 #include <TKey.h>
 
+#include <filesystem>
 
 Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     // Constructer should either call parser or take output of parser
@@ -82,7 +83,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
             exit(1);
         }
 
-        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile, outputfile, signal, data);
+        processes->addProcess(processNameAlt, std::stoi(colorString), inputfile, outputfile, signal, data, false);
     }
 
     while (getline(infile, line)) {
@@ -104,6 +105,7 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
             setDrawOpt(currSetAndVal.second);
         } else if (currSetAndVal.first == "OutFolder" && runT2B) {
             pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
+            altOutput = currSetAndVal.second;
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
         } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {
@@ -169,7 +171,7 @@ void Stacker::readData(std::string& dataFile) {
 
     TString name = "Data";
 
-    dataProcess = new Process(name, kBlack, inputfile, outputfile, false, true);
+    dataProcess = new Process(name, kBlack, inputfile, outputfile, false, true, false);
 }
 
 
@@ -353,4 +355,20 @@ void Stacker::readUncertaintyFile(std::string& filename) {
     std::cout << histForDC.size() << std::endl;
     dcwriter = new DatacardWriter(yearID, processes, histForDC, outputfile, dataProcess);
     dcwriter->writeUncertainties(processes->getUncHead());
+}
+
+void Stacker::SaveToVault(std::string& filename) {
+    if (! runT2B) return;
+
+    size_t firstPos = filename.find_first_of('_');
+    size_t lastPos = filename.find_last_of('_');
+    std::string datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
+
+    std::string baseDir = "/user/nivanden/public_html/";
+    std::string subDir = removeOccurencesOf(altOutput, "Most_recent_plots/");
+
+    int response = std::system( ("mkdir " + baseDir + "PreviousVersions/" + subDir + datestring).c_str());
+    if (response < 0) std::cout << "copying failed" << std::endl;
+    response = std::system( ("cp -R " + pathToOutput + ". " + baseDir + "PreviousVersions/" + subDir + datestring + "/").c_str());    
+    if (response < 0) std::cout << "copying failed" << std::endl;
 }

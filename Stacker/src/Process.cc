@@ -1,6 +1,6 @@
 #include "../interface/Process.h"
 
-Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data) : name(procName), rootFile(procInputfile),
+Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data, bool oldStuff) : name(procName), rootFile(procInputfile),
     outputFile(outputFile), isSignal(signal), isData(data) {
     color = procColor;
     cleanedName = cleanTString(name);
@@ -21,19 +21,25 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
             }
         }
 
-        gDirectory->cd(procName);
         std::vector<const char*>* subdirectories = new std::vector<const char*>;
 
-        TList* folders = gDirectory->GetListOfKeys();
+        if (procName == "nonPrompt" && oldStuff) {
+            subdirectories->push_back("../nonPrompt");
+        } else {
 
-        for(const auto&& obj: *folders) {
-            subdirectories->push_back(obj->GetName());
+            gDirectory->cd(procName);
+
+            TList* folders = gDirectory->GetListOfKeys();
+
+            for(const auto&& obj: *folders) {
+                subdirectories->push_back(obj->GetName());
+            }
         }
         subdirectoriesPerFile.push_back(subdirectories);
     }
 }
 
-Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data) : name(procName), rootFile(inputfiles[0]),
+Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data, bool oldStuff) : name(procName), rootFile(inputfiles[0]),
     inputfiles(inputfiles), outputFile(outputFile), isSignal(signal), isData(data) {
     color = procColor;
     cleanedName = cleanTString(name);
@@ -51,14 +57,18 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
                 exit(2);
             }
         }
-
-        gDirectory->cd(procName);
         std::vector<const char*>* subdirectories = new std::vector<const char*>;
 
-        TList* folders = gDirectory->GetListOfKeys();
+        if (procName == "nonPrompt" && oldStuff) {
+            subdirectories->push_back("../nonPrompt");
+        } else {
+            gDirectory->cd(procName);
 
-        for(const auto&& obj: *folders) {
-            subdirectories->push_back(obj->GetName());
+            TList* folders = gDirectory->GetListOfKeys();
+
+            for(const auto&& obj: *folders) {
+                subdirectories->push_back(obj->GetName());
+            }
         }
         subdirectoriesPerFile.push_back(subdirectories);
     }
@@ -113,7 +123,7 @@ TH1D* Process::getHistogram(TString& histName) {
 }
 
 TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
-    TString histName = hist->getID() + "_" + uncName + "_" + upOrDown;
+    TString histName = hist->getID(); // + "_" + uncName + "_" + upOrDown;
     TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
     TH1D* output = nullptr;

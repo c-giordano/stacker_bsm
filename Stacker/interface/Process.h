@@ -32,8 +32,8 @@ class Process {
         bool isSignal;
         bool isData;
     public:
-        Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data);
-        Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data);
+        Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data, bool OldStuff);
+        Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data, bool OldStuff);
         
         ~Process() {};
 

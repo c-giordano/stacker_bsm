@@ -81,5 +81,6 @@ int main(int argc, char const *argv[])
     stacker.printAllHistograms();
     stacker.printAll2DHistograms();
 
+    stacker.SaveToVault(argvStr[0]);
     return 0;
 }

@@ -25,6 +25,8 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
         settingFileNb++;
     }
 
+    if (cmdArgs[2] == "OLD") oldStuff = true;
+
     std::string outputfilename = (settingFileNb > 1 ? "full" : cmdArgs[0]);
     yearID = getYearFromRootFile(outputfilename);
     outputfilename = "combineFiles/" + yearID + ".root";
@@ -86,7 +88,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             exit(1);
         }
 
-        processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data);
+        processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
     }
 
     while (getline(infile, line)) {
@@ -108,6 +110,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             setDrawOpt(currSetAndVal.second);
         } else if (currSetAndVal.first == "OutFolder" && runT2B) {
             pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
+            altOutput = currSetAndVal.second;
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
         } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {

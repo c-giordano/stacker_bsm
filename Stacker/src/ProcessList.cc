@@ -1,10 +1,10 @@
 #include "../interface/ProcessList.h"
 #include <iomanip>
 
-void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data) {
+void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
-    Process* brandNewObj = new Process(name, color, inputfile, outputfile, signal, data);
+    Process* brandNewObj = new Process(name, color, inputfile, outputfile, signal, data, oldStuff);
 
     if (tail) {
         brandNewObj->setPrev(tail);
@@ -17,10 +17,10 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* 
     }
 }
 
-void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data) {
+void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
-    Process* brandNewObj = new Process(name, color, inputfiles, outputfile, signal, data);
+    Process* brandNewObj = new Process(name, color, inputfiles, outputfile, signal, data, oldStuff);
 
     if (tail) {
         brandNewObj->setPrev(tail);

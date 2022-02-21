@@ -77,9 +77,11 @@ class Stacker {
         bool useData = false;
         bool fakeData = false;
         bool onlyDC = false;
+        bool oldStuff = false;
 
         bool runT2B = true;
         std::string pathToOutput;
+        std::string altOutput = "";
 
         bool isRatioPlot = false;
         bool isSignalLine = false;
@@ -138,6 +140,7 @@ class Stacker {
         void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first);
 
         void initDatacard() {dcwriter->initDatacard();}
+        void SaveToVault(std::string& filename);
 
 };
 

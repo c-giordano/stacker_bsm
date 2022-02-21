@@ -26,8 +26,8 @@ class ProcessList {
         ProcessList() = default;
         ~ProcessList();
 
-        void addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data);
-        void addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data);
+        void addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff);
+        void addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff);
 
         Uncertainty* addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile);
         
