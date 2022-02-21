@@ -139,7 +139,10 @@ class Stacker {
         void stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec);
         void stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first);
 
-        void initDatacard() {dcwriter->initDatacard();}
+        void initDatacard() {
+            dcwriter->initDatacard();
+            dcwriter->writeUncertainties(processes->getUncHead());
+        }
         void SaveToVault(std::string& filename);
 
 };
