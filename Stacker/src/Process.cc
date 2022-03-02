@@ -11,11 +11,8 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
         it->cd("Nominal");
 
         if (! gDirectory->GetDirectory(procName)) {
-            it->cd();
-            if (! gDirectory->GetDirectory(procName)) {
-                std::cout << "Process " << procName << " not found in " << it->GetName() << std::endl;
-                continue;
-            }
+            std::cout << "Process " << procName << " not found in " << it->GetName() << std::endl;
+            continue;
         }
 
         std::vector<const char*>* subdirectories = new std::vector<const char*>;
@@ -45,10 +42,7 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
         it->cd("Nominal");
 
         if (! gDirectory->GetDirectory(procName)) {
-            it->cd();
-            if (! gDirectory->GetDirectory(procName)) {
-                continue;
-            }
+            continue;
         }
         std::vector<const char*>* subdirectories = new std::vector<const char*>;
 
@@ -76,10 +70,7 @@ TH1D* Process::getHistogram(TString& histName) {
 
         currFile->cd("Nominal");
         if (! gDirectory->GetDirectory(name)) {
-            currFile->cd();
-            if (! gDirectory->GetDirectory(name)) {
-                continue;
-            }
+            continue;
         }
         gDirectory->cd(name);
 
