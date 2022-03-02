@@ -14,7 +14,7 @@ BROAD SETTINGS
 Lumi=HIST
 Drawopt=HIST
 OutFolder=Most_recent_plots/nominal/
-#RatioPlots=True
+RatioPlots=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions

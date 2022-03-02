@@ -360,6 +360,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
 void Stacker::SaveToVault(std::string& filename) {
     if (! runT2B) return;
 
+    filename = getFilename(filename);
     size_t firstPos = filename.find_first_of('_');
     size_t lastPos = filename.find_last_of('_');
     std::string datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
