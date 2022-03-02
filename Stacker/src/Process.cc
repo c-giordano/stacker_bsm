@@ -10,12 +10,15 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
     for (auto it : inputfiles) {
         it->cd("Nominal");
 
+        std::vector<const char*>* subdirectories = new std::vector<const char*>;
+
         if (! gDirectory->GetDirectory(procName)) {
             std::cout << "Process " << procName << " not found in " << it->GetName() << std::endl;
+            subdirectoriesPerFile.push_back(subdirectories);
             continue;
         }
 
-        std::vector<const char*>* subdirectories = new std::vector<const char*>;
+        //std::vector<const char*>* subdirectories = new std::vector<const char*>;
 
         if (procName == "nonPrompt" && oldStuff) {
             subdirectories->push_back("../nonPrompt");
@@ -41,10 +44,13 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
     for (auto it : inputfiles) {
         it->cd("Nominal");
 
+        std::vector<const char*>* subdirectories = new std::vector<const char*>;
+
         if (! gDirectory->GetDirectory(procName)) {
+            // std::cout << "Process " << procName << " not found in " << it->GetName() << std::endl;
+            subdirectoriesPerFile.push_back(subdirectories);
             continue;
         }
-        std::vector<const char*>* subdirectories = new std::vector<const char*>;
 
         if (procName == "nonPrompt" && oldStuff) {
             subdirectories->push_back("../nonPrompt");

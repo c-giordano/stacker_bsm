@@ -121,7 +121,11 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
     // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
-    gDirectory->cd(processes->getHead()->getName());
+    Process* curr = processes->getHead();
+    while (! gDirectory->GetDirectory(curr->getName())) {
+        curr = curr->getNext();
+    }
+    gDirectory->cd(curr->getName());
     gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
 
     TList* histogramsAvailable = gDirectory->GetListOfKeys();
