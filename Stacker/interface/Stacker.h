@@ -145,6 +145,8 @@ class Stacker {
         }
         void SaveToVault(std::string& filename);
 
+        void plotDifference(std::vector<std::string>& argvStr);
+
 };
 
 #endif

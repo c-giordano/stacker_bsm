@@ -80,6 +80,12 @@ int main(int argc, char const *argv[])
             stacker.SaveToVault(argvStr[0]);
             exit(0);
         }
+
+        if (currentElement == "-COMP") {
+            stacker.plotDifference(argvStr);
+
+            stacker.SaveToVault(argvStr[0]);
+        }
     }
 
     stacker.printAllHistograms();

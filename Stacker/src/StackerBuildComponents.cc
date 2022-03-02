@@ -21,6 +21,8 @@ TPad* Stacker::getPad(TString& histID, int position) {
 		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.24);
 		outputPad->SetTopMargin(margin);
 		outputPad->SetBottomMargin(0.4);
+	} else {
+		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 1.);
 	}
 
 	return outputPad;

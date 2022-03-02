@@ -11,13 +11,10 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
         it->cd("Nominal");
 
         if (! gDirectory->GetDirectory(procName)) {
-            std::cout << "ERROR: Process " << procName << " not found." << std::endl;
-            std::cout << "Trying rootfile itself..." << std::endl;
             it->cd();
-
             if (! gDirectory->GetDirectory(procName)) {
-                std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
-                exit(2);
+                std::cout << "Process " << procName << " not found in " << it->GetName() << std::endl;
+                continue;
             }
         }
 
@@ -48,13 +45,9 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
         it->cd("Nominal");
 
         if (! gDirectory->GetDirectory(procName)) {
-            std::cout << "ERROR: Process " << procName << " not found." << std::endl;
-            std::cout << "Trying rootfile itself..." << std::endl;
             it->cd();
-
             if (! gDirectory->GetDirectory(procName)) {
-                std::cout << "ERROR: Process still " << procName << " not found." << std::endl;
-                exit(2);
+                continue;
             }
         }
         std::vector<const char*>* subdirectories = new std::vector<const char*>;
@@ -83,13 +76,9 @@ TH1D* Process::getHistogram(TString& histName) {
 
         currFile->cd("Nominal");
         if (! gDirectory->GetDirectory(name)) {
-            std::cout << "ERROR: Process " << name << " not found." << std::endl;
-            std::cout << "Trying rootfile itself..." << std::endl;
             currFile->cd();
-
             if (! gDirectory->GetDirectory(name)) {
-                std::cout << "ERROR: Process still " << name << " not found." << std::endl;
-                exit(2);
+                continue;
             }
         }
         gDirectory->cd(name);
@@ -133,6 +122,10 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
         
         currFile->cd("Uncertainties");
+
+        if (! gDirectory->GetDirectory(name)) {
+            continue;
+        }
         gDirectory->cd(name);
 
         //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
@@ -206,14 +199,7 @@ TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
 
         currFile->cd("Nominal");
         if (! gDirectory->GetDirectory(name)) {
-            std::cout << "ERROR: Process " << name << " not found." << std::endl;
-            std::cout << "Trying rootfile itself..." << std::endl;
-            currFile->cd();
-
-            if (! gDirectory->GetDirectory(name)) {
-                std::cout << "ERROR: Process still " << name << " not found." << std::endl;
-                exit(2);
-            }
+            continue;
         }
         gDirectory->cd(name);
 

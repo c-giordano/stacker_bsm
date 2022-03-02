@@ -25,7 +25,7 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
         settingFileNb++;
     }
 
-    if (cmdArgs[2] == "OLD") oldStuff = true;
+    if (cmdArgs[cmdArgs.size()-1] == "OLD") oldStuff = true;
 
     std::string outputfilename = (settingFileNb > 1 ? "full" : cmdArgs[0]);
     yearID = getYearFromRootFile(outputfilename);
