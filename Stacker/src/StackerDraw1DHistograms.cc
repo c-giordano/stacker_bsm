@@ -74,6 +74,8 @@ void Stacker::printHistogram(Histogram* hist) {
     }
 
     canv->Print(fullPath + histID + ".png");
+    canv->Print(fullPath + histID + ".pdf");
+
 }
 
 

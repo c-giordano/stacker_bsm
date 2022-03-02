@@ -96,4 +96,6 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     }
 
     canvas->Print(fullPath + hist->getID() + ".png");
+    canvas->Print(fullPath + hist->getID() + ".pdf");
+
 }

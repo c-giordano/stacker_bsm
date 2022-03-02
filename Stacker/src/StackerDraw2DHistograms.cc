@@ -52,6 +52,7 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
     }
 
     canv->Print(fullPath + histID + ".png");
+    canv->Print(fullPath + histID + ".pdf");
 
     delete info;
 
