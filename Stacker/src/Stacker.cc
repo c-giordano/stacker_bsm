@@ -7,6 +7,7 @@
 #include <functional>
 
 #include <TKey.h>
+#include <TObjString.h>
 
 #include <filesystem>
 
@@ -361,9 +362,19 @@ void Stacker::SaveToVault(std::string& filename) {
     if (! runT2B) return;
 
     filename = getFilename(filename);
-    size_t firstPos = filename.find_first_of('_');
-    size_t lastPos = filename.find_last_of('_');
-    std::string datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
+    std::string datestring;
+    if (inputfile->GetListOfKeys()->Contains("Timestamp")) {
+        TObjString* ts, *br;
+        inputfile->GetObject( "Timestamp" , ts);
+        inputfile->GetObject( "Branch" , br);
+
+        datestring = std::string(br->GetString().Data()) + "_" + std::string(ts->GetString().Data());
+    } else {
+        size_t firstPos = filename.find_first_of('_');
+        size_t lastPos = filename.find_last_of('_');
+
+        datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
+    }
 
     std::string baseDir = "/user/nivanden/public_html/";
     std::string subDir = removeOccurencesOf(altOutput, "Most_recent_plots/");

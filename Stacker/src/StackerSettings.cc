@@ -14,13 +14,45 @@ void Stacker::setLumi(std::string& lumiSetting) {
     if(inputfile->GetListOfKeys()->Contains("IntLumi")) {
         TH1F* lumiHist;
         inputfile->GetObject("IntLumi", lumiHist);
+        
+        std::map<std::string, double> takenEras; // era and lumi
 
         for (unsigned i = 1; i < inputfiles.size(); i++) {
+            // get filename
+            // get year from filename
+            // put in map together with lumi, only add if not present
+
             TFile* it = inputfiles[i];
             it->cd();
             TH1F* inter;
             it->GetObject("IntLumi", inter);
-            lumiHist->Add(inter);
+
+            std::string currentEra = it->GetName();
+            currentEra = getFilename(currentEra);
+            if (! stringContainsSubstr(currentEra, "_201")) {
+                lumiHist->Add(inter);
+                continue;
+            }
+
+            std::vector<std::string> eraSplit = split(currentEra, "_");
+            for (auto it : eraSplit) {
+                if (stringContainsSubstr(it, "201")) {
+                    currentEra = it;
+                    break;
+                }
+            }
+
+            if ( takenEras.find(currentEra) == takenEras.end() ) {
+                lumiHist->Add(inter);
+                takenEras[currentEra] = inter->GetBinContent(1);
+                // not found
+            } else {
+                double comp = takenEras[currentEra];
+                if (inter->GetBinContent(1) != comp) {
+                    std::cerr << "Attention! Lumi in file " << it->GetName() << " does not match lumi in first file from this era" << std::endl;
+                }
+            }
+            // lumiHist->Add(inter);
         }
 
         std::stringstream stream;
