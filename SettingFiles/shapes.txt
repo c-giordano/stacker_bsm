@@ -13,7 +13,7 @@ BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST, NOSTACK
-OutFolder=Most_recent_plots/shapes/
+OutFolder=Most_recent_plots/Shapes/
 
 
 HISTOGRAMS
