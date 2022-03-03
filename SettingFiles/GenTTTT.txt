@@ -1,0 +1,11 @@
+# Processname       color       -> Processes in order: last to first
+TTTT                633         S
+
+BROAD SETTINGS
+# general settings
+Lumi=137.64
+Drawopt=HIST
+OutFolder=GenPlots/
+
+HISTOGRAMS
+# list of histgorams for which modified conditions are applied, together with the modified conditions
