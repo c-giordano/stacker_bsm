@@ -364,11 +364,12 @@ void Stacker::SaveToVault(std::string& filename) {
     filename = getFilename(filename);
     std::string datestring;
     if (inputfile->GetListOfKeys()->Contains("Timestamp")) {
-        TObjString* ts, *br;
+        TObjString* ts, *br, *an;
         inputfile->GetObject( "Timestamp" , ts);
         inputfile->GetObject( "Branch" , br);
+        inputfile->GetObject( "AN_Type" , an);
 
-        datestring = std::string(br->GetString().Data()) + "_" + std::string(ts->GetString().Data());
+        datestring = std::string(an->GetString().Data()) + "_" + std::string(br->GetString().Data()) + "_" + std::string(ts->GetString().Data());
     } else {
         size_t firstPos = filename.find_first_of('_');
         size_t lastPos = filename.find_last_of('_');
