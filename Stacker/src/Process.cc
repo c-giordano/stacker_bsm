@@ -189,7 +189,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
 
 TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
     TH2D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
-
+    
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];
         std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];

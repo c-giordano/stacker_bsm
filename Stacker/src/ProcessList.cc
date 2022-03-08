@@ -33,6 +33,38 @@ void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inpu
     }
 }
 
+void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+    // TODO: Create new process object
+    allProcessNames.push_back(name);
+    Process* brandNewObj = new ProcessSet(name, procNames, color, inputfile, outputfile, signal, data, oldStuff);
+
+    if (tail) {
+        brandNewObj->setPrev(tail);
+        tail->setNext(brandNewObj); // check if tail already exists
+    }
+    tail = brandNewObj;
+
+    if (! head) {
+        head = brandNewObj;
+    }
+}
+
+void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+    // TODO: Create new process object
+    allProcessNames.push_back(name);
+    Process* brandNewObj = new ProcessSet(name, procNames, color, inputfiles, outputfile, signal, data, oldStuff);
+
+    if (tail) {
+        brandNewObj->setPrev(tail);
+        tail->setNext(brandNewObj); // check if tail already exists
+    }
+    tail = brandNewObj;
+
+    if (! head) {
+        head = brandNewObj;
+    }
+}
+
 Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
     Uncertainty* brandNewObj = new Uncertainty(name, flat, envelope, corrProcess, eraSpec, processes, outputfile);
 

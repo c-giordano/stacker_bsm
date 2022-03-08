@@ -15,10 +15,10 @@ void Stacker::setLumi(std::string& lumiSetting) {
         TH1F* lumiHist;
         inputfile->GetObject("IntLumi", lumiHist);
         std::map<std::string, double> takenEras; // era and lumi
-        
 
         std::string initEra = inputfile->GetName();
         initEra = getFilename(initEra);
+
         if (stringContainsSubstr(initEra, "_201")) {
             std::vector<std::string> eraSplit = split(initEra, "_");
             for (auto it : eraSplit) {
@@ -74,6 +74,7 @@ void Stacker::setLumi(std::string& lumiSetting) {
         std::stringstream stream;
         stream << std::fixed << std::setprecision(2) << lumiHist->GetBinContent(1);
         intLumi = stream.str();
+        std::cout << "Lumi is " << intLumi << " fb^{-1}" << std::endl;
     } else {
         std::cout << "Luminosity not found. Are you sure it is supplied?" << std::endl;
         exit(1);

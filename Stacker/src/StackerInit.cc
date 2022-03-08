@@ -88,7 +88,23 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             exit(1);
         }
 
-        processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
+        // check for special stuff
+        std::string part;
+        if (stream >> part) {
+            std::cout << "NEW STUFF HAPPENS HERE" << std::endl;
+            // check if it contains a plus. If so, the current process must be modified to take into account multiple subdirectories
+            // maybe make a process object containing multiple processes
+            std::vector<std::string> processNamesStrings = split(part, "+");
+            std::vector<TString> processNamesSet;
+            for (auto it : processNamesStrings) {
+                processNamesSet.push_back(TString(it));
+            }
+
+            processes->addProcess(processNameAlt, processNamesSet, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
+
+        } else {
+            processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
+        }
     }
 
     while (getline(infile, line)) {
@@ -134,7 +150,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         if (std::string(((TKey*) obj)->GetClassName()) == "TH1D") {
             Histogram* hist = new Histogram(TString(obj->GetName()));
             histogramVec.push_back(hist);
-        } else {
+        } else if (std::string(((TKey*) obj)->GetClassName()) == "TH2D") {
             Histogram2D* hist = new Histogram2D(TString(obj->GetName()));
             histogramVec2D.push_back(hist);
         }

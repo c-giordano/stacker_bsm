@@ -2,6 +2,7 @@
 #define PROCESSLIST_H
 
 #include "Process.h"
+#include "ProcessSet.h"
 #include "Uncertainty.h"
 #include "Histogram.h"
 
@@ -28,6 +29,10 @@ class ProcessList {
 
         void addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff);
         void addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff);
+        
+        void addProcess(TString& name, std::vector<TString>& procNames, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff);
+        void addProcess(TString& name, std::vector<TString>& procNames, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff);
+
 
         Uncertainty* addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile);
         

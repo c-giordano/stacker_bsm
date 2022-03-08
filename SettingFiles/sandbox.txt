@@ -4,9 +4,10 @@ TTVV                851         B
 #ChargeMisID         882         B   
 #Rare                906         B   
 #nonPrompt           801         B   
-TTH                 803         B   
-TTZ                 407         B   
-TTW                 419         B   
+#TTH                 803         B   
+#TTZ                 407         B   
+#TTW                 419         B
+TTV                 419         B  TTH+TTW+TTZ
 TTTT                633         S
 
 BROAD SETTINGS

@@ -2,11 +2,12 @@
 TTVV                851         B
 Xgamma              593         B
 ChargeMisID         882         B   
-Rare                906         B   
-TTH                 803         B   
+#Rare                906         B   
+#TTH                 803         B   
 nonPrompt           801         B   
-TTZ                 407         B   
-TTW                 419         B   
+#TTZ                 407         B   
+#TTW                 419         B   
+TTV                419         B   TTW+TTZ+TTH
 TTTT                633         S
 
 BROAD SETTINGS
