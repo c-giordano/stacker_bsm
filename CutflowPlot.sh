@@ -9,7 +9,7 @@ filestring=""
 
 for e in ${eras[@]}; do
     for p in ${process[@]}; do
-        file=$(ls -t ../ewkino/_FourTopAnalysis/Output/Cutflow*$(e)*$(p)* | head -1)
+        file=$(ls -t ../ewkino/_FourTopAnalysis/Output/Cutflow*$e*$p* | head -1)
         filestring=${filestring}file
         filestring=${filestring}" "
     done
