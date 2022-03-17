@@ -53,7 +53,7 @@ int main(int argc, char const *argv[])
     std::vector< std::string > argvStr( &argv[1], &argv[0] + argc );
 
     Stacker stacker(argvStr);
-
+    bool savePrev = true;
     for (int i = 0; i < argc-1; i++) {
         std::string currentElement = argvStr[i];
         std::cout << "checking elements. Current one: " << currentElement << std::endl;
@@ -73,6 +73,7 @@ int main(int argc, char const *argv[])
         if (currentElement == "-DC") {
             stacker.setOnlyDC(true);
             stacker.initDatacard();
+            savePrev = false;
         }
         
         if (currentElement == "-IP") {
@@ -91,6 +92,6 @@ int main(int argc, char const *argv[])
     stacker.printAllHistograms();
     stacker.printAll2DHistograms();
 
-    stacker.SaveToVault(argvStr[0]);
+    if (savePrev) stacker.SaveToVault(argvStr[0]);
     return 0;
 }
