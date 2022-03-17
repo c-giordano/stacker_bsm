@@ -4,7 +4,7 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
     yearID(yearID), allProc(allProc), allHistograms(histVec), outfile(outfile)
 {   
     datacardName = "DC_" + yearID;
-
+    std::cout << datacardName << std::endl;
     if (dataProcNew != nullptr) {
         dataProc = dataProcNew;
         isData = true;
