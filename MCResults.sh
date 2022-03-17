@@ -30,5 +30,6 @@ for e in ${eras[@]}; do
     ./stacker_exec $filestring SettingFiles/main.txt -unc UncertaintyFiles/$e.txt -DC
 done
 
+cd combineFiles
 combineCards.py y16Pre=DC_2016PreVFP.txt y16Post=DC_2016PostVFP.txt y17=DC_2017.txt y18=DC_2018.txt > combinedDatacard.txt
 combine -M Significance combinedDatacard.txt -t -1 --expectSignal=1
