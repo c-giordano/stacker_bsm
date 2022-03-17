@@ -27,7 +27,7 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
 
     if (cmdArgs[cmdArgs.size()-1] == "OLD") oldStuff = true;
 
-    std::string outputfilename = (settingFileNb > 1 ? "full" : cmdArgs[0]);
+    std::string outputfilename = cmdArgs[0];
     yearID = getYearFromRootFile(outputfilename);
     outputfilename = "combineFiles/" + yearID + ".root";
     
