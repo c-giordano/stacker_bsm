@@ -7,7 +7,7 @@ void normalizeHistograms(std::vector<TH1D*>& histos) {
 }
 
 TH1D* sumVector(std::vector<TH1D*>& histoVec) {
-    TH1D* sum;
+    TH1D* sum = nullptr;
     for (unsigned i = 0; i < histoVec.size(); i++) {
         TH1D* currHist = histoVec[i];
         if (i == 0) {

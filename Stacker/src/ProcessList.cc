@@ -253,7 +253,7 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     double signalYield = 0.;
     double bkgYield = 0.;
 
-    //outfile->mkdir(histogramID);
+    if (hist->getPrintToFile()) outfile->mkdir(histogramID);
 
     if (verbose) std::cout << histogramID << std::endl;
 
@@ -272,8 +272,8 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
             std::cout << current->getName() << ": " << histToAdd->Integral() << " events" << std::endl;
         }
 
-        //outfile->cd(histogramID);
-        //histToAdd->Write(current->getName(), TObject::kOverwrite);
+        if (hist->getPrintToFile()) outfile->cd(histogramID);
+        if (hist->getPrintToFile()) histToAdd->Write(current->getName(), TObject::kOverwrite);
 
         current = current->getNext();
     }

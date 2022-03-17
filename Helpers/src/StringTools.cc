@@ -54,7 +54,7 @@ std::string getChannel(std::string& str) {
 
 std::string getFilename(std::string& str) {
     size_t split = str.find_last_of("/");
-
+    if (split == std::string::npos) return str;
     return str.substr(split);
 }
 
