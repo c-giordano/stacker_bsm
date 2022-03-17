@@ -15,6 +15,11 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     setTDRStyle();
 
     unsigned settingFileNb = 0;
+    bool era_16Pre = false;
+    bool era_16Post = false;
+    bool era_17 = false;
+    bool era_18 = false;
+
     for (auto it : cmdArgs) {
         // if string does not contain .root: break
         if (! stringContainsSubstr(it, ".root")) break;
@@ -22,24 +27,28 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
         TFile* newInputFile = new TFile(it.c_str(), "read");
         inputfiles.push_back(newInputFile);
 
+        if (stringContainsSubstr(it, "2016Pre")) era_16Pre = true;
+        if (stringContainsSubstr(it, "2016Post")) era_16Post = true;
+        if (stringContainsSubstr(it, "2017")) era_17 = true;
+        if (stringContainsSubstr(it, "2018")) era_18 = true;
+
         settingFileNb++;
     }
 
-    if (cmdArgs[cmdArgs.size()-1] == "OLD") oldStuff = true;
-
-    std::string outputfilename;
-    // basically split at _, loop from back to front and take year
-    std::vector< std::string > splitStuff = split(cmdArgs[0], "_");
-    for (unsigned i = splitStuff.size()-1; i >= 0; i--) {
-        std::string comp = splitStuff[i];
-        if (stringContainsSubstr(comp, "201")) {
-            outputfilename = comp;
-            break;
-        }
+    unsigned sumYears = unsigned(era_16Pre) + unsigned(era_16Post) + unsigned(era_17) + unsigned(era_18);
+    if (sumYears > 1 && ! (era_16Pre && era_16Post)) {
+        yearID = "AllEras";
+    } else  if (sumYears > 1) {
+        yearID = "2016";
+    } else {
+        if (era_16Pre) yearID = "2016PreVFP";
+        else if (era_16Post) yearID = "2016PostVFP";
+        else if (era_17) yearID = "2017";
+        else if (era_18) yearID = "2018";
+        else yearID = getYearFromRootFile(cmdArgs[0]);
     }
-
-    //yearID = getYearFromRootFile(outputfilename);
-    outputfilename = "combineFiles/" + yearID + ".root";
+    
+    std::string outputfilename = "combineFiles/" + yearID + ".root";
     
     outputfile = new TFile(outputfilename.c_str(), "recreate");
 
