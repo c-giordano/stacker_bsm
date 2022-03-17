@@ -27,8 +27,18 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
 
     if (cmdArgs[cmdArgs.size()-1] == "OLD") oldStuff = true;
 
-    std::string outputfilename = cmdArgs[0];
-    yearID = getYearFromRootFile(outputfilename);
+    std::string outputfilename;
+    // basically split at _, loop from back to front and take year
+    std::vector< std::string > splitStuff = split(cmdArgs[0], "_");
+    for (unsigned i = splitStuff.size()-1; i >= 0; i--) {
+        std::string comp = splitStuff[i];
+        if (stringContainsSubstr(comp, "201")) {
+            outputfilename = comp;
+            break;
+        }
+    }
+
+    //yearID = getYearFromRootFile(outputfilename);
     outputfilename = "combineFiles/" + yearID + ".root";
     
     outputfile = new TFile(outputfilename.c_str(), "recreate");
