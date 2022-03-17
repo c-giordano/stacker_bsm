@@ -8,7 +8,7 @@ nonPromptNorm: flat=1.3 AllEra=1.3 process=nonPrompt
 ChargeMisIDNorm: flat=1.3 AllEra=1.3 process=ChargeMisID
 TTVVNorm: flat=1.05 AllEra=1.05 process=TTVV
 XgammaNorm: flat=1.05 AllEra=1.05 process=Xgamma
-isrShape: shape process=AllMC uncorrelated
+#isrShape: shape process=AllMC uncorrelated
 fsrShape: shape process=AllMC uncorrelated
 electronReco: shape process=AllMC correlated
 muonIDStat: shape process=AllMC correlated corrEra
