@@ -3,6 +3,7 @@
 # combine datacards
 
 eras=("2016PreVFP" "2016PostVFP" "2017" "2018")
+erasAlt=("2016" "2017" "2018")
 process=("TTTT" "TTZ" "TTW" "TTH" "ttbar" "Xgamma" "Rare" "TTVV") 
 
 filestring=""
@@ -19,7 +20,7 @@ echo $filestring
 
 ./stacker_exec $filestring SettingFiles/main.txt -unc UncertaintyFiles/full.txt
 
-for e in ${eras[@]}; do
+for e in ${erasAlt[@]}; do
     filestring=""
     for p in ${process[@]}; do
         file=$(ls -t ../ewkino/_FourTopAnalysis/Output/*MCAll*$e*$p* | head -1)

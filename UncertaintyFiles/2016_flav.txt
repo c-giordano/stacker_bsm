@@ -9,27 +9,27 @@ ChargeMisIDNorm: flat=1.3 AllEra=1.3 process=ChargeMisID
 TTVVNorm: flat=1.05 AllEra=1.05 process=TTVV
 XgammaNorm: flat=1.05 AllEra=1.05 process=Xgamma
 # isrShape: shape process=AllMC uncorrelated
-# fsrShape: shape process=AllMC uncorrelated
-#electronReco: shape process=AllMC correlated
-#muonIDStat: shape process=AllMC correlated corrEra
-#muonIDSyst: shape process=AllMC correlated
-#electronIDStat: shape process=AllMC correlated corrEra
-#electronIDSyst: shape process=AllMC correlated
-#pileup: shape process=AllMC correlated
-#JER_1p93: shape process=AllMC correlated corrEra
-#JER_2p5: shape process=AllMC correlated corrEra
-#JEC: shape process=AllMC correlated
-#qcdScale: envelope process=AllMC correlated
-#pdfShapeVar: envelope process=AllMC correlated 
-#bTagShape_cferr1: shape process=AllMC correlated
-#bTagShape_cferr2: shape process=AllMC correlated
-#bTagShape_hf: shape process=AllMC correlated
-#bTagShape_hfstats1: shape process=AllMC correlated corrEra
-#bTagShape_hfstats2: shape process=AllMC correlated corrEra
-#bTagShape_lf: shape process=AllMC correlated
-#bTagShape_lfstats1: shape process=AllMC correlated corrEra
-#bTagShape_lfstats2: shape process=AllMC correlated corrEra
-#prefire: shape process=AllMC correlated
+fsrShape: shape process=AllMC uncorrelated
+electronReco: shape process=AllMC correlated
+muonIDStat: shape process=AllMC correlated corrEra
+muonIDSyst: shape process=AllMC correlated
+electronIDStat: shape process=AllMC correlated corrEra
+electronIDSyst: shape process=AllMC correlated
+pileup: shape process=AllMC correlated
+JER_1p93: shape process=AllMC correlated corrEra
+JER_2p5: shape process=AllMC correlated corrEra
+JEC: shape process=AllMC correlated
+qcdScale: envelope process=AllMC correlated
+pdfShapeVar: envelope process=AllMC correlated 
+bTagShape_cferr1: shape process=AllMC correlated
+bTagShape_cferr2: shape process=AllMC correlated
+bTagShape_hf: shape process=AllMC correlated
+bTagShape_hfstats1: shape process=AllMC correlated corrEra
+bTagShape_hfstats2: shape process=AllMC correlated corrEra
+bTagShape_lf: shape process=AllMC correlated
+bTagShape_lfstats1: shape process=AllMC correlated corrEra
+bTagShape_lfstats2: shape process=AllMC correlated corrEra
+prefire: shape process=AllMC correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
@@ -45,9 +45,13 @@ BDT_FinalresultSignal_TriClass_DLmm bdt_DLmm_sig
 BDT_FinalresultTTW_TriClass_DLmm bdt_DLmm_ttw
 BDT_FinalresultTTBar_TriClass_DLmm bdt_DLmm_ttbar
 
-BDT_FinalresultSignal_TriClass_3L bdt_3L_sig
-BDT_FinalresultTTW_TriClass_3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_3L bdt_3L_ttbar
+BDT_FinalresultSignal_TriClass_3LOSSF bdt_3LOSSF_sig
+BDT_FinalresultTTW_TriClass_3LOSSF bdt_3LOSSF_ttw
+BDT_FinalresultTTBar_TriClass_3LOSSF bdt_3LOSSF_ttbar
+
+BDT_FinalresultSignal_TriClass_3LnoOSSF bdt_3LNoOSSF_sig
+BDT_FinalresultTTW_TriClass_3LnoOSSF bdt_3LNoOSSF_ttw
+BDT_FinalresultTTBar_TriClass_3LnoOSSF bdt_3LNoOSSF_ttbar
 
 BDT_FinalresultSignal_TriClass_4L bdt_4L_sig
 BDT_FinalresultTTW_TriClass_4L bdt_4L_ttw
