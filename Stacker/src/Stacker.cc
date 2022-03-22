@@ -177,7 +177,7 @@ void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
         if (! stringContainsSubstr(cmdArgs[i], ".root")) break;
         
         TFile* newInputFile = new TFile(cmdArgs[i].c_str(), "read");
-        inputfiles.push_back(newInputFile);
+        inputFilesData.push_back(newInputFile);
     }
 
     dataProcess = new Process(name, kBlack, inputFilesData, outputfile, false, true, false);

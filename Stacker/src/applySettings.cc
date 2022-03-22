@@ -8,7 +8,7 @@ void Stacker::stackSettingsPreDraw(THStack* stack, std::vector<TH1D*>& histVec) 
     if (noStack) normalizeHistograms(histVec);
 }
 
-void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first) {
+void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, TH1* first, TH1* dataHist) {
     // Settings to be applied after drawing the THStack
 
     // Set X axis name
@@ -40,9 +40,17 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     if (noStack) {
         stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.5);
     } else if (hist->isLogscale()) {
-        stack->SetMaximum(stack->GetMaximum() * 20); 
+        if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
+            stack->SetMaximum(dataHist->GetMaximum() * 20); 
+        } else {
+            stack->SetMaximum(stack->GetMaximum() * 20); 
+        }
     } else {
-        stack->SetMaximum(stack->GetMaximum() * 1.5); 
+        if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
+            stack->SetMaximum(dataHist->GetMaximum() * 1.5); 
+        } else {
+            stack->SetMaximum(stack->GetMaximum() * 1.5); 
+        }
     }
 
     // Set logscale if desired

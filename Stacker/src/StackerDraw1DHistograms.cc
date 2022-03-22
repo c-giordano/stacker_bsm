@@ -91,7 +91,7 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
 
     histStack->Draw(drawOpt.c_str());
 
-    stackSettingsPostDraw(pad, histStack, hist, histVec[0]);
+    stackSettingsPostDraw(pad, histStack, hist, histVec[0], data);
 
     TH1D* allHistograms = sumVector(histVec);
     TH1D* totalUnc = nullptr;
