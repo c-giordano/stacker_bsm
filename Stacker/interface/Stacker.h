@@ -110,7 +110,7 @@ class Stacker {
         }
         void setData(bool dataExists) {useData = dataExists;}
         bool getData() {return useData;}
-        void readData(std::string& dataFile);
+        void readData(std::vector<std::string>& dataFile, unsigned i);
 
         void setFakeData(bool isFD) {fakeData = isFD;}
         bool getFakeData() {return fakeData;}

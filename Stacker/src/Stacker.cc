@@ -166,13 +166,21 @@ Stacker::Stacker(const char* rootFilename, std::string& settingFile) {
     }
 }
 
-void Stacker::readData(std::string& dataFile) {
+void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
     setData(true);
-    inputfile = new TFile(dataFile.c_str(), "read");
-
     TString name = "Data";
 
-    dataProcess = new Process(name, kBlack, inputfile, outputfile, false, true, false);
+    std::vector<TFile*> inputFilesData;
+
+    for (; i < cmdArgs.size(); i++) {
+        // if string does not contain .root: break
+        if (! stringContainsSubstr(cmdArgs[i], ".root")) break;
+        
+        TFile* newInputFile = new TFile(cmdArgs[i].c_str(), "read");
+        inputfiles.push_back(newInputFile);
+    }
+
+    dataProcess = new Process(name, kBlack, inputFilesData, outputfile, false, true, false);
 }
 
 

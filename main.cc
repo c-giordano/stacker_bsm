@@ -68,7 +68,7 @@ int main(int argc, char const *argv[])
             stacker.setFakeData(true);
             stacker.setData(true);
         }
-        if (currentElement == "-RD") stacker.readData(argvStr[i+1]);
+        if (currentElement == "-RD") stacker.readData(argvStr, i+1);
         
         if (currentElement == "-DC") {
             stacker.setOnlyDC(true);
