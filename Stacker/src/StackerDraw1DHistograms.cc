@@ -61,7 +61,13 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->cd();
 
     if (getData()) {
-        drawRatioData(hist, totalUnc, dataHistogram);
+        if (! totalUnc) {
+            TH1D* allHistograms = sumVector(histVec);
+            drawRatioData(hist, allHistograms, dataHistogram);
+
+        } else {
+            drawRatioData(hist, totalUnc, dataHistogram);
+        }
     } else {
         drawRatioMC(hist, histVec, *signalVector);
     }
