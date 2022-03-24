@@ -102,8 +102,8 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
         for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
             double statError = allHistograms->GetBinError(bin);
             double systError = (*sysUnc)->GetBinContent(bin); // is already squared
-            //totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
-            totalUnc->SetBinError(bin, sqrt(systError) );
+            totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
+            //totalUnc->SetBinError(bin, sqrt(systError) );
 
             //std::cout << totalUnc->GetBinError(bin) << "\t";
 

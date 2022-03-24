@@ -187,6 +187,48 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
     return output;
 }
 
+std::vector<std::shared_ptr<TH1D>> Process::GetAllVariations(Histogram* histogram, int nVars, std::string& uncName) {
+    TH1::AddDirectory(false);
+    // std::cout << histName << std::endl;
+    std::vector<std::shared_ptr<TH1D>> output;
+
+    for (unsigned i = 0; i < inputfiles.size(); i++) {
+        TFile* currFile = inputfiles[i];
+        
+        currFile->cd("Uncertainties");
+
+        if (! gDirectory->GetDirectory(name)) {
+            continue;
+        }
+        gDirectory->cd(name);
+
+        // std::cout << subdir << std::endl;
+        if (! gDirectory->GetDirectory(uncName.c_str())) {
+            std::cout << "ERROR: Uncertainty " << uncName << " in process " << name.Data() << " not found. Should it?" << std::endl;
+            exit(2);
+        }
+
+        gDirectory->cd(uncName.c_str());
+        
+        for (int i = 0; i < nVars; i++) {
+            TString histName = histogram->getID() + "__" + uncName + "_" + std::to_string(i) + "__" + name;
+
+            TH1D* inter;
+            gDirectory->GetObject(histName, inter);
+
+            if (output.size() < unsigned(nVars)) {
+                std::shared_ptr<TH1D> outputHist = std::make_shared<TH1D>(*inter);
+                output.push_back(outputHist);
+            } else {
+                output[i]->Add(inter);
+            }
+        }
+    }
+
+    return output;
+}
+
+
 TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
     TH2D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
     

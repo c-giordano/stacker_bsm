@@ -36,9 +36,9 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     }
 
     unsigned sumYears = unsigned(era_16Pre) + unsigned(era_16Post) + unsigned(era_17) + unsigned(era_18);
-    if (sumYears > 1 && ! (era_16Pre && era_16Post)) {
+    if (sumYears > 1) {
         yearID = "AllEras";
-    } else  if (sumYears > 1) {
+    } else  if (era_16Pre && era_16Post && !era_17 && !era_18) {
         yearID = "2016";
     } else {
         if (era_16Pre) yearID = "2016PreVFP";

@@ -386,7 +386,7 @@ void Stacker::SaveToVault(std::string& filename) {
             anStr = an->GetString().Data();
         }
         
-        datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr;
+        datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr + "_" + yearID;
     } else {
         size_t firstPos = filename.find_first_of('_');
         size_t lastPos = filename.find_last_of('_');

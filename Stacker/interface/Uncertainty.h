@@ -18,6 +18,7 @@ class Uncertainty {
         TString nameDown;
         bool flat;
         bool envelope;
+        bool buildEnvelope = true;
         bool correlatedAmongProcesses;
         bool eraSpecific;
         bool isBoth;
@@ -57,6 +58,12 @@ class Uncertainty {
         void setNext(Uncertainty* newNext) {next = newNext;}
 
         TH1D* getShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+        TH1D* getEnvelope(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+        TH1D* getSumSquaredEnvelope(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+
+        std::pair<TH1D*, TH1D*> buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
+        std::pair<TH1D*, TH1D*> buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
+
         std::pair<TH1D*, TH1D*> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head);
         TH1D* getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
         TH1D* getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
