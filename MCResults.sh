@@ -33,5 +33,5 @@ for e in ${eras[@]}; do
 done
 
 cd combineFiles
-combineCards.py y16Pre=DC_2016PreVFP.txt y16Post=DC_2016PostVFP.txt y17=DC_2017.txt y18=DC_2018.txt > combinedDatacard.txt
+combineCards.py y16Pre=DC_2016PreVFP_flav.txt y16Post=DC_2016PostVFP_flav.txt y17=DC_2017_flav.txt y18=DC_2018_flav.txt > combinedDatacard.txt
 combine -M Significance combinedDatacard.txt -t -1 --expectSignal=1
