@@ -412,7 +412,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     return ret;
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head) {
+std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists) {
     // Loop processes, ask to add stuff
     Process* current = head;
     TString histogramID = histogram->getID();
@@ -442,8 +442,23 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             histCount++;
             current = current->getNext();
         }
-        TH1D* upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
-        TH1D* downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+
+        TH1D* upVar = nullptr;
+        TH1D* downVar = nullptr;
+        TH1D* histNominal = nominalHists[histCount];
+
+        if (! envelope && ! buildEnvelope) {
+            upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+            downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+        } else if (name == "pdfShapeVar") {
+            std::pair<TH1D*, TH1D*> histVars = buildSumSquaredEnvelopeForProcess(histogram, current, histNominal);
+            upVar = histVars.first;
+            downVar = histVars.second;
+        } else {
+            std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
+            upVar = histVars.first;
+            downVar = histVars.second;
+        }
 
         if (upVarReturn == nullptr) {
             upVarReturn = new TH1D(*upVar);

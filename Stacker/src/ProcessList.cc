@@ -283,7 +283,7 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     return histVec;
 }
 
-std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(Histogram* hist) {
+std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(Histogram* hist, std::vector<TH1D*>& nominalHists) {
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
     std::map<std::string, std::pair<TH1D*, TH1D*>> returnValue;
@@ -293,7 +293,7 @@ std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(
             continue;
         }
         // getShapeUncertainty or apply flat uncertainty
-        std::pair<TH1D*, TH1D*> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head);
+        std::pair<TH1D*, TH1D*> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head, nominalHists);
 
         returnValue[currUnc->getName()] = newUncertainty;
 

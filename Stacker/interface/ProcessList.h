@@ -47,7 +47,7 @@ class ProcessList {
         std::map<TString, bool> printHistograms(Histogram* hist, TFile* outfile, bool isData, Process* dataProc);
         std::vector<TH2D*> fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile);
 
-        std::map<std::string, std::pair<TH1D*, TH1D*>> UpAndDownHistograms(Histogram* hist);
+        std::map<std::string, std::pair<TH1D*, TH1D*>> UpAndDownHistograms(Histogram* hist, std::vector<TH1D*>& nominalHists);
         std::vector<TH1D*> CreateHistogramAllProcesses(Histogram* hist);
 
         void setVerbosity(bool verbosity) {verbose = verbosity;}

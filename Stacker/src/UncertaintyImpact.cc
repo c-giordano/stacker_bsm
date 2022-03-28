@@ -33,7 +33,7 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     // generate vector now with uncertainties in the correct way that i need
     // idk what to do now
     std::vector<TH1D*> nominalHists = processes->CreateHistogramAllProcesses(hist);
-    std::map<std::string, std::pair<TH1D*, TH1D*>> variations = processes->UpAndDownHistograms(hist);
+    std::map<std::string, std::pair<TH1D*, TH1D*>> variations = processes->UpAndDownHistograms(hist, nominalHists);
 
     TH1D* nominal = sumVector(nominalHists);
 
