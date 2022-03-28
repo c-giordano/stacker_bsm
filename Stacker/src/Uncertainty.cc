@@ -306,7 +306,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildSumSquaredEnvelopeForProcess(Histogram
         for(int j=1; j < currentVariation->GetNbinsX()+1; j++){
             // for each up and down variation, we fix the content
             double bincontentCurrent = currentVariation->GetBinContent(j) - nominalHist->GetBinContent(j);
-            totalVar->SetBinContent(j, bincontentCurrent * bincontentCurrent);
+            totalVar->SetBinContent(j, totalVar->GetBinContent(j) + bincontentCurrent * bincontentCurrent);
         }
     }
 
@@ -447,7 +447,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         TH1D* downVar = nullptr;
         TH1D* histNominal = nominalHists[histCount];
 
-        if (! envelope && ! buildEnvelope) {
+        if (! envelope || (envelope && ! buildEnvelope)) {
             upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
             downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
         } else if (name == "pdfShapeVar") {
