@@ -132,7 +132,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
             
             // std::cout << subdir << std::endl;
             if (! gDirectory->GetDirectory(uncName.c_str())) {
-                std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found. Should it?" << std::endl;
+                std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found in file " << currFile->GetName() << ". Should it?" << std::endl;
                 exit(2);
             }
 
