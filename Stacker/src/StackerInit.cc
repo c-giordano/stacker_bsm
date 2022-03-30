@@ -12,7 +12,6 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     // split between root files and settings file
 
     TH1::AddDirectory(false);
-    setTDRStyle();
 
     unsigned settingFileNb = 0;
     bool era_16Pre = false;
