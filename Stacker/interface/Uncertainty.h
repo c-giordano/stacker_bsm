@@ -63,6 +63,7 @@ class Uncertainty {
 
         std::pair<TH1D*, TH1D*> buildEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
         std::pair<TH1D*, TH1D*> buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
+        std::pair<TH1D*, TH1D*> buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, TH1D* nominalHist);
 
         std::pair<TH1D*, TH1D*> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists);
         TH1D* getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);

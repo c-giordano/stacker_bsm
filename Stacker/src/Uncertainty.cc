@@ -166,7 +166,8 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
         std::pair<TH1D*, TH1D*> histVars;
 
         if (name == "pdfShapeVar") {
-            histVars = buildSumSquaredEnvelopeForProcess(histogram, current, histNominal);
+            // alternative code is still available for building correct envelope here. Should in principle never be used anymore
+            histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
         } else {
             histVars = buildEnvelopeForProcess(histogram, current, histNominal);
         }
@@ -279,6 +280,30 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
     return {upVar, downVar};
 }
 
+std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram* histogram, Process* currentProcess, TH1D* nominalHist) {
+    // call this for each histogram (comes from earlier call. So only given histogram is relevant)
+    // loop per process
+    // get all n variations of this histogram for a given process, create each bincontent. 
+    // postprocess for given process
+
+    TH1D* upVar = new TH1D(*nominalHist);
+    TH1D* downVar = new TH1D(*nominalHist);
+
+    std::string up = "Up";
+    TH1D* totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+
+    // get all histograms in up variation -> Should automatically sum in process
+
+    for(int j=1; j < totalVar->GetNbinsX()+1; j++){
+        // for each up and down variation, we fix the content
+        totalVar->SetBinContent(j, sqrt(totalVar->GetBinContent(j)));
+    }
+    
+    upVar->Add(totalVar);
+    downVar->Add(totalVar, -1.);
+
+    return {upVar, downVar};
+}
 
 std::pair<TH1D*, TH1D*> Uncertainty::buildSumSquaredEnvelopeForProcess(Histogram* histogram, Process* currentProcess, TH1D* nominalHist) {
     // call this for each histogram (comes from earlier call. So only given histogram is relevant)
