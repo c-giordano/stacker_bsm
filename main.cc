@@ -1,5 +1,6 @@
 #include "Stacker/interface/Stacker.h"
 #include <iostream>
+#include "Styles/tdrStyle.h"
 /*
 
 int main(int argc, char const *argv[]) {
@@ -52,6 +53,8 @@ int main(int argc, char const *argv[])
     }
     std::vector< std::string > argvStr( &argv[1], &argv[0] + argc );
 
+    setTDRStyle();
+
     Stacker stacker(argvStr);
     bool savePrev = true;
     for (int i = 0; i < argc-1; i++) {
@@ -77,6 +80,7 @@ int main(int argc, char const *argv[])
         }
         
         if (currentElement == "-IP") {
+            std::cout << "Drawing impact of uncertainties" << std::endl;
             stacker.drawAllUncertaintyImpacts();
             stacker.SaveToVault(argvStr[0]);
             exit(0);
@@ -86,6 +90,10 @@ int main(int argc, char const *argv[])
             stacker.plotDifference(argvStr);
 
             stacker.SaveToVault(argvStr[0]);
+        }
+
+        if (currentElement == "-stats") {
+            gStyle->SetOptStat(11);
         }
     }
 

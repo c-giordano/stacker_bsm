@@ -178,8 +178,15 @@ void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
         
         TFile* newInputFile = new TFile(cmdArgs[i].c_str(), "read");
         inputFilesData.push_back(newInputFile);
-    }
 
+        newInputFile->cd("Nominal");
+        TString nameInter = gDirectory->GetListOfKeys()->At(0)->GetName();
+
+        if (name != nameInter && name != "something") {
+            name = nameInter;
+        }
+    }
+    std::cout << "Pulling out data under the name: " << name.Data() << std::endl;
     dataProcess = new Process(name, kBlack, inputFilesData, outputfile, false, true, false);
 }
 
