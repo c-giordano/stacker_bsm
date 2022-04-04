@@ -250,6 +250,8 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
 
     int nrBins = mcTotal->GetNbinsX();
     for (int i = 1; i < nrBins + 1; i++) {
+        dataTotal->SetBinError(i, sqrt(data->GetBinContent(i)) / uncHist->GetBinContent(i));
+
         if (mcTotal->GetBinContent(i) <= 0.0001) {
             mcTotal->SetBinError(i, 0.00001);
         } else {
@@ -263,12 +265,13 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
     line->Draw("SAME");
 
     if (dataTotal->GetMaximum() > 2. || dataTotal->GetMaximum() + sqrt(dataTotal->GetMaximum()) > 2.) {
-        dataTotal->SetMaximum(2.5); 
     }
 
     if (dataTotal->GetMinimum() < 0. || dataTotal->GetMinimum() - sqrt(dataTotal->GetMinimum()) < 0.) {
-        dataTotal->SetMinimum(0.5); 
     }
+
+    dataTotal->SetMaximum(2.45); 
+    dataTotal->SetMinimum(0.5);
 
     smallPad->Update();
     smallPad->Modified();
