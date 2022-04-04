@@ -5,7 +5,7 @@
 eras=("2016PreVFP" "2016PostVFP" "2017" "2018")
 erasAlt=("2016" "2017" "2018")
 # make  sure this stays the same or find a better solution
-process=("TTTT" "TTZ" "TTW" "TTH" "ttbar" "Xgamma" "Rare_0" "Rare_1" "Rare_2" "Rare_3" "Rare_4" "Rare_5" "TTVV_0" "TTVV_1") 
+process=("TTTT_0" "TTZ_0" "TTW_0" "TTH_0" "ttbar_0" "Xgamma_0" "Xgamma_1" "Rare_0" "Rare_1" "Rare_2" "Rare_3" "Rare_4" "Rare_5" "Rare_6" "Rare_7" "Rare_8" "Rare_9" "TTVV_0" "TTVV_1") 
 
 filestring=""
 
@@ -33,5 +33,5 @@ for e in ${eras[@]}; do
 done
 
 cd combineFiles
-combineCards.py y16Pre=DC_2016PreVFP_flav.txt y16Post=DC_2016PostVFP_flav.txt y17=DC_2017_flav.txt y18=DC_2018_flav.txt > combinedDatacard.txt
+combineCards.py y16Pre=DC_2016PreVFP.txt y16Post=DC_2016PostVFP.txt y17=DC_2017.txt y18=DC_2018.txt > combinedDatacard.txt
 combine -M Significance combinedDatacard.txt -t -1 --expectSignal=1
