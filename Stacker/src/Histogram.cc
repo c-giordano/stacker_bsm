@@ -43,4 +43,24 @@ void Histogram::readSetting(std::string& setting, std::pair<std::string, std::st
         }
         return;
     }
+
+    if (setting == "rebin") {
+        RebinFixed = std::stoi(currSetAndVal.second);
+    }
+
+    if (setting == "rebinVar") {
+        std::istringstream stream(currSetAndVal.second);
+        std::string bin;
+        xBinLabels = new std::vector<std::string>;
+        getline(stream, bin, ',');
+
+        RebinFixed = std::stoi(bin);
+        RebinVar = new double[RebinFixed];
+        int currEntry = 0;
+        while (getline(stream, bin, ',')) {
+            RebinVar[currEntry] = std::stod(bin);
+            currEntry++;
+        }
+        return;
+    }
 }

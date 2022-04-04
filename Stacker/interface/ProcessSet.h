@@ -18,7 +18,7 @@ class ProcessSet : public Process {
         ~ProcessSet() {};
 
         // overloading of getHistogram functions which basically does the same but sums over all the thingies?
-        virtual TH1D* getHistogram(TString& histName);
+        virtual TH1D* getHistogram(Histogram* histogram);
         virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope);
 
         virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);

@@ -21,6 +21,9 @@ class Histogram {
         std::vector<std::string>* xBinLabels = nullptr;
 
         std::map<TString, bool> relevance;
+
+        int RebinFixed = 1;
+        double* RebinVar = nullptr;
     public:
         Histogram(TString histID);
         Histogram(TString histID, bool requireLogScale);
@@ -55,6 +58,9 @@ class Histogram {
         std::map<TString, bool> getRelevance() {return relevance;}
         bool isRelevant(TString& entry) {return relevance[entry];}
 
+        bool HasRebin() const {if (RebinVar || RebinFixed != 1) return true; else return false;}
+        double* GetRebinVar() {return RebinVar;}
+        int GetRebin() {return RebinFixed;}
 };
 
 //bool searchHist(Histogram*, std::string&);

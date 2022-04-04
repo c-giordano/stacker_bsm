@@ -67,7 +67,8 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
     }
 }
 
-TH1D* Process::getHistogram(TString& histName) {
+TH1D* Process::getHistogram(Histogram* histogram) {
+    TString histName = histogram->getID();
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
     for (unsigned i = 0; i < inputfiles.size(); i++) {
@@ -95,6 +96,15 @@ TH1D* Process::getHistogram(TString& histName) {
             // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
 
             gDirectory->cd("..");
+        }
+    }
+
+    if (histogram->HasRebin()) {
+        if (histogram->GetRebinVar() == nullptr) {
+            output->Rebin(histogram->GetRebin());
+        } else {
+            std::string newName = std::string(histName.Data() + name);
+            output = (TH1D*) output->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
         }
     }
 

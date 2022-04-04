@@ -20,11 +20,12 @@ ProcessSet::ProcessSet(TString& name, std::vector<TString>& procNames, int procC
 }
 
 
-TH1D* ProcessSet::getHistogram(TString& histName) {
+TH1D* ProcessSet::getHistogram(Histogram* histogram) {
     TH1D* output = nullptr;
+    TString histName = histogram->getID();
 
     for (auto it : subProcesses) {
-        TH1D* tmp = it->getHistogram(histName);
+        TH1D* tmp = it->getHistogram(histogram);
 
         if (output == nullptr) {
             output = tmp;

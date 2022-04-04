@@ -101,8 +101,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
-
-        TH1D* histToAdd = current->getHistogram(histogramID);
+        TH1D* histToAdd = current->getHistogram(hist);
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
         histVec.push_back(histToAdd);
@@ -198,7 +197,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
 
     while (current) {
 
-        TH1D* histToAdd = current->getHistogram(histogramID);
+        TH1D* histToAdd = current->getHistogram(hist);
         histVec.push_back(histToAdd);
 
         output[current->getName()] = (histToAdd->Integral() > 0);
@@ -235,7 +234,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         }
         allHistograms->Write("data_obs", TObject::kOverwrite);
     } else if (isData && hist->getPrintToFile()) {
-        TH1D* data = dataProc->getHistogram(histogramID);
+        TH1D* data = dataProc->getHistogram(hist);
         data->SetName("data_obs");
         data->SetTitle("data_obs");
         outfile->cd(hist->getCleanName().c_str());
@@ -310,7 +309,7 @@ std::vector<TH1D*> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
     TString histogramID = hist->getID();
 
     while (current) {
-        TH1D* histToAdd = current->getHistogram(histogramID);
+        TH1D* histToAdd = current->getHistogram(hist);
         histVec.push_back(histToAdd);
 
         current = current->getNext();

@@ -44,7 +44,7 @@ void Stacker::printHistogram(Histogram* hist) {
                 dataHistogram->SetBinError(bin, sqrt(dataHistogram->GetBinContent(bin)));
             }
         } else {
-            dataHistogram = dataProcess->getHistogram(histID);
+            dataHistogram = dataProcess->getHistogram(hist);
             dataHistogram->SetTitle("Data");
             dataHistogram->SetName("Data");
         }
@@ -250,6 +250,8 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
 
     int nrBins = mcTotal->GetNbinsX();
     for (int i = 1; i < nrBins + 1; i++) {
+        dataTotal->SetBinError(i, sqrt(data->GetBinContent(i)) / uncHist->GetBinContent(i));
+
         if (mcTotal->GetBinContent(i) <= 0.0001) {
             mcTotal->SetBinError(i, 0.00001);
         } else {
