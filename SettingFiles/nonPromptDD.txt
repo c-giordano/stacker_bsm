@@ -1,0 +1,20 @@
+# Processname       color       -> Processes in order: last to first
+#TTVV                851         B
+#Xgamma              593         B
+#ChargeMisID         882         B
+#Rare                906         B
+nonPrompt           801         B
+#TTH                 803         B
+#TTZ                 407         B
+#TTW                 419         B
+#TTTT                633         S
+
+BROAD SETTINGS
+# general settings
+Lumi=HIST
+Drawopt=HIST
+OutFolder=Most_recent_plots/nonPromptDD/
+RatioPlots=False
+
+HISTOGRAMS
+

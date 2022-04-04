@@ -265,12 +265,13 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
     line->Draw("SAME");
 
     if (dataTotal->GetMaximum() > 2. || dataTotal->GetMaximum() + sqrt(dataTotal->GetMaximum()) > 2.) {
-        dataTotal->SetMaximum(2.5); 
     }
 
     if (dataTotal->GetMinimum() < 0. || dataTotal->GetMinimum() - sqrt(dataTotal->GetMinimum()) < 0.) {
-        dataTotal->SetMinimum(0.5); 
     }
+
+    dataTotal->SetMaximum(2.45); 
+    dataTotal->SetMinimum(0.5);
 
     smallPad->Update();
     smallPad->Modified();
