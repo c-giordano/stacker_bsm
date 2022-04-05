@@ -297,6 +297,11 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                     if (it != relProcess.end()) {
                         relProcess.erase(it);
                     }
+
+                    std::vector<TString>::iterator it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptDD"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
                     
                     it = std::find(relProcess.begin(), relProcess.end(), TString("ChargeMisID"));
                     if (it != relProcess.end()) {
