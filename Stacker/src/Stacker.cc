@@ -381,36 +381,8 @@ void Stacker::readUncertaintyFile(std::string& filename) {
 void Stacker::SaveToVault(std::string& filename) {
     if (! runT2B) return;
 
-    filename = getFilename(filename);
-    std::string datestring;
-    if (inputfile->GetListOfKeys()->Contains("Timestamp")) {
-        TObjString* ts, *br, *an;
-        std::string brStr = "NA";
-        std::string anStr = "NA";
+    std::string baseDir = "/user/nivanden/public_html/" + altOutput + "/";
 
-        inputfile->GetObject( "Timestamp" , ts);
-        if (inputfile->GetListOfKeys()->Contains("Branch")) {
-            inputfile->GetObject( "Branch" , br);
-            brStr = br->GetString().Data();
-        }
-        if (inputfile->GetListOfKeys()->Contains("AN_Type")) {
-            inputfile->GetObject( "AN_Type" , an);
-            anStr = an->GetString().Data();
-        }
-        
-        datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr + "_" + yearID;
-    } else {
-        size_t firstPos = filename.find_first_of('_');
-        size_t lastPos = filename.find_last_of('_');
-
-        datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
-    }
-
-    std::string baseDir = "/user/nivanden/public_html/";
-    std::string subDir = removeOccurencesOf(altOutput, "Most_recent_plots/");
-
-    int response = std::system( ("mkdir " + baseDir + "PreviousVersions/" + subDir + datestring).c_str());
-    if (response < 0) std::cout << "copying failed" << std::endl;
-    response = std::system( ("cp -R " + pathToOutput + ". " + baseDir + "PreviousVersions/" + subDir + datestring + "/").c_str());    
+    int response = std::system( ("cp -R " + pathToOutput + ". " + baseDir).c_str());    
     if (response < 0) std::cout << "copying failed" << std::endl;
 }

@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <functional>
+#include <TObjString.h>
 
 #include <TKey.h>
 
@@ -144,6 +145,46 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         } else if (currSetAndVal.first == "OutFolder" && runT2B) {
             pathToOutput = "/user/nivanden/public_html/" + currSetAndVal.second;
             altOutput = currSetAndVal.second;
+
+            std::string filename = inputfile->GetName();
+            std::string filename = getFilename(filename);
+            std::string datestring;
+
+            if (inputfile->GetListOfKeys()->Contains("Timestamp")) {
+                TObjString* ts, *br, *an, *st;
+                std::string brStr = "NA";
+                std::string anStr = "NA";
+                std::string stStr = "NA";
+
+                inputfile->GetObject( "Timestamp" , ts);
+                if (inputfile->GetListOfKeys()->Contains("Branch")) {
+                    inputfile->GetObject( "Branch" , br);
+                    brStr = br->GetString().Data();
+                }
+                if (inputfile->GetListOfKeys()->Contains("AN_Type")) {
+                    inputfile->GetObject( "AN_Type" , an);
+                    anStr = an->GetString().Data();
+                }
+                if (inputfile->GetListOfKeys()->Contains("EventSelectionType")) {
+                    inputfile->GetObject( "EventSelectionType" , st);
+                    stStr = st->GetString().Data();
+                }
+                
+                datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr + "_" + stStr + "_" + yearID;
+            } else {
+                size_t firstPos = filename.find_first_of('_');
+                size_t lastPos = filename.find_last_of('_');
+
+                datestring = filename.substr(firstPos+1, lastPos-firstPos-1);
+            }
+
+            std::string baseDir = "/user/nivanden/public_html/PreviousVersions/";
+            std::string subDir = removeOccurencesOf(altOutput, "Most_recent_plots/");
+
+            int response = std::system( ("mkdir " + baseDir + subDir + datestring).c_str());
+            if (response < 0) std::cout << "mkdir failed" << std::endl;
+
+            pathToOutput = baseDir + subDir + datestring;
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
         } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {
