@@ -147,7 +147,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             altOutput = currSetAndVal.second;
 
             std::string filename = inputfile->GetName();
-            std::string filename = getFilename(filename);
+            filename = getFilename(filename);
             std::string datestring;
 
             if (inputfile->GetListOfKeys()->Contains("Timestamp")) {

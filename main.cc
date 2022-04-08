@@ -82,14 +82,14 @@ int main(int argc, char const *argv[])
         if (currentElement == "-IP") {
             std::cout << "Drawing impact of uncertainties" << std::endl;
             stacker.drawAllUncertaintyImpacts();
-            stacker.SaveToVault(argvStr[0]);
+            stacker.SaveToVault();
             exit(0);
         }
 
         if (currentElement == "-COMP") {
             stacker.plotDifference(argvStr);
 
-            stacker.SaveToVault(argvStr[0]);
+            stacker.SaveToVault();
         }
 
         if (currentElement == "-stats") {
@@ -100,6 +100,6 @@ int main(int argc, char const *argv[])
     stacker.printAllHistograms();
     stacker.printAll2DHistograms();
 
-    if (savePrev) stacker.SaveToVault(argvStr[0]);
+    if (savePrev) stacker.SaveToVault();
     return 0;
 }

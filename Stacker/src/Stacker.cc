@@ -378,7 +378,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
     //dcwriter->writeUncertainties(processes->getUncHead());
 }
 
-void Stacker::SaveToVault(std::string& filename) {
+void Stacker::SaveToVault() {
     if (! runT2B) return;
 
     std::string baseDir = "/user/nivanden/public_html/" + altOutput + "/";

@@ -143,7 +143,7 @@ class Stacker {
             dcwriter->initDatacard();
             dcwriter->writeUncertainties(processes->getUncHead());
         }
-        void SaveToVault(std::string& filename);
+        void SaveToVault();
 
         void plotDifference(std::vector<std::string>& argvStr);
 
