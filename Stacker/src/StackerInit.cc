@@ -184,7 +184,20 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             int response = std::system( ("mkdir " + baseDir + subDir + datestring).c_str());
             if (response < 0) std::cout << "mkdir failed" << std::endl;
 
-            pathToOutput = baseDir + subDir + datestring;
+            response = std::system( ("cp /user/nivanden/public_html/index.php " + baseDir + subDir + datestring).c_str());
+            if (response < 0) std::cout << "cp failed" << std::endl;
+
+
+            pathToOutput = baseDir + subDir + datestring + "/";
+
+            std::vector<std::string> subdirs = {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CRW", "CRO", "CRZ", "CRO-3L", "CRZ-4L"};
+            for (auto currSub : subdirs) {
+                response = std::system( ("mkdir " + baseDir + subDir + datestring + "/" + currSub).c_str());
+                if (response < 0) std::cout << "mkdir failed for " << currSub << std::endl;
+
+                response = std::system( ("cp /user/nivanden/public_html/index.php " + baseDir + subDir + datestring + "/" + currSub).c_str());
+                if (response < 0) std::cout << "cp failed" << std::endl;
+            }
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
         } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {
