@@ -71,6 +71,21 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
             procCount++;
             continue;
         }
+
+        if (histogram->HasRebin()) {
+            if (histogram->GetRebinVar() == nullptr) {
+                histUp->Rebin(histogram->GetRebin());
+                histDown->Rebin(histogram->GetRebin());
+            } else {
+                TString newNameUp = histUp->GetName();
+                histUp->SetName(newNameUp + TString("OLD"));
+                TString newNameDown = histUp->GetName();
+                histDown->SetName(newNameDown + TString("OLD"));
+                
+                histUp = (TH1D*) histUp->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
+                histDown = (TH1D*) histDown->Rebin(histogram->GetRebin(), newNameDown, histogram->GetRebinVar());
+            }
+        }
         // do stuff
         // anyway
         for (int bin = 1; bin < histNominal->GetNbinsX() + 1; bin++) {
@@ -256,6 +271,12 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
     TH1D* upVar = new TH1D(*nominalHist);
     TH1D* downVar = new TH1D(*nominalHist);
 
+    upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+    upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+
+    downVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
+    downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
+
     unsigned variations = 6;
 
     std::vector<std::shared_ptr<TH1D>> allHistogramVariations = currentProcess->GetAllVariations(histogram, variations, name);
@@ -276,6 +297,21 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
             }
         }
     }
+
+    if (histogram->HasRebin()) {
+        if (histogram->GetRebinVar() == nullptr) {
+            upVar->Rebin(histogram->GetRebin());
+            downVar->Rebin(histogram->GetRebin());
+        } else {
+            std::string newName = (histogram->getID() + currentProcess->getName() + TString(name + "Up")).Data();
+            upVar->SetName((newName + "OLD").c_str());
+            upVar = (TH1D*) upVar->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
+            newName = (histogram->getID() + currentProcess->getName() + TString(name + "Down")).Data();
+            downVar->SetName((newName + "OLD").c_str());
+            downVar = (TH1D*) downVar->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
+        }
+    }
+
 
     return {upVar, downVar};
 }
@@ -298,9 +334,24 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
         // for each up and down variation, we fix the content
         totalVar->SetBinContent(j, sqrt(totalVar->GetBinContent(j)));
     }
+
+    if (histogram->HasRebin()) {
+        if (histogram->GetRebinVar() == nullptr) {
+            totalVar->Rebin(histogram->GetRebin());
+        } else {
+            std::string newName = std::string(histogram->getID() + name + "Complete");
+            totalVar = (TH1D*) totalVar->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
+        }
+    }
     
     upVar->Add(totalVar);
     downVar->Add(totalVar, -1.);
+
+    upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+    upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+
+    downVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
+    downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
 
     return {upVar, downVar};
 }
