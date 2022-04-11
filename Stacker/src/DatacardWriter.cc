@@ -9,7 +9,6 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
         dataProc = dataProcNew;
         isData = true;
     }
-
     //initDatacard();
 }
 
@@ -21,6 +20,10 @@ void DatacardWriter::initDatacard() {
     writeShapeSource();
     writeDataObs();
     writeProcessHeader();
+
+    for (auto it : allHistograms) {
+        allHistogramTH1Ds.push_back(allProc->CreateHistogramAllProcesses(it));
+    }
 }
 
 void DatacardWriter::writeEmptyLine(unsigned length) {
@@ -154,7 +157,7 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
         }
 
         for (unsigned i=0; i < allHistograms.size(); i++) {
-            if (! uncertainty->isFlat()) uncertainty->printOutShapeUncertainty(allHistograms[i], allProc->getHead());
+            if (! uncertainty->isFlat()) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i]);
 
             std::stringstream interString;
 

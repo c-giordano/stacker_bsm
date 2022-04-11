@@ -180,14 +180,14 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
         if (output->GetBinContent(j) <= 0.) output->SetBinContent(j, 0.00001);
     }
 
-    if (hist->getPrintToFile()) {
-        outputFile->cd();
-        outputFile->cd((hist->getCleanName()).c_str());
-
-        gDirectory->cd((outputFolder + upOrDown).c_str());
-
-        output->Write(name);
-    }
+    //if (hist->getPrintToFile()) {
+    //    outputFile->cd();
+    //    outputFile->cd((hist->getCleanName()).c_str());
+//
+    //    gDirectory->cd((outputFolder + upOrDown).c_str());
+//
+    //    output->Write(name);
+    //}
 
     output->SetName(histName + name + TString(uncName + upOrDown));
     output->SetTitle(histName + name + TString(uncName + upOrDown));

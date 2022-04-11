@@ -46,7 +46,9 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
 
 TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
     TH1D* output = nullptr;
-    
+   // bool printToFile = hist->getPrintToFile();
+   // hist->setPrintToFile(false);
+
     for (auto it : subProcesses) {
         TH1D* tmp = it->getHistogramUncertainty(uncName, upOrDown, hist, outputFolder, envelope);
         
@@ -59,6 +61,16 @@ TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upO
 
     output->SetName(hist->getID() + getName() + TString(uncName + upOrDown));
     output->SetTitle(hist->getID() + getName() + TString(uncName + upOrDown));
+
+    //if (printToFile) {
+    //    GetOutputFile()->cd();
+    //    GetOutputFile()->cd((hist->getCleanName()).c_str());
+//
+    //    gDirectory->cd((outputFolder + upOrDown).c_str());
+//
+    //    output->Write(getName());
+    //    hist->setPrintToFile(printToFile);
+    //}
 
     return output;
 }

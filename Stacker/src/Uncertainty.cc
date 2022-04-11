@@ -79,7 +79,7 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
             } else {
                 TString newNameUp = histUp->GetName();
                 histUp->SetName(newNameUp + TString("OLD"));
-                TString newNameDown = histUp->GetName();
+                TString newNameDown = histDown->GetName();
                 histDown->SetName(newNameDown + TString("OLD"));
                 
                 histUp = (TH1D*) histUp->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
@@ -285,6 +285,17 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
         // loop all possible up and down variations
         // get histograms for current variation
         // combine in correct way
+
+        if (histogram->HasRebin()) {
+            if (histogram->GetRebinVar() == nullptr) {
+                currentVariation->Rebin(histogram->GetRebin());
+            } else {
+                std::string newName = currentVariation->GetName();
+                currentVariation->SetName((newName + "OLD").c_str());
+                currentVariation = std::make_shared<TH1D>(*(TH1D*) currentVariation->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar()));
+            }
+        }
+
         for(int j=1; j < currentVariation->GetNbinsX()+1; j++){
 
             // for each up and down variation, we fix the content
@@ -298,21 +309,6 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
         }
     }
 
-    if (histogram->HasRebin()) {
-        if (histogram->GetRebinVar() == nullptr) {
-            upVar->Rebin(histogram->GetRebin());
-            downVar->Rebin(histogram->GetRebin());
-        } else {
-            std::string newName = (histogram->getID() + currentProcess->getName() + TString(name + "Up")).Data();
-            upVar->SetName((newName + "OLD").c_str());
-            upVar = (TH1D*) upVar->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
-            newName = (histogram->getID() + currentProcess->getName() + TString(name + "Down")).Data();
-            downVar->SetName((newName + "OLD").c_str());
-            downVar = (TH1D*) downVar->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
-        }
-    }
-
-
     return {upVar, downVar};
 }
 
@@ -323,7 +319,12 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
     // postprocess for given process
 
     TH1D* upVar = new TH1D(*nominalHist);
+    upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+    upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
+
     TH1D* downVar = new TH1D(*nominalHist);
+    downVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
+    downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
 
     std::string up = "Up";
     TH1D* totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
@@ -346,12 +347,6 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
     
     upVar->Add(totalVar);
     downVar->Add(totalVar, -1.);
-
-    upVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
-    upVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Up"));
-
-    downVar->SetName(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
-    downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
 
     return {upVar, downVar};
 }
@@ -424,15 +419,43 @@ void Uncertainty::printOutShapeUncertainty(Histogram* histogram, Process* head) 
             histCount++;
             current = current->getNext();
         }
-        current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
-        current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+
+        //TH1D* upVar = nullptr;
+        //TH1D* downVar = nullptr;
+        //TH1D* histNominal = nominalHists[histCount];
+        ////current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        ////current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+//
+        //if (! envelope || (envelope && ! buildEnvelope)) {
+        //    upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+        //    downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+//
+        //    if (histogram->HasRebin()) {
+        //        if (histogram->GetRebinVar() == nullptr) {
+        //            upVar->Rebin(histogram->GetRebin());
+        //            downVar->Rebin(histogram->GetRebin());
+        //        } else {
+        //            TString newNameUp = upVar->GetName();
+        //            upVar->SetName(newNameUp + TString("OLD"));
+        //            TString newNameDown = downVar->GetName();
+        //            downVar->SetName(newNameDown + TString("OLD"));
+        //            
+        //            upVar = (TH1D*) upVar->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
+        //            downVar = (TH1D*) downVar->Rebin(histogram->GetRebin(), newNameDown, histogram->GetRebinVar());
+        //        }
+        //    }
+        //} else if (name == "pdfShapeVar") {
+        //    std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
+        //    upVar = histVars.first;
+        //    downVar = histVars.second;
+        //} else {
+        //    std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
+        //    upVar = histVars.first;
+        //    downVar = histVars.second;
+        //}
+
 
         current = current->getNext();
-
-        //if (! correlatedAmongProcesses) {
-        //    relevantProcesses.erase(relevantProcesses.begin() + procCount);
-        //    return;
-        //}
 
         histCount++;
         procCount++;
@@ -526,14 +549,40 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         if (! envelope || (envelope && ! buildEnvelope)) {
             upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
             downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+
+            if (histogram->HasRebin()) {
+                if (histogram->GetRebinVar() == nullptr) {
+                    upVar->Rebin(histogram->GetRebin());
+                    downVar->Rebin(histogram->GetRebin());
+                } else {
+                    TString newNameUp = upVar->GetName();
+                    upVar->SetName(newNameUp + TString("OLD"));
+                    TString newNameDown = downVar->GetName();
+                    downVar->SetName(newNameDown + TString("OLD"));
+                    
+                    upVar = (TH1D*) upVar->Rebin(histogram->GetRebin(), newNameUp, histogram->GetRebinVar());
+                    downVar = (TH1D*) downVar->Rebin(histogram->GetRebin(), newNameDown, histogram->GetRebinVar());
+                }
+            }
         } else if (name == "pdfShapeVar") {
-            std::pair<TH1D*, TH1D*> histVars = buildSumSquaredEnvelopeForProcess(histogram, current, histNominal);
+            std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
             upVar = histVars.first;
             downVar = histVars.second;
         } else {
             std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
             upVar = histVars.first;
             downVar = histVars.second;
+        }
+
+
+        if (histogram->getPrintToFile()) {
+            current->GetOutputFile()->cd();
+            current->GetOutputFile()->cd((histogram->getCleanName()).c_str());
+
+            gDirectory->cd(outputNameUp);
+            upVar->Write(current->getName());
+            gDirectory->cd(outputNameDown);
+            upVar->Write(current->getName());
         }
 
         if (upVarReturn == nullptr) {

@@ -209,8 +209,18 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
     // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
     Process* curr = processes->getHead();
-    while (! gDirectory->GetDirectory(curr->getName())) {
+    while (! gDirectory->GetDirectory(curr->getName()) && curr != nullptr) {
         curr = curr->getNext();
+    }
+    if (curr == nullptr) {
+        curr = processes->getHead();
+
+        for (auto it : inputfiles) {
+            it->cd("Nominal");
+            if (gDirectory->GetDirectory(curr->getName())) {
+                break;
+            }
+        }
     }
     gDirectory->cd(curr->getName());
     gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
