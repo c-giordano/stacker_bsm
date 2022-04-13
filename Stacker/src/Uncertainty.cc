@@ -523,6 +523,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     TString outputNameDown = outputName + "Down";
 
     if (histogram->getPrintToFile()) {
+        
         outfile->cd(histogram->getCleanName().c_str());
         gDirectory->mkdir(outputNameUp);
         gDirectory->mkdir(outputNameDown);
@@ -574,15 +575,21 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             downVar = histVars.second;
         }
 
-
         if (histogram->getPrintToFile()) {
-            current->GetOutputFile()->cd();
-            current->GetOutputFile()->cd((histogram->getCleanName()).c_str());
+            outfile->cd();
+            outfile->cd((histogram->getCleanName()).c_str());
+
+            for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
+                if (upVar->GetBinContent(j) <= 0.) upVar->SetBinContent(j, 0.00001);
+                if (downVar->GetBinContent(j) <= 0.) downVar->SetBinContent(j, 0.00001);
+            }
 
             gDirectory->cd(outputNameUp);
             upVar->Write(current->getName());
+            gDirectory->cd("..");
+
             gDirectory->cd(outputNameDown);
-            upVar->Write(current->getName());
+            downVar->Write(current->getName());
         }
 
         if (upVarReturn == nullptr) {

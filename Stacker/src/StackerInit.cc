@@ -155,6 +155,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
                 std::string brStr = "NA";
                 std::string anStr = "NA";
                 std::string stStr = "NA";
+                std::string extras = "";
 
                 inputfile->GetObject( "Timestamp" , ts);
                 if (inputfile->GetListOfKeys()->Contains("Branch")) {
@@ -169,8 +170,10 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
                     inputfile->GetObject( "EventSelectionType" , st);
                     stStr = st->GetString().Data();
                 }
-                
-                datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr + "_" + stStr + "_" + yearID;
+                if (stringContainsSubstr(std::string(inputfile->GetName()), "_CR_")) {
+                    extras += "_CR";
+                }
+                datestring = std::string(ts->GetString().Data()) + "_" + anStr + "_" + brStr + "_" + stStr + "_" + yearID + extras;
             } else {
                 size_t firstPos = filename.find_first_of('_');
                 size_t lastPos = filename.find_last_of('_');
@@ -209,7 +212,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
     // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
     Process* curr = processes->getHead();
-    while (! gDirectory->GetDirectory(curr->getName()) && curr != nullptr) {
+    while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
         curr = curr->getNext();
     }
     if (curr == nullptr) {

@@ -1,12 +1,12 @@
 # Processname       color       -> Processes in order: last to first
-RareTop              851         B   TTVV+topRare
-Xgamma              593         B   Xgamma+ttbar
-#ChargeMisID         882         B   
-Rare                906         B   
-#nonPrompt           801         B
-TTH                 803         B   
-TTZ                 407         B   
-TTW                 419         B   
+#RareTop              851         B   TTVV+topRare
+#Xgamma              593         B   Xgamma+ttbar
+##ChargeMisID         882         B   
+#Rare                906         B   
+##nonPrompt           801         B
+#TTH                 803         B   
+#TTZ                 407         B   
+#TTW                 419         B   
 TTTT                633         S
 
 BROAD SETTINGS

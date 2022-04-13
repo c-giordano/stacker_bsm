@@ -10,7 +10,7 @@ draw canvas, call uncertainty histograms
 void Stacker::drawAllUncertaintyImpacts() {
     setUncertaintyImpactStyle();
     gROOT->ForceStyle();
-    std::vector<std::string> uncToDraw = {"JEC", "qcdScale", "pdfShapeVar", "JER"};
+    std::vector<std::string> uncToDraw = {"JEC", "qcdScale", "pdfShapeVar", "bTagShape_hf", "bTagShape_cferr1"};
     for (auto histogramID : histogramVec) {
         histogramID->setPrintToFile(false);
         drawUncertaintyImpacts(histogramID, uncToDraw);
@@ -41,7 +41,7 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     legend->SetNColumns(3);
 
     double max=0.;
-    double min=0.5;    
+    double min=0.98;    
 
     int colIndex=0;
     int step = (cols.GetSize() - 1) / (uncToDraw.size() - 1);
@@ -57,6 +57,13 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
 
         if (std::max(upVar->GetMaximum(), downVar->GetMaximum()) > max) {
             max = std::max(upVar->GetMaximum(), downVar->GetMaximum());
+        }
+
+
+        for (int i=1; i < upVar->GetNbinsX()+1; i++) {
+            if (std::min(upVar->GetBinContent(i), downVar->GetBinContent(i)) < min && std::min(upVar->GetBinContent(i), downVar->GetBinContent(i)) > 0.5) {
+                min = std::min(upVar->GetBinContent(i), downVar->GetBinContent(i));
+            }
         }
         // set style
         upVar->UseCurrentStyle();
@@ -77,8 +84,8 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
         colIndex += step;
     }
     auto it = variations.begin();
-    it->second.first->SetMaximum(max * 1.3);
-    it->second.first->SetMinimum(min); 
+    it->second.first->SetMaximum(max * 1.2);
+    it->second.first->SetMinimum(min * 0.95); 
 
     TLine* line = new TLine(nominal->GetBinLowEdge(1), 1., nominal->GetXaxis()->GetBinUpEdge(nominal->GetNbinsX()), 1.);
     line->Draw("SAME");

@@ -1,0 +1,24 @@
+# Processname       color       -> Processes in order: last to first
+RareTop              851         B   TTVV+topRare
+Xgamma              593         B     Xgamma+ttbar
+ChargeMisID         882         B   
+Rare                906         B   
+nonPrompt           801         B     nonPromptDD 
+TTH                 803         B   
+TTZ                 407         B   
+TTW                 419         B   
+TTTT                633         S
+
+BROAD SETTINGS
+# general settings
+Lumi=HIST
+Drawopt=HIST
+OutFolder=Most_recent_plots/Nominal/
+RatioPlots=True
+
+HISTOGRAMS
+# list of histgorams for which modified conditions are applied, together with the modified conditions
+
+BDTScore_TTBar_TriClass_4L_CRW rebin=5
+BDTScore_TTBar_TriClass_4L_CRO rebin=5
+BDTScore_TTBar_TriClass_4L_CRO-3L rebin=5
