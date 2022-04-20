@@ -31,7 +31,7 @@ private:
     bool isData = false;
     Process* dataProc = nullptr;
 public:
-    DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew);
+    DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew, std::string nameOverwrite);
     ~DatacardWriter();
 
     void addData(Process* dataProcNew) {

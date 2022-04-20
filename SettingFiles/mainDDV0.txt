@@ -1,9 +1,9 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+topRare
-Xgamma              593         B   Xgamma+ttbar
+RareTop              851         B   TTVV+topRare
+Xgamma              593         B     Xgamma+ttbar
 ChargeMisID         882         B   
-VVV                 906         B   
-nonPrompt           801         B   nonPromptDD
+Rare                906         B   
+nonPrompt           801         B     nonPromptDD 
 TTH                 803         B   
 TTZ                 407         B   
 TTW                 419         B   

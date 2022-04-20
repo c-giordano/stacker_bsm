@@ -23,11 +23,9 @@ Process::Process(TString& procName, int procColor, TFile* procInputfile, TFile* 
         if (procName == "nonPrompt" && oldStuff) {
             subdirectories->push_back("../nonPrompt");
         } else {
-
             gDirectory->cd(procName);
 
             TList* folders = gDirectory->GetListOfKeys();
-
             for(const auto&& obj: *folders) {
                 subdirectories->push_back(obj->GetName());
             }
@@ -58,7 +56,6 @@ Process::Process(TString& procName, int procColor, std::vector<TFile*>& inputfil
             gDirectory->cd(procName);
 
             TList* folders = gDirectory->GetListOfKeys();
-
             for(const auto&& obj: *folders) {
                 subdirectories->push_back(obj->GetName());
             }
@@ -79,18 +76,19 @@ TH1D* Process::getHistogram(Histogram* histogram) {
         if (! gDirectory->GetDirectory(name)) {
             continue;
         }
+
         gDirectory->cd(name);
 
         for(auto subdir : *subdirectories) {
+
             gDirectory->cd(subdir);
             
             TH1D* inter;
             gDirectory->GetObject(histName, inter);
 
-            if (true) {
-                std::cout << "Sample " << subdir << " for histogram " << histName.Data() << " contains " << inter->GetEntries(); 
-            }
-
+            //if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
+            //    std::cout << subdir << " & " << inter->GetEntries() <<  " & " << inter->Integral() << std::endl;
+            //}
 
             if (output == nullptr) {
                 output = new TH1D(*inter);
