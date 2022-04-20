@@ -1,9 +1,9 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+TTX
-Xgam              593         B   Xgamma+ttbar
+TTVV                851         B
+Xgamma              593         B
 ChargeMisID         882         B   
-VVV                 906         B   
-nonPrompt           801         B
+Rare                906         B   
+nonPrompt           801         B   
 TTH                 803         B   
 TTZ                 407         B   
 TTW                 419         B   
@@ -13,12 +13,8 @@ BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST
-OutFolder=Most_recent_plots/Nominal/
+OutFolder=Most_recent_plots/tests/
 RatioPlots=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
-
-BDTScore_TTBar_TriClass_4L_CRW rebin=5
-BDTScore_TTBar_TriClass_4L_CRO rebin=5
-BDTScore_TTBar_TriClass_4L_CRO-3L rebin=5

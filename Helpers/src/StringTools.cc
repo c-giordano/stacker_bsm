@@ -3,9 +3,16 @@
 TString cleanTString(TString& toClean) {
     TString cleaned(toClean);
 
-    cleaned.ReplaceAll("gamma", "#gamma");
+    if (stringContainsSubstr(toClean.Data(), "gamma")) {
+        cleaned.ReplaceAll("gamma", "#gamma");
+    } else {
+        cleaned.ReplaceAll("gam", "#gamma");
+    }
     cleaned.ReplaceAll("TT", "t#bar{t}");
+    cleaned.ReplaceAll("T(T)", "t(#bar{t})");
     cleaned.ReplaceAll("tt", "t#bar{t}");
+    cleaned.ReplaceAll("VVV", "VV(V)");
+
 
     /*if (cleaned.Contains("e+")) {
 
@@ -55,7 +62,7 @@ std::string getChannel(std::string& str) {
 std::string getFilename(std::string& str) {
     size_t split = str.find_last_of("/");
     if (split == std::string::npos) return str;
-    return str.substr(split);
+    return str.substr(split+1);
 }
 
 std::string splitAtUnderscore(std::string& str) {

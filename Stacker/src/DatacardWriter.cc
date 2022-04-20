@@ -1,9 +1,13 @@
 #include "../interface/DatacardWriter.h"
 
-DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew) :
+DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::vector<Histogram*> histVec, TFile* outfile, Process* dataProcNew, std::string nameOverwrite) :
     yearID(yearID), allProc(allProc), allHistograms(histVec), outfile(outfile)
 {   
     datacardName = "DC_" + yearID;
+
+    if (nameOverwrite != "") {
+        datacardName = "DC_" + nameOverwrite;
+    }
     std::cout << datacardName << std::endl;
     if (dataProcNew != nullptr) {
         dataProc = dataProcNew;
