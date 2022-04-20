@@ -87,6 +87,11 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             TH1D* inter;
             gDirectory->GetObject(histName, inter);
 
+            if (true) {
+                std::cout << "Sample " << subdir << " for histogram " << histName.Data() << " contains " << inter->GetEntries(); 
+            }
+
+
             if (output == nullptr) {
                 output = new TH1D(*inter);
             } else {

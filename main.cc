@@ -76,6 +76,7 @@ int main(int argc, char const *argv[])
         if (currentElement == "-DC") {
             stacker.setOnlyDC(true);
             stacker.initDatacard();
+            stacker.GetDCWriter()->WriteDatacardVariations();
             savePrev = false;
         }
         
