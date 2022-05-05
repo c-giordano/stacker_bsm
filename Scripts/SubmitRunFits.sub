@@ -1,0 +1,8 @@
+universe    =   vanilla
+executable  =   RunCombineFits.sh
+
+log         =   /user/nivanden/condor/logs/run_fits_$(ClusterId)_$(Process).log
+error       =   /user/nivanden/condor/error/run_fits_$(ClusterId)_$(Process).err
+output      =   /user/nivanden/condor/output/run_fits_$(ClusterId)_$(Process).out
+
+queue 1
