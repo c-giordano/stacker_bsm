@@ -14,7 +14,7 @@ void DatacardWriter::WriteDatacardVariationInit(Histogram *histogram)
     std::ofstream datacardVar;
     datacardVar.open("combineFiles/Variations/Base/" + datacardName + "_" + histogram->getCleanName() + ".txt");
 
-    datacardVar << "imax " << allHistograms.size() << std::endl;
+    datacardVar << "imax 1" << std::endl;
     datacardVar << "jmax *" << std::endl;
     datacardVar << "kmax *" << std::endl;
 
@@ -22,8 +22,9 @@ void DatacardWriter::WriteDatacardVariationInit(Histogram *histogram)
     {
         datacardVar << "-";
     }
+    datacardVar << std::endl;
 
-    datacardVar << "shapes * * " << yearID << ".root";
+    datacardVar << "shapes * * ../../" << yearID << ".root";
     // combinefile name
     // folder structure
     datacardVar << " $CHANNEL/$PROCESS $CHANNEL/$SYSTEMATIC/$PROCESS" << std::endl;
@@ -32,6 +33,8 @@ void DatacardWriter::WriteDatacardVariationInit(Histogram *histogram)
     {
         datacardVar << "-";
     }
+    datacardVar << std::endl;
+
 
     datacardVar << std::setw(20) << "bin\t";
     std::stringstream rates;
@@ -48,6 +51,8 @@ void DatacardWriter::WriteDatacardVariationInit(Histogram *histogram)
     {
         datacardVar << "-";
     }
+    datacardVar << std::endl;
+
 
     datacardVar << std::setw(30) << "bin"
                 << "\t" << std::setw(15) << "\t";
@@ -96,28 +101,29 @@ void DatacardWriter::WriteDatacardVariationInit(Histogram *histogram)
     {
         datacardVar << "-";
     }
+    datacardVar << std::endl;
 
 
-    WriteDatacardVariationUncertainties(datacardVar, allProc->getUncHead());
+    WriteDatacardVariationUncertainties(datacardVar, allProc->getUncHead(), histogram);
 }
 
-void DatacardWriter::WriteDatacardVariationUncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, bool eraSpecific)
+void DatacardWriter::WriteDatacardVariationUncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, Histogram *histogram, bool eraSpecific)
 {
     // consider switching to just 4 bools for era or just naming it erawise
     //std::cout << uncertainty->getName() << " " << uncertainty->isEraSpecific() << eraSpecific << std::endl;
     if (uncertainty->isEraSpecific() && !eraSpecific && uncertainty->isBothEraAndFull())
     {
-        WriteDatacardVariationUncertainties(datacardVar, uncertainty, true);
+        WriteDatacardVariationUncertainties(datacardVar, uncertainty, histogram, true);
     }
     else if (!uncertainty->isBothEraAndFull() && uncertainty->isEraSpecific() && !eraSpecific)
     {
-        WriteDatacardVariationUncertainties(datacardVar, uncertainty, true);
+        WriteDatacardVariationUncertainties(datacardVar, uncertainty, histogram, true);
         if (uncertainty->getNext() != nullptr)
-            WriteDatacardVariationUncertainties(datacardVar, uncertainty->getNext());
+            WriteDatacardVariationUncertainties(datacardVar, uncertainty->getNext(), histogram);
         return;
     }
     if (uncertainty->is1718Specific() && !eraSpecific)
-        WriteDatacardVariation1718Uncertainties(datacardVar, uncertainty);
+        WriteDatacardVariation1718Uncertainties(datacardVar, uncertainty, histogram);
 
     // write name
     std::string name = uncertainty->getName();
@@ -155,47 +161,45 @@ void DatacardWriter::WriteDatacardVariationUncertainties(std::ofstream& datacard
             uncertainty->setOutputName(tempName);
         }
 
-        for (unsigned i = 0; i < allHistograms.size(); i++)
+        std::stringstream interString;
+
+        Process *proc = allProc->getTail();
+        while (proc)
         {
-            std::stringstream interString;
-
-            Process *proc = allProc->getTail();
-            while (proc)
+            TString currentName = proc->getName();
+            if (!histogram->isRelevant(currentName))
             {
-                TString currentName = proc->getName();
-                if (!allHistograms[i]->isRelevant(currentName))
-                {
-                    proc = proc->getPrev();
-                    continue;
-                }
-                if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j]))
-                {
-                    interString << std::setw(15) << "-"
-                                << "\t";
-                    proc = proc->getPrev();
-                    continue;
-                }
-                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-
                 proc = proc->getPrev();
+                continue;
             }
+            if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j]))
+            {
+                interString << std::setw(15) << "-"
+                            << "\t";
+                proc = proc->getPrev();
+                continue;
+            }
+            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
 
-            // loop over number of histograms we consider
-            datacardVar << interString.str();
+            proc = proc->getPrev();
         }
+
+        // loop over number of histograms we consider
+        datacardVar << interString.str();
+
         datacardVar << std::endl;
     }
 
     if (eraSpecific)
         return;
     else if (uncertainty->getNext() != nullptr)
-        WriteDatacardVariationUncertainties(datacardVar, uncertainty->getNext());
+        WriteDatacardVariationUncertainties(datacardVar, uncertainty->getNext(), histogram);
     else
         datacardVar << "* autoMCStats 0 1 1" << std::endl;
 
 }
 
-void DatacardWriter::WriteDatacardVariation1718Uncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty)
+void DatacardWriter::WriteDatacardVariation1718Uncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, Histogram *histogram)
 {
     std::string name = uncertainty->getName() + "1718";
 
@@ -226,34 +230,33 @@ void DatacardWriter::WriteDatacardVariation1718Uncertainties(std::ofstream& data
                         << "\t";
         }
 
-        for (unsigned i = 0; i < allHistograms.size(); i++)
+
+        std::stringstream interString;
+
+        Process *proc = allProc->getTail();
+        while (proc)
         {
-            std::stringstream interString;
-
-            Process *proc = allProc->getTail();
-            while (proc)
+            TString currentName = proc->getName();
+            if (!histogram->isRelevant(currentName))
             {
-                TString currentName = proc->getName();
-                if (!allHistograms[i]->isRelevant(currentName))
-                {
-                    proc = proc->getPrev();
-                    continue;
-                }
-                if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j]))
-                {
-                    interString << std::setw(15) << "-"
-                                << "\t";
-                    proc = proc->getPrev();
-                    continue;
-                }
-                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-
                 proc = proc->getPrev();
+                continue;
             }
+            if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j]))
+            {
+                interString << std::setw(15) << "-"
+                            << "\t";
+                proc = proc->getPrev();
+                continue;
+            }
+            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
 
-            // loop over number of histograms we consider
-            datacardVar << interString.str();
+            proc = proc->getPrev();
         }
+
+        // loop over number of histograms we consider
+        datacardVar << interString.str();
+    
         datacardVar << std::endl;
     }
 }

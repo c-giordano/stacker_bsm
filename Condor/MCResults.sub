@@ -1,8 +1,0 @@
-universe    =   vanilla
-executable  =   SubMCResults.sh
-
-log         =   /user/nivanden/condor/logs/Stacker_MCResults_$(ClusterId)_$(Process).log
-error       =   /user/nivanden/condor/error/Stacker_MCResults_$(ClusterId)_$(Process).err
-output      =   /user/nivanden/condor/output/Stacker_MCResults_$(ClusterId)_$(Process).out
-
-queue

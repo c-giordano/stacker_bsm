@@ -48,7 +48,7 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
         else yearID = getYearFromRootFile(cmdArgs[0]);
     }
     
-    std::string outputfilename = "combineFiles/" + yearID + ".root";
+    std::string outputfilename = "combineFiles/Tmp/" + yearID + ".root";
     
     outputfile = new TFile(outputfilename.c_str(), "recreate");
 
@@ -193,7 +193,9 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
             pathToOutput = baseDir + subDir + datestring + "/";
 
-            std::vector<std::string> subdirs = {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CRW", "CRO", "CRZ", "CRO-3L", "CRZ-4L"};
+            std::vector<std::string> subdirs = {"CRWZ","CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-3L-2J1B", "CR-2L-45J2B", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
+            // {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CR", "CRO", "CRZ", "CRO-3L", "CRZ-4L", "CRWZ"};
+            
             for (auto currSub : subdirs) {
                 response = std::system( ("mkdir " + baseDir + subDir + datestring + "/" + currSub).c_str());
                 if (response < 0) std::cout << "mkdir failed for " << currSub << std::endl;
@@ -212,19 +214,37 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
     // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
     Process* curr = processes->getHead();
-    while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
-        curr = curr->getNext();
-    }
-    if (curr == nullptr) {
-        curr = processes->getHead();
+    //while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
+    //    for (auto it : inputfiles) {
+    //        it->cd("Nominal");>
+    //        if (gDirectory->GetDirectory(curr->getName())) {
+    //            break;
+    //        }
+    //    }
+    //    curr = curr->getNext();
+    //}
 
-        for (auto it : inputfiles) {
-            it->cd("Nominal");
-            if (gDirectory->GetDirectory(curr->getName())) {
-                break;
-            }
+    for (auto it : inputfiles) {
+        curr = processes->getHead();
+        it->cd("Nominal");
+        while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
+            curr = curr->getNext();
         }
+        if (curr != nullptr && gDirectory->GetDirectory(curr->getName())) {
+            break;
+        }
+        
     }
+    //if (curr == nullptr) {
+    //    curr = processes->getHead();
+    //
+    //    for (auto it : inputfiles) {
+    //        it->cd("Nominal");
+    //        if (gDirectory->GetDirectory(curr->getName())) {
+    //            break;
+    //        }
+    //    }
+    //}
     gDirectory->cd(curr->getName());
     gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
 

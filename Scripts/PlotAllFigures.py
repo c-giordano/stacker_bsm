@@ -1,5 +1,9 @@
 import sys
 import os
+import subprocess
+import time
+
+# execute in Stacker_v2 dir. Use python3 PlotAllFigures.py with location relative to Stacker_v2 dir
 
 eras = ["16PreVFP", "16PostVFP", "17", "18"]
 
@@ -22,14 +26,17 @@ def PlotFigures(inputFiles, settingFile, uncertaintyFile="", observationFiles=[]
             arguments += inputFile + " "
     
     finalCommand = baseCommand + arguments + additionalArguments
+    #print(finalCommand)
+    subprocess.run(finalCommand.split())
+    #os.system(finalCommand)
 
-    os.system(finalCommand)
     # execute terminalcommand
 
 def PlotSeperateEras(inputFiles, observationFiles):
     for era in eras:
-        inputFilesEra = [filename for filename in inputFiles if era in filename]
-        obsFilesEra = [filename for filename in observationFiles if era in filename]
+        inputFilesEra = [filename for filename in inputFiles if ("20" + era in filename) or ("Data"+era in filename)]
+        obsFilesEra = [filename for filename in observationFiles if ("20" + era in filename) or ("Data"+era in filename)]
+
         if (GetCR(inputFilesEra[0])):
             uncFile = "fullCR.txt"
         else:
@@ -56,10 +63,10 @@ def ParseInputArguments(inputArgs):
 
     # skip 1?
     inputfiles = [filename for filename in inputArgs[1:]]
-    
+
     if any("-data" in filename for filename in inputfiles): 
         index = inputfiles.index("-data")
-        obsFiles[index+1:]
+        obsFiles = inputfiles[index+1:]
         inputfiles = inputfiles[:index]
 
     return inputfiles, obsFiles

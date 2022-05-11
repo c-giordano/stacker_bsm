@@ -57,8 +57,8 @@ public:
 
     void WriteDatacardVariations();
     void WriteDatacardVariationInit(Histogram* histogram);
-    void WriteDatacardVariationUncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, bool eraSpecific = false);
-    void WriteDatacardVariation1718Uncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty);
+    void WriteDatacardVariationUncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, Histogram *histogram, bool eraSpecific = false);
+    void WriteDatacardVariation1718Uncertainties(std::ofstream& datacardVar, Uncertainty *uncertainty, Histogram *histogram);
 
 };
 

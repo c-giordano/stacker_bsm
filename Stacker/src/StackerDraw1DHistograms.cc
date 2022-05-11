@@ -128,8 +128,7 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
         data->SetLineWidth(2);
         data->SetMarkerSize(1.1);
 
-
-        data->Draw("E SAME"); // E1 for more barsssss
+        data->Draw("E1 X0 SAME"); // E1 for more barsssss
     }
 
 
@@ -242,7 +241,7 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
     dataTotal->SetTickLength(0.096, "X");
     dataTotal->SetNdivisions(504, "Y");
 
-    dataTotal->Draw("E"); // E1 for more barsssss
+    dataTotal->Draw("E1 X0"); // E1 for more barsssss
 
     //signalTotal->GetXaxis()->SetTitle(first->GetXaxis()->GetTitle());
 

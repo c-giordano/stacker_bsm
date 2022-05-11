@@ -54,6 +54,7 @@ int main(int argc, char const *argv[])
     std::vector< std::string > argvStr( &argv[1], &argv[0] + argc );
 
     setTDRStyle();
+    gROOT->ForceStyle();
 
     Stacker stacker(argvStr);
     bool savePrev = true;

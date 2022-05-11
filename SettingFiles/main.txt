@@ -46,3 +46,10 @@ BDT_FinalresultTTBar_TriClass_4L rebin=60
 BDTScore_TTBar_TriClass_4L_CRW rebin=5
 BDTScore_TTBar_TriClass_4L_CRO rebin=5
 BDTScore_TTBar_TriClass_4L_CRO-3L rebin=5
+BDTScore_Signal_TriClass_DL rebin=5
+BDTScore_TTBar_TriClass_DL rebin=5
+BDTScore_TTW_TriClass_DL rebin=5
+HT_DL rebin=5
+HT_3L rebin=5
+HT_4L rebin=5
+

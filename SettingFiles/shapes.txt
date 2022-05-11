@@ -1,7 +1,7 @@
 # Processname       color       -> Processes in order: last to first
-TTVV                851         B
-Xgamma              593         B
-ChargeMisID         882         B   
+TT+X              851         B   TTVV+TTX
+#Xgam              593         B   Xgamma+ttbar
+#ChargeMisID         882         B   
 #Rare                906         B   
 #TTH                 803         B   
 nonPrompt           801         B   
@@ -19,3 +19,30 @@ OutFolder=Most_recent_plots/Shapes/
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
+BDT_FinalresultSignal_TriClass_DL rebin=3
+BDT_FinalresultTTW_TriClass_DL rebin=3
+BDT_FinalresultTTBar_TriClass_DL rebin=3
+BDT_FinalresultSignal_TriClass_DLee rebin=3
+BDT_FinalresultTTW_TriClass_DLee rebin=3
+BDT_FinalresultTTBar_TriClass_DLee rebin=3
+BDT_FinalresultSignal_TriClass_DLem rebin=3
+BDT_FinalresultTTW_TriClass_DLem rebin=3
+BDT_FinalresultTTBar_TriClass_DLem rebin=3
+BDT_FinalresultSignal_TriClass_DLmm rebin=3
+BDT_FinalresultTTW_TriClass_DLmm rebin=3
+BDT_FinalresultTTBar_TriClass_DLmm rebin=3
+BDT_FinalresultSignal_TriClass_3LOSSF rebin=3
+BDT_FinalresultTTW_TriClass_3LOSSF rebin=3
+BDT_FinalresultTTBar_TriClass_3LOSSF rebin=3
+BDT_FinalresultSignal_TriClass_3LnoOSSF rebin=3
+BDT_FinalresultTTW_TriClass_3LnoOSSF rebin=3
+BDT_FinalresultTTBar_TriClass_3LnoOSSF rebin=3
+BDT_FinalresultSignal_TriClass_3L rebin=3
+BDT_FinalresultTTW_TriClass_3L rebin=3
+BDT_FinalresultTTBar_TriClass_3L rebin=3
+BDT_FinalresultSignal_TriClass_4L rebin=30
+BDT_FinalresultTTW_TriClass_4L rebin=60
+BDT_FinalresultTTBar_TriClass_4L rebin=60
+BDTScore_TTBar_TriClass_4L_CRW rebin=5
+BDTScore_TTBar_TriClass_4L_CRO rebin=5
+BDTScore_TTBar_TriClass_4L_CRO-3L rebin=5
