@@ -96,6 +96,11 @@ int main(int argc, char const *argv[])
         if (currentElement == "-stats") {
             gStyle->SetOptStat(11);
         }
+
+        if (currentElement == "-SF") {
+            stacker.GenerateSFs(argvStr[i+1]);
+            exit(0);
+        }
     }
 
     stacker.printAllHistograms();

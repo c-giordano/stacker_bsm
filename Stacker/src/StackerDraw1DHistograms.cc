@@ -132,6 +132,12 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
         data->Draw("E SAME"); // E1 for more barsssss
     }
 
+
+    TH1* combiHist = (TH1*) histStack->GetStack()->Last();
+
+    // fix range here
+    
+
     pad->Update();
     pad->Modified();
 

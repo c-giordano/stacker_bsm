@@ -57,5 +57,4 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     pad->SetLogy(hist->isLogscale());
 
     // Set custom bin labels if desired
-    
 }

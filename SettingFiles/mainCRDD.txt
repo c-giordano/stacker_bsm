@@ -19,6 +19,33 @@ RatioPlots=True
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
 
-BDTScore_TTBar_TriClass_4L_CRW rebin=5
-BDTScore_TTBar_TriClass_4L_CRO rebin=5
-BDTScore_TTBar_TriClass_4L_CRO-3L rebin=5
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-4L-Z rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-4L-Z rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-4L-Z rebin=3
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-4L-Z rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-4L-Z rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-4L-Z rebin=5
