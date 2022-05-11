@@ -127,15 +127,21 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
             }
         }
 
+        for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+            if (histToAdd->GetBinContent(j) <= 0.) {
+                histToAdd->SetBinContent(j, 0.00001);
+                histToAdd->SetBinError(j, 0.00001);
+            }
+        }
+
         if (hist->getPrintToFile()) {
             outfile->cd(hist->getCleanName().c_str());
-            for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
-                if (histToAdd->GetBinContent(j) <= 0.) {
-                    histToAdd->SetBinContent(j, 0.00001);
-                    histToAdd->SetBinError(j, 0.00001);
-
-                }
-            }
+            //for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+            //    if (histToAdd->GetBinContent(j) <= 0.) {
+            //        histToAdd->SetBinContent(j, 0.00001);
+            //        histToAdd->SetBinError(j, 0.00001);
+            //    }
+            //}
             histToAdd->Write(current->getName(), TObject::kOverwrite);
         }
         current = current->getNext();

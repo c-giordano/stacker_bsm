@@ -39,7 +39,7 @@ void setUncertaintyImpactStyle() {
 
     gStyle->SetEndErrorSize(4);
     // gStyle->SetErrorMarker(20);
-    //gStyle->SetErrorX(0.);
+    // gStyle->SetErrorX(0.);
 
     gStyle->SetMarkerStyle(0);
 

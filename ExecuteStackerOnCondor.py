@@ -1,5 +1,22 @@
+#!/usr/bin/env python3
+
 import os
 import sys
+
+def makeUnique(fname):
+    ### make a file name unique by appending a number to it,
+    ### e.g. test.txt -> test1.txt (in case test.txt already exists)
+    if not os.path.exists(fname): return fname
+    [name,ext] = os.path.splitext(fname)
+    app = 1
+    while app < 2500:
+        tryname = name+str(app)+ext
+        if not os.path.exists(tryname): return tryname
+        app += 1
+    print('### ERROR ###: already 2500 files named {} exist.'.format(fname))
+    print(' consider choosing more specific names, splitting in folders, etc.')
+    sys.exit()
+
 
 def initJobScript(name, cmssw_version='CMSSW_10_6_27'):
     ### initialize an executable bash script by setting correct cms env
@@ -10,6 +27,8 @@ def initJobScript(name, cmssw_version='CMSSW_10_6_27'):
     fname = name+'.sh'
     if os.path.exists(fname): os.system('rm {}'.format(fname))
     cwd = os.path.abspath(os.getcwd())
+
+    print(cwd)
     # write script
     with open(fname,'w') as script:
         script.write('#!/bin/bash\n')
@@ -117,7 +136,8 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
     for commandset in commands:
         # parse arguments
         name = os.path.splitext(name)[0]
-        shname = name+'.sh'
+        shname = makeUnique('stackerScripts/'+name+'.sh')
+        #shname = name+'.sh'
         jdname = name+'.sub'
         # first make the executable
         initJobScript(shname, cmssw_version=cmssw_version)
