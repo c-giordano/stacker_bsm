@@ -1,5 +1,5 @@
 #include "../interface/Stacker.h"
-
+#include <functional>
 
 void Stacker::GenerateSFs(std::string& SFFile) {
     // read input file ->parse to a vector which histograms we need
