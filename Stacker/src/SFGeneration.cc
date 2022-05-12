@@ -53,7 +53,7 @@ void Stacker::GenerateSF(Histogram* histogram) {
 
     sf->Divide(dataHistogram);
 
-    TFile* sfOutput = new TFile(("ScaleFactors/Output/SF_" + histogram->getCleanName()).c_str(), "RECREATE");
+    TFile* sfOutput = new TFile(("ScaleFactors/Output/SF_" + histogram->getCleanName() + ".root").c_str(), "RECREATE");
     sfOutput->cd();
 
     sf->Write("SF");
