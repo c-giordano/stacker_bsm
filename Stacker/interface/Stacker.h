@@ -149,7 +149,7 @@ class Stacker {
         void plotDifference(std::vector<std::string>& argvStr);
 
         void GenerateSFs(std::string& SFFile);
-        void GenerateSF(Histogram* histogram);
+        void GenerateSF(Histogram* histogram, TString& processName);
 
 };
 

@@ -14,12 +14,20 @@ void Stacker::GenerateSFs(std::string& SFFile) {
 
     while (getline(infile, line)) {
         std::vector<Histogram*>::iterator it;
-        it = std::find_if(histogramVec.begin(), histogramVec.end(), std::bind(Histogram::searchHist, std::placeholders::_1, line));
-        GenerateSF(*it);
+
+        // split line in process and histogram
+        std::string processName;
+        std::string histogram;
+        std::stringstream stream(line);
+        stream >> histogram >> processName;
+
+        TString processNameTString = processName;
+        it = std::find_if(histogramVec.begin(), histogramVec.end(), std::bind(Histogram::searchHist, std::placeholders::_1, histogram));
+        GenerateSF(*it, processNameTString);
     }
 }
 
-void Stacker::GenerateSF(Histogram* histogram) {
+void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     // generate stack + data info
     // also plot the inputdistribution and the output somewhere
     // generate outputroot file for each distribution. Renaming will be done manually anyway
@@ -48,12 +56,28 @@ void Stacker::GenerateSF(Histogram* histogram) {
     }
 
     TH1D* sf = new TH1D(*dataHistogram);
+    // take a deep copy of the process for which we extract a SF
+    // histvector should be in the order of the processes
+    // remove from histvec, sum histvec, extract from data
+    // generate SF with contribution and backgrounds
+    size_t index = 0;
+    Process* currProc = processes->getHead();
+    while (currProc && currProc->getName() != processName) {
+        currProc = currProc->getNext();
+        index++;
+    }
+
+    TH1D* releventContribution = new TH1D(*histVec[index]);
+    histVec.erase(histVec.begin()+index);
+
     TH1D* sum = sumVector(histVec);
+    sf->Add(sum, -1.);
+    
 
     sf->SetName("SF_" + histogram->getID());
     sf->SetTitle("SF_" + histogram->getID());
 
-    sf->Divide(sum);
+    sf->Divide(releventContribution);
 
     TFile* sfOutput = new TFile("ScaleFactors/Output/SF_" + histogram->getID() + ".root", "RECREATE");
 
