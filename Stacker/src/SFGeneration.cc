@@ -47,13 +47,16 @@ void Stacker::GenerateSF(Histogram* histogram) {
         dataHistogram->SetName("Data");
     }
 
-    TH1D* sf = sumVector(histVec);
-    sf->SetName(("SF_" + histogram->getCleanName()).c_str());
-    sf->SetTitle(("SF_" + histogram->getCleanName()).c_str());
+    TH1D* sf = new TH1D(*dataHistogram);
+    TH1D* sum = sumVector(histVec);
 
-    sf->Divide(dataHistogram);
+    sf->SetName("SF_" + histogram->getID());
+    sf->SetTitle("SF_" + histogram->getID());
 
-    TFile* sfOutput = new TFile(("ScaleFactors/Output/SF_" + histogram->getCleanName() + ".root").c_str(), "RECREATE");
+    sf->Divide(sum);
+
+    TFile* sfOutput = new TFile("ScaleFactors/Output/SF_" + histogram->getID() + ".root", "RECREATE");
+
     sfOutput->cd();
 
     sf->Write("SF");
