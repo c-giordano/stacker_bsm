@@ -133,7 +133,32 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
 
 
     TH1* combiHist = (TH1*) histStack->GetStack()->Last();
+    double xmin = combiHist->GetBinLowEdge(1);
+    double xmax = combiHist->GetBinLowEdge(combiHist->GetNbinsX()) + combiHist->GetBinWidth(combiHist->GetNbinsX());
+    bool change = false;
+    
+    double MinContent = 0.00002;
+    int counter = 1;
 
+    while (combiHist->GetBinContent(counter) <= MinContent && counter <= combiHist->GetNbinsX()) {
+        counter++;
+        xmin = combiHist->GetBinLowEdge(counter);
+        change = true;
+    }
+
+    double MaxContent = 0.00002;
+    counter = combiHist->GetNbinsX();
+
+    while (combiHist->GetBinContent(counter) <= MaxContent && counter >= 1) {
+        counter--;
+        xmax = combiHist->GetBinLowEdge(counter) + combiHist->GetBinWidth(counter);
+        change = true; 
+    }
+
+    if (change) {
+        histStack->GetXaxis()->SetRangeUser(xmin, xmax);
+    }
+    
     // fix range here
     
 
