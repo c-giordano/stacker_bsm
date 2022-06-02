@@ -28,7 +28,7 @@ void setTDRStyle() {
     gStyle->SetFrameFillStyle(0);
     gStyle->SetFrameLineColor(1);
     gStyle->SetFrameLineStyle(1);
-    gStyle->SetFrameLineWidth(2);
+    gStyle->SetFrameLineWidth(1);
 
     // For the histo:
     // gStyle->SetHistFillColor(1);
@@ -122,7 +122,7 @@ void setTDRStyle() {
     gStyle->SetAxisColor(1, "XYZ");
     gStyle->SetStripDecimals(kTRUE);
     gStyle->SetTickLength(0.03, "XYZ");
-    gStyle->SetNdivisions(505, "XYZ");
+    gStyle->SetNdivisions(510, "XYZ");
     gStyle->SetPadTickX(1);  // To get tick marks on the opposite side of the frame
     gStyle->SetPadTickY(1);
 
