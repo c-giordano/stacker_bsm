@@ -93,7 +93,7 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
     pad->Draw();
     pad->cd();
 
-    stackSettingsPreDraw(histStack, histVec);
+    //stackSettingsPreDraw(histStack, histVec);
 
     histStack->Draw(drawOpt.c_str());
 
@@ -137,7 +137,7 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
     double xmax = combiHist->GetBinLowEdge(combiHist->GetNbinsX()) + combiHist->GetBinWidth(combiHist->GetNbinsX());
     bool change = false;
     
-    double MinContent = 0.00002;
+    double MinContent = 0.00002; // too small. Fix later because this does not take ratioplots into account
     int counter = 1;
 
     while (combiHist->GetBinContent(counter) <= MinContent && counter <= combiHist->GetNbinsX()) {
@@ -158,9 +158,6 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
     if (change) {
         histStack->GetXaxis()->SetRangeUser(xmin, xmax);
     }
-    
-    // fix range here
-    
 
     pad->Update();
     pad->Modified();

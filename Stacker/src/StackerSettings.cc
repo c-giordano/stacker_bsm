@@ -72,7 +72,11 @@ void Stacker::setLumi(std::string& lumiSetting) {
         }
 
         std::stringstream stream;
-        stream << std::fixed << std::setprecision(2) << lumiHist->GetBinContent(1);
+        int precision = 1;
+        if (lumiHist->GetBinContent(1) >= 100.) {
+            precision = 0;
+        }
+        stream << std::fixed << std::setprecision(precision) << lumiHist->GetBinContent(1);
         intLumi = stream.str();
         std::cout << "Lumi is " << intLumi << " fb^{-1}" << std::endl;
     } else {
