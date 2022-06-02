@@ -45,6 +45,18 @@ void Stacker::printHistogram(Histogram* hist) {
             }
         } else {
             dataHistogram = dataProcess->getHistogram(hist);
+            if (verbose) {
+                std::cout << "Obs";
+                if (veryVerbose) {
+                    std::cout << " & ";
+                    for (int i=1; i < dataHistogram->GetNbinsX() + 1; i++) {
+                        std::cout << dataHistogram->GetBinContent(i) << " & ";
+                    }
+                    std::cout << std::endl;
+                } else {
+                    std::cout << ": " << dataHistogram->Integral() << " events" << std::endl;
+                }
+            }
             dataHistogram->SetTitle("Data");
             dataHistogram->SetName("Data");
         }
