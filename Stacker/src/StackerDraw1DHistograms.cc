@@ -65,23 +65,75 @@ void Stacker::printHistogram(Histogram* hist) {
         // change dataHistogram settings
     }
 
-    TH1D* totalUnc = drawStack(hist, histStack, histVec, sysUnc, dataHistogram);
+    TPad** mainPad = new TPad*();
+    TH1D* totalUnc = drawStack(hist, histStack, histVec, sysUnc, dataHistogram, mainPad);
 
     drawSignalYield(legend, *signalVector);
     legend->Draw();
     
     canv->cd();
 
+    TPad** smallPad = new TPad*(); 
+    TH1D* ratioPlot = nullptr;
     if (getData()) {
         if (! totalUnc) {
             TH1D* allHistograms = sumVector(histVec);
-            drawRatioData(hist, allHistograms, dataHistogram);
+            ratioPlot = drawRatioData(hist, allHistograms, dataHistogram, smallPad);
 
         } else {
-            drawRatioData(hist, totalUnc, dataHistogram);
+            ratioPlot = drawRatioData(hist, totalUnc, dataHistogram, smallPad);
         }
     } else {
-        drawRatioMC(hist, histVec, *signalVector);
+        ratioPlot = drawRatioMC(hist, histVec, *signalVector, smallPad);
+    }
+
+    // auto resize axis
+    
+    TH1* combiHist = (TH1*) histStack->GetStack()->Last();
+    double xmin = combiHist->GetBinLowEdge(1);
+    double xmax = combiHist->GetBinLowEdge(combiHist->GetNbinsX()) + combiHist->GetBinWidth(combiHist->GetNbinsX());
+    bool change = false;
+    
+    double MinContent = 0.0002; // too small. Fix later because this does not take ratioplots into account
+    int counter = 1;
+    double currentBinContent = combiHist->GetBinContent(counter);
+    if (dataHistogram) currentBinContent += dataHistogram->GetBinContent(counter);
+
+    while (currentBinContent <= MinContent && counter <= combiHist->GetNbinsX()) {
+        counter++;
+        xmin = combiHist->GetBinLowEdge(counter);
+        change = true;
+
+        currentBinContent = combiHist->GetBinContent(counter);
+        if (dataHistogram) currentBinContent += dataHistogram->GetBinContent(counter);
+    }
+
+    double MaxContent = 0.0002;
+    counter = combiHist->GetNbinsX();
+
+    currentBinContent = combiHist->GetBinContent(counter);
+    if (dataHistogram) currentBinContent += dataHistogram->GetBinContent(counter);
+
+    while (currentBinContent <= MaxContent && counter >= 1) {
+        counter--;
+        xmax = combiHist->GetBinLowEdge(counter) + combiHist->GetBinWidth(counter);
+        change = true; 
+
+        currentBinContent = combiHist->GetBinContent(counter);
+        if (dataHistogram) currentBinContent += dataHistogram->GetBinContent(counter);
+    }
+
+    if (change) {
+        histStack->GetXaxis()->SetRangeUser(xmin, xmax);
+        if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
+    }
+
+    (*mainPad)->Update();
+    (*mainPad)->Modified();
+
+    if (*smallPad) {
+        (*smallPad)->Update();
+        (*smallPad)->Modified();
     }
 
     std::string fullPath = pathToOutput;
@@ -94,13 +146,16 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->Print(fullPath + histID + ".png");
     canv->Print(fullPath + histID + ".pdf");
 
+    delete mainPad;
+    delete smallPad;
 }
 
 
-TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data) {
+TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data, TPad** mainPad) {
     stackSettingsPreDraw(histStack, histVec);
     TString histID = hist->getID();
     TPad* pad = getPad(histID, 0);
+    *mainPad = pad;
 
     pad->Draw();
     pad->cd();
@@ -197,15 +252,16 @@ void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
 }
 
 
-void Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec) {
+TH1D* Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec, TPad** smallPadPtr) {
     /* 
     TODO:
         Make a function deciding if data or not, let it decide after what to do... ofzo
     */
-    if (! isRatioPlot) return;
+    if (! isRatioPlot) return nullptr;
 
     TString histID = hist->getID() + "_ratio";
     TPad* smallPad = getPad(histID, 1);
+    *smallPadPtr = smallPad;
 
     smallPad->Draw();
     smallPad->cd();
@@ -244,13 +300,16 @@ void Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::ve
     smallPad->Update();
     smallPad->Modified();
     //signalTotal->UseCurrentStyle();
+
+    return signalTotal;
 }
 
-void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
-    if (! isRatioPlot) return;
+TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** smallPadPtr) {
+    if (! isRatioPlot) return nullptr;
     
     TString histID = hist->getID() + "_ratio";
     TPad* smallPad = getPad(histID, 1);
+    *smallPadPtr = smallPad;
 
     smallPad->Draw();
     smallPad->cd();
@@ -315,4 +374,6 @@ void Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data) {
     smallPad->Update();
     smallPad->Modified();
     //signalTotal->UseCurrentStyle();
+
+    return dataTotal;
 }

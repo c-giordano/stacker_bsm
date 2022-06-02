@@ -120,10 +120,10 @@ class Stacker {
 
         void printAllHistograms();
         void printHistogram(Histogram* histID);
-        TH1D* drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data);
+        TH1D* drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>& histVec, TH1D** sysUnc, TH1D* data, TPad** mainPad);
         void drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec);
-        void drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec);
-        void drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data);
+        TH1D* drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::vector<TH1D*>& signalVec, TPad** smallPadPtr);
+        TH1D* drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** smallPadPtr);
 
         void drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& uncToDraw);
         void drawAllUncertaintyImpacts();
