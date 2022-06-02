@@ -29,11 +29,11 @@ TPad* Stacker::getPad(TString& histID, int position) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 0.2;
-    double y1 = 0.73;
-    double x2 = 0.93;
-    double y2 = 0.92;
-    int nColumns = 3;
+    double x1 = 0.4;
+    double y1 = 0.69;
+    double x2 = 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
+    double y2 = 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;
+    int nColumns = 2;
 
     TLegend* legend = new TLegend(x1, y1, x2, y2);
     legend->SetNColumns(nColumns);
@@ -62,12 +62,12 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
     TString lumiText = intLumi + " fb^{-1} (13 TeV)";
     TString extraText = "Work in progress";
 
-    const float l = pad->GetLeftMargin();
+    const float l = pad->GetLeftMargin() + gStyle->GetTickLength()*1.2;
   	const float t = pad->GetTopMargin();
   	const float r = pad->GetRightMargin();
   	//const float b = pad->GetBottomMargin();
 
-	float CMSTextSize = pad->GetTopMargin()*0.8;
+	float CMSTextSize = pad->GetTopMargin()*0.75;
 	float lumiTextSize = pad->GetTopMargin()*0.6;
 
 	//float CMSTextOffset = pad->GetTopMargin()*0.2;
@@ -84,7 +84,7 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
 	latex->SetTextAlign(11); 
 	latex->SetTextSize(CMSTextSize);
 	//float cmsX = latex->GetXsize();
-	latex->DrawLatex(l,1  -t + lumiTextOffset,"CMS");
+	latex->DrawLatex(l,1  - (2 * t),"CMS");
 
 	float extraTextSize = CMSTextSize*0.76;	 
 	latex->SetTextFont(52);
@@ -92,7 +92,7 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
 	latex->SetTextAlign(11);
 	//std::cout << extraText << " " << l + 1.2 * cmsX << std::endl;
 	// using cmsX gave strange results
-	latex->DrawLatex(l + 0.1, 1-t+lumiTextOffset, extraText);
+	latex->DrawLatex(l, 1-(2 * t) - (extraTextSize*1.1), extraText);
 
 	latex->SetTextFont(42);
 	latex->SetTextAlign(31);

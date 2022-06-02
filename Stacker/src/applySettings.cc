@@ -38,18 +38,18 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
 
     // Set maximum size of histogram to avoid overlap with legend
     if (noStack) {
-        stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.5);
+        stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.6);
     } else if (hist->isLogscale()) {
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
-            stack->SetMaximum(dataHist->GetMaximum() * 100); 
+            stack->SetMaximum(dataHist->GetMaximum() * 120); 
         } else {
-            stack->SetMaximum(stack->GetMaximum() * 100); 
+            stack->SetMaximum(stack->GetMaximum() * 120); 
         }
     } else {
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
-            stack->SetMaximum(dataHist->GetMaximum() * 1.5); 
+            stack->SetMaximum(dataHist->GetMaximum() * 1.6); 
         } else {
-            stack->SetMaximum(stack->GetMaximum() * 1.5); 
+            stack->SetMaximum(stack->GetMaximum() * 1.6); 
         }
     }
 

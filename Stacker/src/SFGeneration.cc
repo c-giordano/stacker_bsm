@@ -66,8 +66,13 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
         currProc = currProc->getNext();
         index++;
     }
+    if (currProc == nullptr) {
+        std::cerr << "SF generation failed. Process " << processName << " was not found." << std::endl;
+        exit(1);
+    }
 
     TH1D* releventContribution = new TH1D(*histVec[index]);
+    std::cout << releventContribution->GetName() << std::endl;
     histVec.erase(histVec.begin()+index);
 
     TH1D* sum = sumVector(histVec);

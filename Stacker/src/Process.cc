@@ -68,9 +68,9 @@ TH1D* Process::getHistogram(Histogram* histogram) {
     TString histName = histogram->getID();
     TH1D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
 
-    if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
-        std::cout << "Process " << name << std::endl;
-    }
+    //if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
+    //    std::cout << "Process " << name << std::endl;
+    //}
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];
         std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
@@ -89,18 +89,18 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             TH1D* inter;
             gDirectory->GetObject(histName, inter);
 
-            //if (stringContainsSubstr(std::string(histName.Data()), "LT_")) {
+            //if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
             //    std::cout << subdir << " & " << inter->GetEntries() <<  " & " << inter->Integral() << std::endl;
-            //    std::cout << " & ";
-            //    for (int i=1; i < inter->GetNbinsX() + 1; i++) {
-            //        std::cout << inter->GetBinContent(i) << " & ";
-            //    }
-            //    std::cout << std::endl;
-            //    std::cout << " & ";
-            //    for (int i=1; i < inter->GetNbinsX() + 1; i++) {
-            //        std::cout << inter->GetBinError(i) << " & ";
-            //    }
-            //    std::cout << std::endl;
+            //    //std::cout << " & ";
+            //    //for (int i=1; i < inter->GetNbinsX() + 1; i++) {
+            //    //    std::cout << inter->GetBinContent(i) << " & ";
+            //    //}
+            //    //std::cout << std::endl;
+            //    //std::cout << " & ";
+            //    //for (int i=1; i < inter->GetNbinsX() + 1; i++) {
+            //    //    std::cout << inter->GetBinError(i) << " & ";
+            //    //}
+            //    //std::cout << std::endl;
             //}
 
             if (output == nullptr) {
