@@ -124,8 +124,9 @@ void Stacker::printHistogram(Histogram* hist) {
     }
 
     if (change) {
-        histStack->GetXaxis()->SetRangeUser(xmin, xmax);
-        if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
+        // temp disabled -> dont really like the effect it has on some plots. Definitely a want for later versions but not now.
+        //histStack->GetXaxis()->SetRangeUser(xmin, xmax);
+        //if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
     }
 
     (*mainPad)->Update();
@@ -242,12 +243,13 @@ void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
     TH1D* signalTotal = sumVector(signalVec);
     signalTotal->SetTitle("Signal yield");
 
-    legend->AddEntry(signalTotal, "Signal yield");
+    legend->AddEntry(signalTotal, "Signal x10");
     
     signalTotal->SetFillColor(0);
     signalTotal->SetLineColor(1);
     signalTotal->SetLineWidth(3);
     signalTotal->SetMarkerStyle(0);
+    signalTotal->Scale(10.);
     signalTotal->Draw("SAME HIST");
 }
 

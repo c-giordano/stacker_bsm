@@ -4,7 +4,7 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
     yearID(yearID), allProc(allProc), allHistograms(histVec), outfile(outfile)
 {   
     datacardName = "DC_" + yearID;
-
+    std::cout << "outputfile name is " << outfile->GetName() << std::endl;
     if (nameOverwrite != "") {
         datacardName = "DC_" + nameOverwrite;
     }

@@ -3,7 +3,9 @@
 #Xgamma              593         B
 #ChargeMisID         882         B
 #Rare                906         B
-nonPrompt           801         B
+#nonPrompt           801         B
+noAddBs              801         B
+AddBs                810         B
 #TTH                 803         B
 #TTZ                 407         B
 #TTW                 419         B

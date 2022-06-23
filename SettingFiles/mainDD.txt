@@ -3,7 +3,9 @@ TT+X              851         B   TTVV+TTX
 Xgam              593         B   ttG+ZG+Z+WG+ttbar
 ChargeMisID         882         B  
 WZ                  893         B
-ZZ-H                  600         B
+#WWDS                436         B                       
+SSWW                841         B                       
+ZZ-H                600         B
 VVV                 906         B   
 nonPrompt           801         B   nonPromptDD
 TTH                 803         B   
@@ -17,32 +19,103 @@ Lumi=HIST
 Drawopt=HIST
 OutFolder=Most_recent_plots/Nominal/
 RatioPlots=True
+# SignalYield=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
 
-BDT_FinalresultSignal_TriClass_DL rebin=2
-BDT_FinalresultTTW_TriClass_DL rebin=2
-BDT_FinalresultTTBar_TriClass_DL rebin=2
-BDT_FinalresultSignal_TriClass_DLee rebin=2
-BDT_FinalresultTTW_TriClass_DLee rebin=2
-BDT_FinalresultTTBar_TriClass_DLee rebin=2
-BDT_FinalresultSignal_TriClass_DLem rebin=2
-BDT_FinalresultTTW_TriClass_DLem rebin=2
-BDT_FinalresultTTBar_TriClass_DLem rebin=2
-BDT_FinalresultSignal_TriClass_DLmm rebin=2
-BDT_FinalresultTTW_TriClass_DLmm rebin=2
-BDT_FinalresultTTBar_TriClass_DLmm rebin=2
-BDT_FinalresultSignal_TriClass_3LOSSF rebin=2
-BDT_FinalresultTTW_TriClass_3LOSSF rebin=2
-BDT_FinalresultTTBar_TriClass_3LOSSF rebin=2
-BDT_FinalresultSignal_TriClass_3LnoOSSF rebin=2
-BDT_FinalresultTTW_TriClass_3LnoOSSF rebin=2
-BDT_FinalresultTTBar_TriClass_3LnoOSSF rebin=2
-BDT_FinalresultSignal_TriClass_3L rebin=2
-BDT_FinalresultTTW_TriClass_3L rebin=2
-BDT_FinalresultTTBar_TriClass_3L rebin=2
-BDTScore_TTBar_TriClass_4L_CRW rebin=2
-BDTScore_TTBar_TriClass_4L_CRO rebin=2
-BDTScore_TTBar_TriClass_4L_CRO rebin=2
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L_CR-4L-Z rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-4L-Z rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-23J1B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-45J2B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-2J1B rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-Z rebin=3
+BDT_FinalresultTTW_TriClass_SR-4L_CR-4L-Z rebin=3
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_Signal_TriClass_SR-4L_CR-4L-Z rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_TTBar_TriClass_SR-4L_CR-4L-Z rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-2L-23J1B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-2L-45J2B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-3L-2J1B rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-3L-Z rebin=5
+BDTScore_TTW_TriClass_SR-4L_CR-4L-Z rebin=5
+N_jets_CR-Conversion logscale
+N_jets_CRWZ logscale
 
+#BDT_FinalresultSignal_TriClass_SR-2L rebinVar=11,0.4,0.55,0.65,0.7,0.75,0.8,0.85,0.9,0.94,0.97,1. logscale
+BDT_FinalresultSignal_TriClass_SR-2L rebinVar=21,0.4,0.55,0.65,0.7,0.75,0.8,0.82,0.84,0.86,0.88,0.90,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1. logscale
+BDT_FinalresultSignal_TriClass_SR-2L-- rebin=3
+BDT_FinalresultSignal_TriClass_SR-2L++ rebin=3
+BDT_FinalresultSignal_TriClass_SR-2Lee rebin=3
+BDT_FinalresultSignal_TriClass_SR-2Lem rebin=3
+BDT_FinalresultSignal_TriClass_SR-2Lmm rebin=3
+#BDT_FinalresultSignal_TriClass_SR-3L rebinVar=11,0.4,0.55,0.65,0.7,0.75,0.8,0.85,0.9,0.94,0.97,1. logscale
+BDT_FinalresultSignal_TriClass_SR-3L rebinVar=21,0.4,0.55,0.65,0.7,0.75,0.8,0.82,0.84,0.86,0.88,0.90,0.91,0.92,0.93,0.94,0.95,0.96,0.97,0.98,0.99,1. logscale
+BDT_FinalresultSignal_TriClass_SR-3LnoOSSF rebin=3
+BDT_FinalresultSignal_TriClass_SR-3LOSSF rebin=3
+BDT_FinalresultSignal_TriClass_SR-4L rebin=30
+BDT_FinalresultTTBar_TriClass_SR-2L rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-2L-- rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-2L++ rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-2Lee rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-2Lem rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-2Lmm rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-3L rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-3LnoOSSF rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-3LOSSF rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTBar_TriClass_SR-4L rebin=60
+BDT_FinalresultTTW_TriClass_SR-2L rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-2L-- rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-2L++ rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-2Lee rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-2Lem rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-2Lmm rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-3L rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-3LnoOSSF rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-3LOSSF rebin=6,0.4,0.5,0.6,0.7,0.8,1.
+BDT_FinalresultTTW_TriClass_SR-4L rebin=60
+BDTScore_Signal_TriClass_SR-2L rebin=5
+BDTScore_Signal_TriClass_SR-2L-- rebin=5
+BDTScore_Signal_TriClass_SR-2L++ rebin=5
+BDTScore_Signal_TriClass_SR-2Lee rebin=5
+BDTScore_Signal_TriClass_SR-2Lem rebin=5
+BDTScore_Signal_TriClass_SR-2Lmm rebin=5
+BDTScore_Signal_TriClass_SR-3L rebin=5
+BDTScore_Signal_TriClass_SR-3LnoOSSF rebin=5
+BDTScore_Signal_TriClass_SR-3LOSSF rebin=5
+BDTScore_Signal_TriClass_SR-4L rebin=25 logscale
+BDTScore_TTBar_TriClass_SR-2L rebin=5
+BDTScore_TTBar_TriClass_SR-2L-- rebin=5
+BDTScore_TTBar_TriClass_SR-2L++ rebin=5
+BDTScore_TTBar_TriClass_SR-2Lee rebin=5
+BDTScore_TTBar_TriClass_SR-2Lem rebin=5
+BDTScore_TTBar_TriClass_SR-2Lmm rebin=5
+BDTScore_TTBar_TriClass_SR-3L rebin=5
+BDTScore_TTBar_TriClass_SR-3LnoOSSF rebin=5
+BDTScore_TTBar_TriClass_SR-3LOSSF rebin=5
+BDTScore_TTBar_TriClass_SR-4L rebin=5
+BDTScore_TTW_TriClass_SR-2L rebin=5
+BDTScore_TTW_TriClass_SR-2L-- rebin=5
+BDTScore_TTW_TriClass_SR-2L++ rebin=5
+BDTScore_TTW_TriClass_SR-2Lee rebin=5
+BDTScore_TTW_TriClass_SR-2Lem rebin=5
+BDTScore_TTW_TriClass_SR-2Lmm rebin=5
+BDTScore_TTW_TriClass_SR-3L rebin=5
+BDTScore_TTW_TriClass_SR-3LnoOSSF rebin=5
+BDTScore_TTW_TriClass_SR-3LOSSF rebin=5
+BDTScore_TTW_TriClass_SR-4L rebin=5
