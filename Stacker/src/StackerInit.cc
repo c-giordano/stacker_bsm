@@ -193,7 +193,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
             pathToOutput = baseDir + subDir + datestring + "/";
 
-            std::vector<std::string> subdirs = {"CRWZ","CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-3L-2J1B", "CR-2L-45J2B", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
+            std::vector<std::string> subdirs = {"CRWZ","CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-2L-23J1B++", "CR-2L-23J1B--", "CR-2L-23J1Bee", "CR-2L-23J1Bem", "CR-2L-23J1Bmm", "CR-3L-2J1B", "CR-2L-45J2B", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
             // {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CR", "CRO", "CRZ", "CRO-3L", "CRZ-4L", "CRWZ"};
             
             for (auto currSub : subdirs) {

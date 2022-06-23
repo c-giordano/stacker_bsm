@@ -39,6 +39,7 @@ TLegend* Stacker::getLegend() {
     legend->SetNColumns(nColumns);
     legend->SetMargin(.4);
     legend->SetColumnSeparation(0.1);
+	legend->SetFillStyle(0);
 
     return legend;
 }

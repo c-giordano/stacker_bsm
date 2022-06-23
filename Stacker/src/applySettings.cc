@@ -41,10 +41,11 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
         stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.6);
     } else if (hist->isLogscale()) {
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
-            stack->SetMaximum(dataHist->GetMaximum() * 120); 
+            stack->SetMaximum(dataHist->GetMaximum() * 10); 
         } else {
-            stack->SetMaximum(stack->GetMaximum() * 120); 
+            stack->SetMaximum(stack->GetMaximum() * 10); 
         }
+        stack->SetMinimum(0.8);
     } else {
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
             stack->SetMaximum(dataHist->GetMaximum() * 1.6); 

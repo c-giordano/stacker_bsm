@@ -373,7 +373,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         }
         std::cout << "FOUND " << histogramID << std::endl;
     }
-    std::cout << histForDC.size() << std::endl;
+    std::cout << "histograms for datacards: " << histForDC.size() << std::endl;
     std::string tmp = getFilename(filename);
     std::string dcid = removeExt(tmp); // TMP
     dcwriter = new DatacardWriter(yearID, processes, histForDC, outputfile, dataProcess, dcid);

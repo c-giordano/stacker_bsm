@@ -120,7 +120,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             output->Rebin(histogram->GetRebin());
         } else {
             std::string newName = std::string(histName.Data() + name);
-            output = (TH1D*) output->Rebin(histogram->GetRebin(), newName.c_str(), histogram->GetRebinVar());
+            output = (TH1D*) output->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar());
         }
     }
 
