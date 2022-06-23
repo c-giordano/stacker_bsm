@@ -83,6 +83,8 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     sf->SetTitle("SF_" + histogram->getID());
 
     sf->Divide(releventContribution);
+    
+    DrawSF(sf);
 
     TFile* sfOutput = new TFile("ScaleFactors/Output/SF_" + histogram->getID() + ".root", "RECREATE");
 
@@ -93,3 +95,60 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     sfOutput->Close();
 }
 
+void Stacker::DrawSF(TH1D* sfHistogram) {
+    // canvas, pad, draw with usual setting but add text on it
+    // lumi not specified generally speaking
+    TString sfName = sfHistogram->GetName();
+    TCanvas* canv = getCanvas(sfName);
+    canv->Draw();
+    canv->cd(); 
+    TPad* pad = getPad(sfName, 0);
+    pad->Draw();
+    pad->cd();
+
+    //gStyle->SetMarkerSize(2.);
+
+    sfHistogram->Draw();
+    for (int i=1; i<=sfHistogram->GetNbinsX(); i++) {
+        auto t = new TText(sfHistogram->GetXaxis()->GetBinCenter(i), sfHistogram->GetBinContent(i)+0.5, Form("%4.2f",sfHistogram->GetBinContent(i)));
+        t->SetTextAlign(22);
+        t->Draw("SAME");
+    }
+
+    TString extraText = "Work in progress";
+
+    const float l = pad->GetLeftMargin() + gStyle->GetTickLength()*1.2;
+  	const float t = pad->GetTopMargin();
+  	const float r = pad->GetRightMargin();
+  	//const float b = pad->GetBottomMargin();
+
+	float CMSTextSize = pad->GetTopMargin()*0.75;
+	float lumiTextSize = pad->GetTopMargin()*0.6;
+
+	//float CMSTextOffset = pad->GetTopMargin()*0.2;
+	float lumiTextOffset = pad->GetTopMargin()*0.2;
+	
+	pad->cd();
+	//Define latex text to draw on plot
+	TLatex* latex = new TLatex(l,1+lumiTextOffset*t,"CMS");
+	latex->SetNDC();
+	latex->SetTextAngle(0);
+	latex->SetTextColor(kBlack); 
+
+	latex->SetTextFont(61);
+	latex->SetTextAlign(11); 
+	latex->SetTextSize(CMSTextSize);
+	//float cmsX = latex->GetXsize();
+	latex->DrawLatex(l,1  - (2 * t),"CMS");
+
+	float extraTextSize = CMSTextSize*0.76;	 
+	latex->SetTextFont(52);
+	latex->SetTextSize(extraTextSize);
+	latex->SetTextAlign(11);
+	//std::cout << extraText << " " << l + 1.2 * cmsX << std::endl;
+	// using cmsX gave strange results
+	latex->DrawLatex(l, 1-(2 * t) - (extraTextSize*1.1), extraText);
+
+    canv->Print("ScaleFactors/Output/" + sfName + ".pdf");
+    canv->Print("ScaleFactors/Output/" + sfName + ".png");
+}

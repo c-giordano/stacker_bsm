@@ -150,6 +150,7 @@ class Stacker {
 
         void GenerateSFs(std::string& SFFile);
         void GenerateSF(Histogram* histogram, TString& processName);
+        void DrawSF(TH1D* sfHistogram);
 
 };
 
