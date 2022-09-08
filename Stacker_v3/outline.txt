@@ -1,0 +1,35 @@
+main: captures inputs and follows commands of inputs
+    Keep current drawing options definitely
+    Add new things like limited drawing of a region
+    Dynamic creation of outputfolders
+    More intelligent management of printing histograms
+
+Plot class: manages the drawing of a single histogram -> allows for easier per histogram manipulation
+    -> all settings stored in one but also accessed in the functions -> no more passing histogram as an argument. Everything related to a histogram is handled by the single histogram object:
+        In practice this comes down to managing the canvas, pad, drawing, applying settings, ...
+        Even rebinning. Process should just return all histograms that make up a certain process/category separately. Histogram rebins if it wants. For uncertainties it's slightly different ofcourse.
+
+Drawing generators: generate things like pads, dataset info, legends, ... with flexible options
+    This ist just a namespace, makes most sence
+
+Datacardwriting: Handled similarly but more dynamic if we want all variations
+    -> not sure if class or namespace. Depends a bit on how we structure it.
+    -> also only thing that can build outputfiles. No more generation by default and also specified with a sensible name. Same for DC names.
+        -> also only one that can write thing to output.
+
+
+SF Extraction: not sure
+    Histogram class can do this as well, at least apply the correct settings -> ask for this histogram or that historam.
+
+Uncertainties: we can do this similarly as before, worked quite well and was very flexible. Do keep an easier way to not duplicate code 20 times
+    Generic extraction, generic rebinning, all at different steps.
+
+Process/Processlist: also worked quite well but move responsibilities -> very generic getters and setters. Merge process and processset 
+    -> both do the same in the new idea where process just provides an array of pointers
+    How do we handle coloring the plots correctly? Just some getcolor will be easiest...
+
+add an interactive option? Not sure how feasible but in a way that root can work with the shit?
+
+New: 
+    Plot combine files logically
+    
