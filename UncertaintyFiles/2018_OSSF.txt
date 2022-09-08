@@ -42,17 +42,18 @@ MET: shape process=AllMC correlated corrEra
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
-BDT_FinalresultSignal_TriClass_SR-2L++ bdt_DL++_sig
-BDT_FinalresultTTW_TriClass_SR-2L++ bdt_DL++_ttw
-BDT_FinalresultTTBar_TriClass_SR-2L++ bdt_DL++_ttbar
+BDT_FinalresultSignal_TriClass_SR-2L bdt_DL_sig
+BDT_FinalresultTTW_TriClass_SR-2L bdt_DL_ttw
+BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
+#
+BDT_FinalresultSignal_TriClass_SR-3LnoOSSF bdt_3LnoOSSF_sig
+BDT_FinalresultSignal_TriClass_SR-3LOSSF bdt_3LOSSF_sig
 
-BDT_FinalresultSignal_TriClass_SR-2L-- bdt_DL--_sig
-BDT_FinalresultTTW_TriClass_SR-2L-- bdt_DL--_ttw
-BDT_FinalresultTTBar_TriClass_SR-2L-- bdt_DL--_ttbar
+BDT_FinalresultTTBar_TriClass_SR-3LnoOSSF bdt_3LnoOSSF_ttbar
+BDT_FinalresultTTBar_TriClass_SR-3LOSSF bdt_3LOSSF_ttbar
+BDT_FinalresultTTW_TriClass_SR-3LnoOSSF bdt_3LnoOSSF_ttw
+BDT_FinalresultTTW_TriClass_SR-3LOSSF bdt_3LOSSF_ttw
 
-BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
-BDT_FinalresultTTW_TriClass_SR-3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
 #
 BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
 BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw

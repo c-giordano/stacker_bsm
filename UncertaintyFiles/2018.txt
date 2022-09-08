@@ -1,14 +1,16 @@
 # unc  Flat or shape    correlationProc     yearCorrelations
 Lumi:   flat=1.025        correlated          corrEra Era=1.015 AllEra=1.02 1718=1.002      process=AllMC
-TTWNorm: flat=1.2 AllEra=1.2 process=TTW
-TTZNorm: flat=1.2 AllEra=1.2 process=TTZ
-TTHNorm: flat=1.1 AllEra=1.1 process=TTH
-RareNorm: flat=1.05 AllEra=1.05 process=Rare
-nonPromptNorm: flat=1.3 AllEra=1.3 process=nonPrompt
-ChargeMisIDNorm: flat=1.3 AllEra=1.3 process=ChargeMisID
-RareTopNorm: flat=1.05 AllEra=1.05 process=RareTop
-XgammaNorm: flat=1.05 AllEra=1.05 process=Xgamma
-#isrShape: shape process=AllMC uncorrelated
+TTWNorm: flat=1.127   AllEra=1.2 process=TTW
+TTZNorm: flat=1.145    AllEra=1.15 process=TTZ
+TTHNorm: flat=1.276    AllEra=1.273 process=TTH
+WZNorm: flat=1.066    AllEra=1.066 process=WZ
+ZZHNorm: flat=1.06   AllEra=1.06 process=ZZ-H
+VVVNorm: flat=1.06   AllEra=1.06 process=VVV
+nonPromptNorm: flat=1.3   AllEra=1.3 process=nonPrompt
+ChargeMisIDNorm: flat=1.15   AllEra=1.15 process=ChargeMisID
+TTXNorm: flat=1.2    AllEra=1.2 process=TT+X
+XgammaNorm: flat=1.05   AllEra=1.05 process=Xgam
+isrShape: shape process=AllMC uncorrelated
 fsrShape: shape process=AllMC uncorrelated
 electronReco: shape process=AllMC correlated
 muonIDStat: shape process=AllMC correlated corrEra
@@ -18,8 +20,8 @@ electronIDSyst: shape process=AllMC correlated
 pileup: shape process=AllMC correlated
 JER_1p93: shape process=AllMC correlated corrEra
 JER_2p5: shape process=AllMC correlated corrEra
-JEC: shape process=AllMC correlated
-qcdScale: envelope process=AllMC correlated
+#JEC: shape process=AllMC correlated
+qcdScale: envelope process=AllMC uncorrelated
 pdfShapeVar: envelope process=AllMC correlated 
 bTagShape_cferr1: shape process=AllMC correlated
 bTagShape_cferr2: shape process=AllMC correlated
@@ -30,23 +32,43 @@ bTagShape_lf: shape process=AllMC correlated
 bTagShape_lfstats1: shape process=AllMC correlated corrEra
 bTagShape_lfstats2: shape process=AllMC correlated corrEra
 prefire: shape process=AllMC correlated
+WZSF_Stat_0Jet: shape process=WZ correlated
+WZSF_Stat_1Jet: shape process=WZ correlated
+WZSF_Stat_2Jet: shape process=WZ correlated
+WZSF_Stat_3Jet: shape process=WZ correlated
+WZSF_Stat_4Jet: shape process=WZ correlated
+WZSF_Stat_5Jet: shape process=WZ correlated
+WZSF_Stat_6PlusJet: shape process=WZ correlated
+# WZSF_Stat_7PlusJet: shape process=WZ correlated
+MET: shape process=AllMC correlated corrEra
+JEC_Absolute: shape process=AllMC correlated
+JEC_Absolute_2018: shape process=AllMC correlated corrEra
+JEC_BBEC1: shape process=AllMC correlated
+JEC_BBEC1_2018: shape process=AllMC correlated corrEra
+JEC_EC2: shape process=AllMC correlated
+JEC_EC2_2018: shape process=AllMC correlated corrEra
+JEC_FlavorQCD: shape process=AllMC correlated
+JEC_HF: shape process=AllMC correlated
+JEC_HF_2018: shape process=AllMC correlated corrEra
+JEC_RelativeBal: shape process=AllMC correlated
+JEC_RelativeSample_2018: shape process=AllMC correlated corrEra
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
-BDT_FinalresultSignal_TriClass_DL bdt_DL_sig
-BDT_FinalresultTTW_TriClass_DL bdt_DL_ttw
-BDT_FinalresultTTBar_TriClass_DL bdt_DL_ttbar
-
-BDT_FinalresultSignal_TriClass_3L bdt_3L_sig
-BDT_FinalresultTTW_TriClass_3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_3L bdt_3L_ttbar
-
-BDT_FinalresultSignal_TriClass_4L bdt_4L_sig
-BDT_FinalresultTTW_TriClass_4L bdt_4L_ttw
-BDT_FinalresultTTBar_TriClass_4L bdt_4L_ttbar
-
-BDTScore_TTBar_TriClass_4L_CRW crw
-BDTScore_TTBar_TriClass_4L_CRO cro
-BDTScore_TTBar_TriClass_4L_CRO-3L cro-3L
-N_jets_CRZ crz
-N_jets_CRZ-4L crz-4L
+BDT_FinalresultSignal_TriClass_SR-2L bdt_DL_sig
+BDT_FinalresultTTW_TriClass_SR-2L bdt_DL_ttw
+BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
+#
+BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
+BDT_FinalresultTTW_TriClass_SR-3L bdt_3L_ttw
+BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
+#
+BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
+BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
+BDT_FinalresultTTW_TriClass_SR-4L bdt_4L_ttbar
+#
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
+BDTScore_TTW_TriClass_SR-4L_CR-3L-2J1B cro-3L
+N_jets_CR-3L-Z crz
+N_jets_CR-4L-Z crz-4L

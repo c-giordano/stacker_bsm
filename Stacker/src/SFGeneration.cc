@@ -99,6 +99,7 @@ void Stacker::DrawSF(TH1D* sfHistogram) {
     // canvas, pad, draw with usual setting but add text on it
     // lumi not specified generally speaking
     TString sfName = sfHistogram->GetName();
+    isRatioPlot = false;
     TCanvas* canv = getCanvas(sfName);
     canv->Draw();
     canv->cd(); 
@@ -107,6 +108,7 @@ void Stacker::DrawSF(TH1D* sfHistogram) {
     pad->cd();
 
     //gStyle->SetMarkerSize(2.);
+    sfHistogram->SetYTitle("Scale factor");
 
     sfHistogram->Draw();
     for (int i=1; i<=sfHistogram->GetNbinsX(); i++) {

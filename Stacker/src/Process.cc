@@ -115,6 +115,10 @@ TH1D* Process::getHistogram(Histogram* histogram) {
         }
     }
 
+    if (output == nullptr) {
+        std::cerr << "Process " << name.Data() << " is not available in any file. Is this expected? " << std::endl;
+        return output;
+    }
     if (histogram->HasRebin()) {
         if (histogram->GetRebinVar() == nullptr) {
             output->Rebin(histogram->GetRebin());
@@ -188,7 +192,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
     }
 
     if (output == nullptr) {
-        //std::cout << "Histogram " << histName << " has no uncertainty " << uncName << std::endl;
+        std::cout << "Histogram " << histName << " has no uncertainty " << uncName << ". Or process " << name.Data() << " is not defined." << std::endl;
         return nullptr;
     }
     

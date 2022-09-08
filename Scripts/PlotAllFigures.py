@@ -32,6 +32,28 @@ def PlotFigures(inputFiles, settingFile, uncertaintyFile="", observationFiles=[]
 
     # execute terminalcommand
 
+def PlotFiguresLocal(inputFiles, settingFile, uncertaintyFile="", observationFiles=[], additionalArguments=""):
+    # set cwd to be /user/nivanden/Stacker_v2
+    os.chdir('/user/nivanden/Stacker_v2/')
+    baseCommand = "./stacker_exec "
+    arguments = ""
+    for inputFile in inputFiles:
+        arguments += inputFile + " "
+    
+    arguments += "SettingFiles/" + settingFile + " "
+
+    if uncertaintyFile != "":
+        arguments += "-unc UncertaintyFiles/" + uncertaintyFile + " "
+    
+    if len(observationFiles) != 0:
+        arguments += "-RD " 
+        for inputFile in observationFiles:
+            arguments += inputFile + " "
+    
+    finalCommand = baseCommand + arguments + additionalArguments
+    #print(finalCommand)
+    subprocess.run(finalCommand.split())
+
 def PlotSeperateEras(inputFiles, observationFiles):
     for era in eras:
         inputFilesEra = [filename for filename in inputFiles if ("20" + era in filename) or ("Data"+era in filename)]
@@ -82,7 +104,7 @@ def GetSettingfile(inputfile):
     
 
 def GetDD(inputfile):
-    return any(["MCPrompt" in inputfile, "nonPrompt" in inputfile, "ChargeMisID" in inputfile])
+    return any(["MCPrompt" in inputfile, "nonPrompt" in inputfile, "ChargeDD" in inputfile])
         
 
 def GetCR(inputfile):

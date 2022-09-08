@@ -26,6 +26,9 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
 
     for (auto it : subProcesses) {
         TH1D* tmp = it->getHistogram(histogram);
+        if (tmp == nullptr) {
+            continue;
+        }
 
         if (output == nullptr) {
             output = tmp;

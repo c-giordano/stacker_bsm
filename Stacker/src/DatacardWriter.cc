@@ -189,7 +189,10 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
         datacard << std::endl;
     }
     
-    if (eraSpecific) return;
+    if (uncertainty->getNext() == nullptr) {
+        writeMCStats();
+        return;
+    } else if (eraSpecific) return;
     else if (uncertainty->getNext() != nullptr) writeUncertainties(uncertainty->getNext());
     else writeMCStats();
 }

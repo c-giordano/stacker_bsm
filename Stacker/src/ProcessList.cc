@@ -102,6 +102,9 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
 
     while (current) {
         TH1D* histToAdd = current->getHistogram(hist);
+        if (histToAdd == nullptr) {
+            current = current->getNext();
+        }
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
         histVec.push_back(histToAdd);
@@ -208,6 +211,9 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
     while (current) {
 
         TH1D* histToAdd = current->getHistogram(hist);
+        if (histToAdd == nullptr) {
+            current = current->getNext();
+        }
         histVec.push_back(histToAdd);
 
         output[current->getName()] = (histToAdd->Integral() > 0);
@@ -323,6 +329,9 @@ std::vector<TH1D*> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
 
     while (current) {
         TH1D* histToAdd = current->getHistogram(hist);
+        if (histToAdd == nullptr) {
+            current = current->getNext();
+        }
         histVec.push_back(histToAdd);
 
         current = current->getNext();

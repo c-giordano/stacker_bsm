@@ -10,7 +10,7 @@ draw canvas, call uncertainty histograms
 void Stacker::drawAllUncertaintyImpacts() {
     setUncertaintyImpactStyle();
     gROOT->ForceStyle();
-    std::vector<std::string> uncToDraw = {"JEC", "qcdScale", "pdfShapeVar", "bTagShape_hf", "bTagShape_cferr1"};
+    std::vector<std::string> uncToDraw = {"JEC", "bTagShape_hf", "bTagShape_cferr1"};
     for (auto histogramID : histogramVec) {
         histogramID->setPrintToFile(false);
         drawUncertaintyImpacts(histogramID, uncToDraw);

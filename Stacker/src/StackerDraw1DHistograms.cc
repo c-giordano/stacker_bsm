@@ -243,13 +243,13 @@ void Stacker::drawSignalYield(TLegend* legend, std::vector<TH1D*>& signalVec) {
     TH1D* signalTotal = sumVector(signalVec);
     signalTotal->SetTitle("Signal yield");
 
-    legend->AddEntry(signalTotal, "Signal x10");
+    legend->AddEntry(signalTotal, "Signal x30");
     
     signalTotal->SetFillColor(0);
-    signalTotal->SetLineColor(1);
-    signalTotal->SetLineWidth(3);
+    signalTotal->SetLineColor(633);
+    signalTotal->SetLineWidth(5);
     signalTotal->SetMarkerStyle(0);
-    signalTotal->Scale(10.);
+    signalTotal->Scale(30.);
     signalTotal->Draw("SAME HIST");
 }
 
