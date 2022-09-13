@@ -7,7 +7,8 @@ void Stacker::printAllHistograms() {
     for (auto histogramID : histogramVec) {
         tempCount++;
         histogramID->setPrintToFile(false);
-        //if (tempCount == 50) break;
+        //std::cout << std::string(histogramID->getID().Data()) << std::endl;
+        if (std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-2L") continue;
 
         if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
             printHistogram(histogramID);

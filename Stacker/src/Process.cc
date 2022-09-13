@@ -103,8 +103,11 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             //    //std::cout << std::endl;
             //}
 
+            //inter->Sumw2();
+
             if (output == nullptr) {
                 output = new TH1D(*inter);
+                //output->Sumw2();
             } else {
                 output->Add(inter);
             }
@@ -171,9 +174,12 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
             
             TH1D* inter;
             gDirectory->GetObject(histName, inter);
+
+            //inter->Sumw2();
             if (inter != nullptr) {
                 if (output == nullptr) {
                     output = new TH1D(*inter);
+                    //output->Sumw2();
                 } else {
                     output->Add(inter);
                 }
