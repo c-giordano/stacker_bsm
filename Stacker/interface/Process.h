@@ -47,6 +47,7 @@ class Process {
         bool isSignalProcess() {return isSignal;}
 
         TFile* GetOutputFile() {return outputFile;}
+        virtual bool isSet() {return false;};
 
         std::vector<TFile*> GetInputfiles() {return inputfiles;};
 

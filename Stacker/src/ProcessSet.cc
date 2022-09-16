@@ -47,13 +47,13 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
     return output;
 }
 
-TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
+TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era) {
     TH1D* output = nullptr;
    // bool printToFile = hist->getPrintToFile();
    // hist->setPrintToFile(false);
-
+    //std::cout << "in processset " << getName().Data() << std::endl;
     for (auto it : subProcesses) {
-        TH1D* tmp = it->getHistogramUncertainty(uncName, upOrDown, hist, outputFolder, envelope);
+        TH1D* tmp = it->getHistogramUncertainty(uncName, upOrDown, hist, outputFolder, envelope, era);
         
         if (output == nullptr) {
             output = tmp;

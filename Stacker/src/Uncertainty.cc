@@ -552,6 +552,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         TH1D* histNominal = nominalHists[histCount];
 
         if (! envelope || (envelope && ! buildEnvelope)) {
+            //std::cout << "process " << current->getName().Data() << " has " << current->isSet() << std::endl;
             upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
             downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
 

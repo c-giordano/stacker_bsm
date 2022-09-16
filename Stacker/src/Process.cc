@@ -146,6 +146,7 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
     TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
     TH1D* output = nullptr;
+    //std::cout << "in process " << getName().Data() << std::endl;
 
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];

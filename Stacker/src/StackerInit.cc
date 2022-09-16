@@ -111,7 +111,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
         // check for special stuff
         std::string part;
-        if (stream >> part) {
+        if (stream >> part) { 
             // check if it contains a plus. If so, the current process must be modified to take into account multiple subdirectories
             // maybe make a process object containing multiple processes
             std::vector<std::string> processNamesStrings = split(part, "+");
