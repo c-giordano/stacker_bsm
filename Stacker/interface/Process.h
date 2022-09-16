@@ -48,8 +48,10 @@ class Process {
 
         TFile* GetOutputFile() {return outputFile;}
 
+        std::vector<TFile*> GetInputfiles() {return inputfiles;};
+
         virtual TH1D* getHistogram(Histogram* histogram);
-        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope);
+        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era="");
 
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
 

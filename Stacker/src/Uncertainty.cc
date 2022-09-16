@@ -513,7 +513,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     return ret;
 }
 
-std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists) {
+std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists, std::string era) {
     // Loop processes, ask to add stuff
     Process* current = head;
     TString histogramID = histogram->getID();
@@ -552,8 +552,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         TH1D* histNominal = nominalHists[histCount];
 
         if (! envelope || (envelope && ! buildEnvelope)) {
-            upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
-            downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+            upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
+            downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
 
             if (histogram->HasRebin()) {
                 if (histogram->GetRebinVar() == nullptr) {

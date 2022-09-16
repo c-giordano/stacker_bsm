@@ -26,6 +26,8 @@ private:
     std::vector<Histogram*> allHistograms;
     std::vector<std::vector<TH1D*>> allHistogramTH1Ds;
 
+    std::vector<std::string> relevantEras; 
+
     Process* head;
     
     bool isData = false;

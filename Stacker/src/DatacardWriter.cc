@@ -14,6 +14,23 @@ DatacardWriter::DatacardWriter(std::string yearID, ProcessList* allProc, std::ve
         isData = true;
     }
     //initDatacard();
+    
+    bool era_16Pre = false;
+    bool era_16Post = false;
+    bool era_17 = false;
+    bool era_18 = false;
+    for (auto file : allProc->getHead()->GetInputfiles()) {
+        std::string filename = file->GetName();
+
+        if (stringContainsSubstr(filename, "2016Pre")) era_16Pre = true;
+        if (stringContainsSubstr(filename, "2016Post")) era_16Post = true;
+        if (stringContainsSubstr(filename, "2017")) era_17 = true;
+        if (stringContainsSubstr(filename, "2018")) era_18 = true;
+    }
+    if (era_16Pre) relevantEras.push_back("2016PreVFP");
+    if (era_16Post) relevantEras.push_back("2016PostVFP");
+    if (era_17) relevantEras.push_back("2017");
+    if (era_18) relevantEras.push_back("2018");
 }
 
 
@@ -142,51 +159,64 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
     unsigned k = 1;
     if (! uncertainty->getCorrelatedAmongProcesses()) k = relevantProcesses.size();
 
-    for (unsigned j=0; j<k; j++) {
-        std::string tempName = name;
-        if (k > 1) tempName += relevantProcesses[j].Data();
-        if (eraSpecific) tempName += yearID;
-        datacard << std::setw(30) << tempName << "\t";
+    bool isUnspecifiedEraSpecific = stringContainsSubstr(uncertainty->getName(), "201");
+    for (unsigned j=0; j<k; j++) {        
+        for (auto era : relevantEras) {
+            if (isUnspecifiedEraSpecific) {
+                if (stringContainsSubstr(uncertainty->getName(), "2016Pre")) era = "2016PreVFP";
+                else if (stringContainsSubstr(uncertainty->getName(), "2016Post")) era = "2016PostVFP";
+                else if (stringContainsSubstr(uncertainty->getName(), "2016")) era = "2016";
+                else if (stringContainsSubstr(uncertainty->getName(), "2017")) era = "2017";
+                else if (stringContainsSubstr(uncertainty->getName(), "2018")) era = "2018";
+            }
+            std::string tempName = name;
 
-        double errorValue = 1.0;
+            if (k > 1) tempName += relevantProcesses[j].Data();
+            if (eraSpecific) tempName += era;
 
-        
-        if (uncertainty->isFlat()) {
-            datacard << std::setw(15) << "lnN" << "\t";
-            if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
-            else errorValue = uncertainty->getFlatRateAll();
-        } else {
-            datacard << std::setw(15) << "shape" << "\t";
-            uncertainty->setOutputName(tempName);
-        }
+            datacard << std::setw(30) << tempName << "\t";
+            double errorValue = 1.0;
 
-        for (unsigned i=0; i < allHistograms.size(); i++) {
-            if (! uncertainty->isFlat()) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i]);
-
-            std::stringstream interString;
-
-            Process* proc = allProc->getTail();
-            while (proc) {
-                TString currentName = proc->getName();
-                if (! allHistograms[i]->isRelevant(currentName)) {
-                    proc = proc->getPrev();
-                    continue;
-                }
-                if (! containsProcess(relevantProcesses, currentName)
-                    || (k != 1 && currentName != relevantProcesses[j])) {
-                    interString << std::setw(15) << "-" << "\t";
-                    proc = proc->getPrev();
-                    continue;
-                }
-                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
-
-                proc = proc->getPrev();
+            if (uncertainty->isFlat()) {
+                datacard << std::setw(15) << "lnN" << "\t";
+                if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
+                else errorValue = uncertainty->getFlatRateAll();
+            } else {
+                datacard << std::setw(15) << "shape" << "\t";
+                uncertainty->setOutputName(tempName);
             }
 
-        // loop over number of histograms we consider
-            datacard << interString.str();
+            for (unsigned i=0; i < allHistograms.size(); i++) {
+                if (! uncertainty->isFlat() && (eraSpecific || isUnspecifiedEraSpecific)) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i], era);
+                else if (! uncertainty->isFlat()) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i]);
+
+                std::stringstream interString;
+
+                Process* proc = allProc->getTail();
+                while (proc) {
+                    TString currentName = proc->getName();
+                    if (! allHistograms[i]->isRelevant(currentName)) {
+                        proc = proc->getPrev();
+                        continue;
+                    }
+                    if (! containsProcess(relevantProcesses, currentName)
+                        || (k != 1 && currentName != relevantProcesses[j])) {
+                        interString << std::setw(15) << "-" << "\t";
+                        proc = proc->getPrev();
+                        continue;
+                    }
+                    interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                    proc = proc->getPrev();
+                }
+
+                // loop over number of histograms we consider
+                datacard << interString.str();
+            }
+
+            datacard << std::endl;
+            if (! eraSpecific) break;
         }
-        datacard << std::endl;
     }
     
     if (uncertainty->getNext() == nullptr) {

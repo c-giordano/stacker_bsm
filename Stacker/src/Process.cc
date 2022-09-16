@@ -141,7 +141,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope) {
+TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era) {
     TString histName = hist->getID(); // + "_" + uncName + "_" + upOrDown;
     TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
@@ -150,50 +150,74 @@ TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDo
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];
         std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
-        
-        currFile->cd("Uncertainties");
 
-        if (! gDirectory->GetDirectory(name)) {
-            continue;
-        }
-        gDirectory->cd(name);
-
-        //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
-
-        for (auto subdir : *subdirectories) {
-            if (! envelope) gDirectory->cd(subdir);
-            
-            // std::cout << subdir << std::endl;
-            if (! gDirectory->GetDirectory(uncName.c_str())) {
-                std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found in file " << currFile->GetName() << ". Should it?" << std::endl;
-                exit(2);
+        if (! stringContainsSubstr(currFile->GetName(), era)) {
+            currFile->cd("Nominal");
+            if (! gDirectory->GetDirectory(name)) {
+                continue;
             }
 
-            gDirectory->cd(uncName.c_str());
-            gDirectory->cd(upOrDown.c_str());
-            
-            TH1D* inter;
-            gDirectory->GetObject(histName, inter);
+            gDirectory->cd(name);
 
-            //inter->Sumw2();
-            if (inter != nullptr) {
+            for(auto subdir : *subdirectories) {
+                gDirectory->cd(subdir);
+                TH1D* inter;
+                gDirectory->GetObject(histName, inter);
+
                 if (output == nullptr) {
                     output = new TH1D(*inter);
                     //output->Sumw2();
                 } else {
                     output->Add(inter);
                 }
-            } else {
-                std::cout << "Histogram " << histName << " not found for uncertainty " << uncName << " in " << subdir << " for process" << getName().Data() << ". Should it exist?" << std::endl;
+                // Read stuff, add to outputhistogram (maybe first output is stack but then print it to th?)
+                gDirectory->cd("..");
             }
+        } else {
+            currFile->cd("Uncertainties");
 
-            //std::cout << output->Integral() << "\t";
+            if (! gDirectory->GetDirectory(name)) {
+                continue;
+            }
+            gDirectory->cd(name);
 
-            gDirectory->cd("..");
-            gDirectory->cd("..");
-            gDirectory->cd("..");
-            
-            if (envelope) break;
+            //std::cout << name << " UNCERTAINTY: " << histName.Data() << "\t";
+
+            for (auto subdir : *subdirectories) {
+                if (! envelope) gDirectory->cd(subdir);
+                
+                // std::cout << subdir << std::endl;
+                if (! gDirectory->GetDirectory(uncName.c_str())) {
+                    std::cout << "ERROR: Uncertainty " << uncName << " in process " << subdir << " not found in file " << currFile->GetName() << ". Should it?" << std::endl;
+                    exit(2);
+                }
+
+                gDirectory->cd(uncName.c_str());
+                gDirectory->cd(upOrDown.c_str());
+                
+                TH1D* inter;
+                gDirectory->GetObject(histName, inter);
+
+                //inter->Sumw2();
+                if (inter != nullptr) {
+                    if (output == nullptr) {
+                        output = new TH1D(*inter);
+                        //output->Sumw2();
+                    } else {
+                        output->Add(inter);
+                    }
+                } else {
+                    std::cout << "Histogram " << histName << " not found for uncertainty " << uncName << " in " << subdir << " for process" << getName().Data() << ". Should it exist?" << std::endl;
+                }
+
+                //std::cout << output->Integral() << "\t";
+
+                gDirectory->cd("..");
+                gDirectory->cd("..");
+                gDirectory->cd("..");
+                
+                if (envelope) break;
+            }
         }
     }
 
