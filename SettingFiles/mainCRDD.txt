@@ -1,13 +1,17 @@
 # Processname       color       -> Processes in order: last to first
 TT+X              851         B   TTVV+TTX
-Xgam              593         B   ttG+ZG+Z+WG+ttbar
+Xgam_int              593         B   Z+ttbar
+Xgam_ext          590            B ZG+ttG
 ChargeMisID         882         B  
 WZ                  893         B
-#WWDS                436         B                       
-#SSWW                841         B    
-ZZ-H                  600         B
-VVV                 906         B   VVV+SSWW
-nonPrompt           801         B   nonPromptDD
+##WWDS                436         B                       
+##SSWW                841         B    
+#ZZ-H                  600         B
+VVV                 906         B   VVV+SSWW+ZZ-H
+#nonPrompt           801         B   nonPromptDD
+#nonPrompt           801         B   nonPromptElectron+nonPromptMuon
+nonPromptEl       801         B  nonPromptElectron
+nonPromptMu           800         B  nonPromptMuon
 TTH                 803         B   
 TTZ                 407         B   
 TTW                 419         B   
@@ -22,36 +26,112 @@ RatioPlots=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-ZSigZVeto rebinVar=9,0.4,0.55,0.7,0.8,0.86,0.91,0.94,0.97,1. 
 
-BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=3
-BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=3
-BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=3
-BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-Z rebin=3
-BDT_FinalresultSignal_TriClass_SR-4L_CR-4L-Z rebin=3
-BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B rebin=3
-BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B rebin=3
-BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-2J1B rebin=3
-BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-Z rebin=3
-BDT_FinalresultTTBar_TriClass_SR-4L_CR-4L-Z rebin=3
-BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-23J1B rebin=3
-BDT_FinalresultTTW_TriClass_SR-4L_CR-2L-45J2B rebin=3
-BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-2J1B rebin=3
-BDT_FinalresultTTW_TriClass_SR-4L_CR-3L-Z rebin=3
-BDT_FinalresultTTW_TriClass_SR-4L_CR-4L-Z rebin=3
-BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B rebin=5
-BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B rebin=5
-BDTScore_Signal_TriClass_SR-4L_CR-3L-2J1B rebin=5
-BDTScore_Signal_TriClass_SR-4L_CR-3L-Z rebin=5
-BDTScore_Signal_TriClass_SR-4L_CR-4L-Z rebin=5
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B rebin=5
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B rebin=5
-BDTScore_TTBar_TriClass_SR-4L_CR-3L-2J1B rebin=5
-BDTScore_TTBar_TriClass_SR-4L_CR-3L-Z rebin=5
-BDTScore_TTBar_TriClass_SR-4L_CR-4L-Z rebin=5
-BDTScore_TTW_TriClass_SR-4L_CR-2L-23J1B rebin=5
-BDTScore_TTW_TriClass_SR-4L_CR-2L-45J2B rebin=5
-BDTScore_TTW_TriClass_SR-4L_CR-3L-2J1B rebin=5
-BDTScore_TTW_TriClass_SR-4L_CR-3L-Z rebin=5
-BDTScore_TTW_TriClass_SR-4L_CR-4L-Z rebin=5
+# list of histgorams for which modified conditions are applied, together with the modified conditions
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-Z rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-4L-Z rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-2J1B rebin=120
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-Z rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-4L-Z rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1B rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2B rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-3L-2J1B rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-3L-Z rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-4L-Z rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-3L-2J1B rebin=20
+BDTScore_Signal_TriClass_SR-4L_CR-3L-Z rebin=25
+BDTScore_Signal_TriClass_SR-4L_CR-4L-Z rebin=25
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-2J1B rebin=50
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-Z rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-4L-Z rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1B rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2B rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-3L-2J1B rebinVar=4,0.,0.6,0.8,1.
+BDTScore_TTV_TriClass_SR-4L_CR-3L-Z rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-4L-Z rebin=20
 N_jets_CR-Conversion logscale
 N_jets_CRWZ logscale
+N_MediumBjets_CR-3L-Z logscale
+
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-3L-ZSigZVeto rebinVar=4,0.4,0.55,0.7,1.
+BDT_FinalresultTTV_TriClass_SR-4L_CR-3L-ZSigZVeto rebinVar=4,0.4,0.6,0.7,1.
+BDTScore_Signal_TriClass_SR-4L_CR-3L-ZSigZVeto rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-3L-ZSigZVeto rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-3L-ZSigZVeto rebin=20
+
+
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1Bee rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2Bee rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1Bee rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2Bee rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1Bee rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2Bee rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1Bee rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2Bee rebin=10
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1Bee rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2Bee rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1Bee rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2Bee rebin=10
+
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1Bem rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2Bem rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1Bem rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2Bem rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1Bem rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2Bem rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1Bem rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2Bem rebin=10
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1Bem rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2Bem rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1Bem rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2Bem rebin=10
+
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1Bmm rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2Bmm rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1Bmm rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2Bmm rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1Bmm rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2Bmm rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1Bmm rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2Bmm rebin=10
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1Bmm rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2Bmm rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1Bmm rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2Bmm rebin=10
+
+
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B++ rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B++ rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B++ rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B++ rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1B++ rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2B++ rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B++ rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B++ rebin=10
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B++ rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B++ rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1B++ rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2B++ rebin=10
+
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B-- rebin=240
+BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B-- rebin=240
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-23J1B-- rebin=60
+BDT_FinalresultTTBar_TriClass_SR-4L_CR-2L-45J2B-- rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-23J1B-- rebin=60
+BDT_FinalresultTTV_TriClass_SR-4L_CR-2L-45J2B-- rebin=60
+BDTScore_Signal_TriClass_SR-4L_CR-2L-23J1B-- rebin=10
+BDTScore_Signal_TriClass_SR-4L_CR-2L-45J2B-- rebin=10
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B-- rebin=20
+BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B-- rebin=20
+BDTScore_TTV_TriClass_SR-4L_CR-2L-23J1B-- rebin=10
+BDTScore_TTV_TriClass_SR-4L_CR-2L-45J2B-- rebin=10

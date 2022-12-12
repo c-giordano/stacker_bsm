@@ -7,8 +7,9 @@ import itertools
 import json
 import glob
 
-eras = [["16PreVFP"], ["16PostVFP"], ["17"], ["18"], ["16PreVFP", "16PostVFP"], ["16PreVFP", "16PostVFP", "17", "18"]]
-mixTags = [["DL"], ["_3L"], ["_4L"], ["crw"], ["cro"], ["crz"], ["crz-4L"], ["cro-3L"], ["DL", "_3L", "_4L"], ["crw", "cro", "crz", "cro-3L", "crz-4L"], ["DL", "_3L", "_4L", "crw", "cro", "crz", "cro-3L", "crz-4L"]]
+#eras = [["16PreVFP"], ["16PostVFP"], ["17"], ["18"], ["16PreVFP", "16PostVFP"], ["16PreVFP", "16PostVFP", "17", "18"]]
+eras = [["16"], ["17"], ["18"], ["16", "17", "18"]]
+mixTags = [["DL"], ["_3L"], ["_4L"], ["crw"], ["cro"], ["crz"], ["crz_4L"], ["cro_3L"], ["DL", "_3L", "_4L"], ["crw", "cro", "crz", "cro_3L", "crz_4L"], ["DL", "_3L", "_4L", "crw", "cro", "crz", "cro_3L", "crz_4L"]]
 # Loop eras:
 #       Loop mixTags, combine all files for era matching all tags in mixtags
 # Do opposite as well: loop tags, then eras
@@ -78,6 +79,6 @@ if __name__ == "__main__":
     baseDCs = glob.glob("/user/nivanden/Stacker_v2/combineFiles/Variations/Base/*") # should yield abs paths
     combinedDCs = MakeSets()
 
-    baseDCs.extend(combinedDCs)
-    GetSignificance(baseDCs)
+    #baseDCs.extend(combinedDCs)
+    #GetSignificance(baseDCs)
 

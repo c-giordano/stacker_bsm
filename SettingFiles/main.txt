@@ -1,27 +1,30 @@
 # Processname       color       -> Processes in order: last to first
 TT+X              851         B   TTVV+TTX
-Xgam              593         B   ttG+ZG+Z+WG+ttbar
+Xgam              593         B   ttG+Z+ZG+ttbar
 ChargeMisID         882         B  
 WZ                  893         B
-#WWDS                436         B                       
-#SSWW                841         B    
-ZZ-H                  600         B
-VVV                 906         B   VVV+SSWW
-nonPrompt           801         B   nonPromptDD
+##WWDS                436         B                       
+##SSWW                841         B    
+#ZZ-H                  600         B
+VVV                 906         B   VVV+SSWW+ZZ-H
+nonPrompt           801         B 
 TTH                 803         B   
 TTZ                 407         B   
 TTW                 419         B   
 TTTT                633         S
+
 
 BROAD SETTINGS
 # general settings
 Lumi=HIST
 Drawopt=HIST
 OutFolder=Most_recent_plots/Nominal/
-#RatioPlots=True
+RatioPlots=True
 
 HISTOGRAMS
 # list of histgorams for which modified conditions are applied, together with the modified conditions
+Cutbased_AN_SR-2L logscale
+
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=3
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=3
 BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=3

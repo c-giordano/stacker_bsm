@@ -54,8 +54,11 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
     std::string down = "Down";
 
     //std::cout << outputName << std::endl;
+    //std::cout << name << std::endl;
+
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
+        //std::cout << current->getName().Data() << std::endl;
         if (current->getName() != relevantProcesses[procCount]) {
             histCount++;
             current = current->getNext();
@@ -88,6 +91,11 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
                 histUp = (TH1D*) histUp->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar());
                 histDown = (TH1D*) histDown->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar());
             }
+        }
+
+        if (histogram->hasUniWidthBins()) {
+            histUp = ApplyBinWidthUnification(histUp);
+            histDown = ApplyBinWidthUnification(histDown);
         }
         // do stuff
         // anyway
@@ -174,9 +182,12 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
 
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
+        //std::cout << current->getName().Data() << " " << relevantProcesses[procCount] << std::endl;
+
         if (current->getName() != relevantProcesses[procCount]) {
             histCount++;
             current = current->getNext();
+            continue;
         }
 
         TH1D* histNominal = histVec[histCount];
@@ -297,6 +308,9 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildEnvelopeForProcess(Histogram* histogra
                 currentVariation = std::make_shared<TH1D>(*(TH1D*) currentVariation->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar()));
             }
         }
+        if (histogram->hasUniWidthBins()) {
+            currentVariation = std::make_shared<TH1D>(*(TH1D*) ApplyBinWidthUnification(currentVariation.get()));
+        }
 
         for(int j=1; j < currentVariation->GetNbinsX()+1; j++){
 
@@ -346,6 +360,10 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
             totalVar = (TH1D*) totalVar->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar());
         }
     }
+    if (histogram->hasUniWidthBins()) {
+        totalVar = ApplyBinWidthUnification(totalVar);
+    }
+    
     
     upVar->Add(totalVar);
     downVar->Add(totalVar, -1.);
@@ -538,6 +556,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     TH1D* downVarReturn = nullptr;
 
 
+    //std::cout << name << " " << envelope << buildEnvelope << indivudalPDFVariations << std::endl;
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
         if (current->getName() != relevantProcesses[procCount]) {
@@ -550,8 +569,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         TH1D* upVar = nullptr;
         TH1D* downVar = nullptr;
         TH1D* histNominal = nominalHists[histCount];
-
-        if (! envelope || (envelope && ! buildEnvelope)) {
+        if (! envelope || (envelope && (! buildEnvelope && ! indivudalPDFVariations))) {
             //std::cout << "process " << current->getName().Data() << " has " << current->isSet() << std::endl;
             upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
             downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
@@ -570,10 +588,33 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                     downVar = (TH1D*) downVar->Rebin(histogram->GetRebin()-1, newNameDown, histogram->GetRebinVar());
                 }
             }
+            if (histogram->hasUniWidthBins()) {
+                upVar = ApplyBinWidthUnification(upVar);
+                downVar = ApplyBinWidthUnification(downVar);
+            }
         } else if (name == "pdfShapeVar") {
-            std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
-            upVar = histVars.first;
-            downVar = histVars.second;
+            if (! indivudalPDFVariations) {
+                //std::cout << "building vars" << std::endl;
+                std::pair<TH1D*, TH1D*> histVars = buildPDFFromSumSquaredCollections(histogram, current, histNominal);
+                upVar = histVars.first;
+                downVar = histVars.second;
+            } else {
+                writeIndividualPDFVariations(histogram, histNominal, current, 100);
+
+                upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
+                downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
+            }
+        } else if (name == "qcdScale") {
+            if (! indivudalPDFVariations) {
+                std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
+                upVar = histVars.first;
+                downVar = histVars.second;
+            } else {
+                writeIndividualPDFVariations(histogram, histNominal, current, 6);
+
+                upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
+                downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
+            }
         } else {
             std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
             upVar = histVars.first;
@@ -583,10 +624,32 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         if (histogram->getPrintToFile()) {
             outfile->cd();
             outfile->cd((histogram->getCleanName()).c_str());
-
+            //std::cout << "process " << current->getName() << std::endl;
             for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
-                if (upVar->GetBinContent(j) <= 0.) upVar->SetBinContent(j, 0.00001);
-                if (downVar->GetBinContent(j) <= 0.) downVar->SetBinContent(j, 0.00001);
+
+                //std::cout << "bin " << j << ": " << histNominal->GetBinContent(j) << " " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j);
+                if (histNominal->GetBinContent(j) <= 0.00005) {
+                    upVar->SetBinContent(j, 0.00001);
+                    upVar->SetBinError(j, 0.00001);
+                    downVar->SetBinContent(j, 0.00001);
+                    downVar->SetBinError(j, 0.00001);
+                }
+
+                if (histNominal->GetBinError(j) > histNominal->GetBinContent(j)) {
+                    upVar->SetBinContent(j, histNominal->GetBinContent(j));
+                    upVar->SetBinError(j, histNominal->GetBinError(j));
+                    downVar->SetBinContent(j, histNominal->GetBinContent(j));
+                    downVar->SetBinError(j, histNominal->GetBinError(j));
+                }
+                if (upVar->GetBinContent(j) <= 0.) {
+                    upVar->SetBinContent(j, 0.00001);
+                    upVar->SetBinError(j, 0.00001);
+                }
+                if (downVar->GetBinContent(j) <= 0.) {
+                    downVar->SetBinContent(j, 0.00001);
+                    downVar->SetBinError(j, 0.00001);
+                }
+                //std::cout << "\t after clean: " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j) << std::endl;
             }
 
             gDirectory->cd(outputNameUp);
@@ -626,3 +689,63 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
 
     return {upVarReturn, downVarReturn};
 }
+
+void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nominalHist, Process* current, int n) {
+    std::vector<std::shared_ptr<TH1D>> allHistogramVariations = current->GetAllVariations(histogram, n, name);
+
+    //std::cout << "writing variations for " << current->getName() << " with n = "  << allHistogramVariations.size() << std::endl; 
+
+    for (unsigned i=0; i < allHistogramVariations.size(); i++) {
+        TH1D* var = allHistogramVariations[i].get();
+
+        if (histogram->HasRebin()) {
+            if (histogram->GetRebinVar() == nullptr) {
+                var->Rebin(histogram->GetRebin());
+            } else {
+                TString newNameUp = var->GetName();
+                var->SetName(newNameUp + TString("OLD"));
+                
+                var = (TH1D*) var->Rebin(histogram->GetRebin()-1, newNameUp, histogram->GetRebinVar());
+            }
+        }
+        if (histogram->hasUniWidthBins()) {
+            var = ApplyBinWidthUnification(var);
+        }
+        if (histogram->getPrintToFile()) {
+            outfile->cd();
+            outfile->cd((histogram->getCleanName()).c_str());
+
+            for (int j=1; j < var->GetNbinsX() + 1; j++) {
+                if (nominalHist->GetBinError(j) > nominalHist->GetBinContent(j)) {
+                    var->SetBinContent(j, nominalHist->GetBinContent(j));
+                    var->SetBinError(j, nominalHist->GetBinError(j));
+                }
+                if (nominalHist->GetBinContent(j) <= 0.00005) {
+                    var->SetBinContent(j, 0.00001);
+                    var->SetBinError(j, 0.00001);
+                }
+                if (var->GetBinContent(j) <= 0.) {
+                    var->SetBinError(j, 0.00001);
+                    var->SetBinContent(j, 0.00001);
+                }
+            }
+
+            TString outputNameUp = outputName + std::to_string(i) + "Up";
+            TString outputNameDown = outputName + std::to_string(i) + "Down";
+            if (! gDirectory->GetDirectory(outputNameUp)) {
+                gDirectory->mkdir(outputNameUp);
+                gDirectory->mkdir(outputNameDown);
+            }
+
+            gDirectory->cd(outputNameUp);
+            var->Write(current->getName());
+            gDirectory->cd("..");
+
+            gDirectory->cd(outputNameDown);
+            nominalHist->Write(current->getName());
+        }
+    }
+}
+
+
+

@@ -1,24 +1,38 @@
 # Processname       color       -> Processes in order: last to first
-#TT+X              851         B   TTVV+TTX
-#Xgam              593         B   ttG+Z+ZG+ttbar
-#ChargeMisID         882         B  
-#WZ                  893         B
-##WWDS                436         B                       
-##SSWW                841         B    
+TT+X              851         B   TTVV+TTX
+Xgam              593         B   ttG+ZG+ttbar
+ChargeMisID         882         B  
+WZ                  893         B
+#WWDS                436         B                       
+#SSWW                841         B    
 #ZZ-H                  600         B
-#VVV                 906         B   VVV+SSWW+ZZ-H
+VVV                 906         B   VVV+SSWW+ZZ-H
+#nonPrompt           801         B   nonPromptElectron+nonPromptMuon
 nonPrompt           801         B   nonPromptDD
-TTV                 419         B   TTW+TTZ+TTH
+#nonPromptElectron       801         B
+#nonPromptMuon           800         B
+TTH                 803         B   
+TTZ                 407         B   
+TTW                 419         B   
 TTTT                633         S
 
 BROAD SETTINGS
 # general settings
 Lumi=HIST
-Drawopt=HIST, NOSTACK
-OutFolder=Most_recent_plots/Shapes/
+Drawopt=HIST
+OutFolder=Most_recent_plots/Nominal/
+#RatioPlots=True
+SignalYield=True
 
 HISTOGRAMS
+Cutbased_AN_SR-2L logscale Xbinlabels=0,SR1,SR2,SR3,SR4,SR5,SR6,SR7,SR8,SR9,SR10,SR11,SR12,SR13,SR14
+Cutbased_AN_SR-2Lee logscale
+Cutbased_AN_SR-2Lem logscale
+Cutbased_AN_SR-2Lmm logscale
+Cutbased_AN_SR-3L logscale
+Cutbased_AN_SR-4L logscale
 # list of histgorams for which modified conditions are applied, together with the modified conditions
+
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=240
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=240
 BDT_FinalresultSignal_TriClass_SR-4L_CR-3L-2J1B rebin=240
@@ -55,32 +69,26 @@ N_jets_CRWZ logscale
 
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=14,0.4,0.55,0.65,0.72,0.77,0.81,0.84,0.87,0.89,0.91,0.94,0.96,0.98,1. logscale
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
-#BDT_FinalresultSignal_TriClass_SR-2L rebinVar=16,0.4,0.5,0.58,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1.
+BDT_FinalresultSignal_TriClass_SR-2L rebinVar=16,0.4,0.5,0.58,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
 
 
 #BDT_FinalresultSignal_TriClass_SR-3L rebinVar=7,0.4,0.6,0.75,0.85,0.9,0.96,1. logscale
 #BDT_FinalresultSignal_TriClass_SR-3L rebinVar=8,0.4,0.65,0.8,0.86,0.91,0.94,0.97,1. 
-#BDT_FinalresultSignal_TriClass_SR-3L rebinVar=9,0.4,0.55,0.7,0.8,0.86,0.91,0.94,0.97,1. 
+BDT_FinalresultSignal_TriClass_SR-3L rebinVar=9,0.4,0.55,0.7,0.8,0.86,0.91,0.94,0.97,1. 
 #BDT_FinalresultSignal_TriClass_SR-3L rebinVar=15,0.4,0.55,0.65,0.71,0.75,0.78,0.81,0.84,0.87,0.89,0.92,0.94,0.96,0.98,1. logscale
 
-BDT_FinalresultSignal_TriClass_SR-2L rebin=24
+#BDT_FinalresultSignal_TriClass_SR-2L rebin=3
 BDT_FinalresultSignal_TriClass_SR-2L-- rebin=3
 BDT_FinalresultSignal_TriClass_SR-2L++ rebin=3
-BDT_FinalresultSignal_TriClass_SR-2Lee rebinVar=11,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.88,0.92,0.97,1. 
+BDT_FinalresultSignal_TriClass_SR-2Lee rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
 BDT_FinalresultSignal_TriClass_SR-2Lem rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
-BDT_FinalresultSignal_TriClass_SR-2Lmm rebinVar=11,0.4,0.55,0.65,0.71,0.76,0.8,0.85,0.9,0.94,0.97,1. 
-#BDT_FinalresultSignal_TriClass_SR-2Lee rebin=2
-#BDT_FinalresultSignal_TriClass_SR-2Lem rebin=2
-#BDT_FinalresultSignal_TriClass_SR-2Lmm rebin=2
-#BDT_FinalresultSignal_TriClass_SR-2Lee rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
-#BDT_FinalresultSignal_TriClass_SR-2Lem rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
-#BDT_FinalresultSignal_TriClass_SR-2Lmm rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
+BDT_FinalresultSignal_TriClass_SR-2Lmm rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
 #BDT_FinalresultSignal_TriClass_SR-3L rebinVar=11,0.4,0.55,0.65,0.7,0.75,0.8,0.85,0.9,0.94,0.97,1. logscale
 #BDT_FinalresultSignal_TriClass_SR-3L rebinVar=13,0.4,0.55,0.65,0.7,0.75,0.8,0.84,0.88,0.90,0.92,0.95,0.98,1. logscale
-BDT_FinalresultSignal_TriClass_SR-3L rebin=24
+#BDT_FinalresultSignal_TriClass_SR-3L rebin=3
 BDT_FinalresultSignal_TriClass_SR-3LnoOSSF rebin=3
 BDT_FinalresultSignal_TriClass_SR-3LOSSF rebin=3
-BDT_FinalresultSignal_TriClass_SR-4L rebinVar=40
+BDT_FinalresultSignal_TriClass_SR-4L rebinVar=3,0.4,0.65,1.
 BDT_FinalresultTTBar_TriClass_SR-2L rebinVar=6,0.4,0.5,0.6,0.7,0.8,1.
 BDT_FinalresultTTBar_TriClass_SR-2L-- rebinVar=6,0.4,0.5,0.6,0.7,0.8,1.
 BDT_FinalresultTTBar_TriClass_SR-2L++ rebinVar=6,0.4,0.5,0.6,0.7,0.8,1.
@@ -101,16 +109,16 @@ BDT_FinalresultTTV_TriClass_SR-3L rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-3LnoOSSF rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-3LOSSF rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-4L rebin=120
-BDTScore_Signal_TriClass_SR-2L rebin=10
+BDTScore_Signal_TriClass_SR-2L rebin=20
 BDTScore_Signal_TriClass_SR-2L-- rebin=20
 BDTScore_Signal_TriClass_SR-2L++ rebin=20
 BDTScore_Signal_TriClass_SR-2Lee rebin=20
 BDTScore_Signal_TriClass_SR-2Lem rebin=20
 BDTScore_Signal_TriClass_SR-2Lmm rebin=20
-BDTScore_Signal_TriClass_SR-3L rebin=10
+BDTScore_Signal_TriClass_SR-3L rebin=20
 BDTScore_Signal_TriClass_SR-3LnoOSSF rebin=20
 BDTScore_Signal_TriClass_SR-3LOSSF rebin=20
-BDTScore_Signal_TriClass_SR-4L rebin=50
+BDTScore_Signal_TriClass_SR-4L rebin=100
 BDTScore_TTBar_TriClass_SR-2L rebin=20
 BDTScore_TTBar_TriClass_SR-2L-- rebin=20
 BDTScore_TTBar_TriClass_SR-2L++ rebin=20
@@ -131,7 +139,6 @@ BDTScore_TTV_TriClass_SR-3L rebin=20
 BDTScore_TTV_TriClass_SR-3LnoOSSF rebin=20
 BDTScore_TTV_TriClass_SR-3LOSSF rebin=20
 BDTScore_TTV_TriClass_SR-4L rebin=50
-
 
 NJets_SR-2L         xAxisName=N_{jets}
 NJets_SR-3L         xAxisName=N_{jets}

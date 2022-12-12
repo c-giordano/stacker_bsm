@@ -130,6 +130,20 @@ TH1D* Process::getHistogram(Histogram* histogram) {
             output = (TH1D*) output->Rebin(histogram->GetRebin()-1, newName.c_str(), histogram->GetRebinVar());
         }
     }
+    if (histogram->hasUniWidthBins()) {
+        // gen new th1 with right number of bins. Bin labels shouldn't matter
+        // transfer contents one by one and apply right errors
+        std::string newName = std::string(histName.Data() + name);
+        output->SetName((std::string(output->GetName()) + "_PreUni").c_str());
+        TH1D* tmpOut = new TH1D(newName.c_str(), newName.c_str(), output->GetNbinsX(), 0., 1.);
+
+        for (unsigned i=1; i<output->GetNbinsX()+1; i++) {
+            tmpOut->SetBinContent(i, output->GetBinContent(i));
+            tmpOut->SetBinError(i, output->GetBinError(i));
+        }
+        //delete output;
+        output = tmpOut;
+    }
 
     output->SetName(histName + name);
     output->SetTitle(histName + name);
@@ -253,8 +267,8 @@ std::vector<std::shared_ptr<TH1D>> Process::GetAllVariations(Histogram* histogra
     // std::cout << histName << std::endl;
     std::vector<std::shared_ptr<TH1D>> output;
 
-    for (unsigned i = 0; i < inputfiles.size(); i++) {
-        TFile* currFile = inputfiles[i];
+    for (unsigned j = 0; j < inputfiles.size(); j++) {
+        TFile* currFile = inputfiles[j];
         
         currFile->cd("Uncertainties");
 

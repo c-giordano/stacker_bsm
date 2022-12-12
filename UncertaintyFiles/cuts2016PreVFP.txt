@@ -7,34 +7,32 @@ WZNorm: flat=1.062    AllEra=1.062 process=WZ
 #ZZHNorm: flat=1.06   AllEra=1.06 process=ZZ-H
 VVVNorm: flat=1.06   AllEra=1.06 process=VVV
 nonPromptNorm: flat=1.3   AllEra=1.3 process=nonPrompt
-#nonPromptMuNorm: flat=1.3   AllEra=1.3 process=nonPromptMuon
-#nonPromptElNorm: flat=1.3   AllEra=1.3 process=nonPromptElectron
 ChargeMisIDNorm: flat=1.15   AllEra=1.15 process=ChargeMisID
 TTXNorm: flat=1.2    AllEra=1.2 process=TT+X
 XgammaNorm: flat=1.05   AllEra=1.05 process=Xgam
 isrShape: shape process=AllMC uncorrelated
 fsrShape: shape process=AllMC correlated
 electronReco: shape process=AllMC correlated
-muonIDStat: shape process=AllMC correlated corrEra
-muonIDSyst: shape process=AllMC correlated
-electronIDStat: shape process=AllMC correlated corrEra
-electronIDSyst: shape process=AllMC correlated
+#muonIDStat: shape process=AllMC correlated corrEra
+#muonIDSyst: shape process=AllMC correlated
+#electronIDStat: shape process=AllMC correlated corrEra
+#electronIDSyst: shape process=AllMC correlated
 pileup: shape process=AllMC correlated
 JER_1p93: shape process=AllMC correlated corrEra
 JER_2p5: shape process=AllMC correlated corrEra
-#JEC: shape process=AllMC correlated
+JEC: shape process=AllMC correlated
 qcdScale: envelope process=AllMC correlated
 #qcdScale: envelope process=AllMC correlated AllPDFVariations
 #pdfShapeVar: envelope process=AllMC correlated AllPDFVariations
 pdfShapeVar: envelope process=AllMC correlated
-bTagShape_cferr1: shape process=AllMC correlated
-bTagShape_cferr2: shape process=AllMC correlated
-bTagShape_hf: shape process=AllMC correlated
-bTagShape_hfstats1: shape process=AllMC correlated corrEra
-bTagShape_hfstats2: shape process=AllMC correlated corrEra
-bTagShape_lf: shape process=AllMC correlated
-bTagShape_lfstats1: shape process=AllMC correlated corrEra
-bTagShape_lfstats2: shape process=AllMC correlated corrEra
+#bTagShape_cferr1: shape process=AllMC correlated
+#bTagShape_cferr2: shape process=AllMC correlated
+#bTagShape_hf: shape process=AllMC correlated
+#bTagShape_hfstats1: shape process=AllMC correlated corrEra
+#bTagShape_hfstats2: shape process=AllMC correlated corrEra
+#bTagShape_lf: shape process=AllMC correlated
+#bTagShape_lfstats1: shape process=AllMC correlated corrEra
+#bTagShape_lfstats2: shape process=AllMC correlated corrEra
 prefire: shape process=AllMC correlated
 WZSF_Stat_0Jet: shape process=WZ correlated
 WZSF_Stat_1Jet: shape process=WZ correlated
@@ -44,50 +42,45 @@ WZSF_Stat_4Jet: shape process=WZ correlated
 WZSF_Stat_5Jet: shape process=WZ correlated
 WZSF_Stat_6PlusJet: shape process=WZ correlated
 MET: shape process=AllMC correlated corrEra
-JEC_Absolute: shape process=AllMC correlated
-JEC_Absolute_2018: shape process=AllMC correlated corrEra
-JEC_BBEC1: shape process=AllMC correlated
-JEC_BBEC1_2018: shape process=AllMC correlated corrEra
-JEC_EC2: shape process=AllMC correlated
-JEC_EC2_2018: shape process=AllMC correlated corrEra
-JECFlavorQCD_bottom: shape process=AllMC correlated
-JECFlavorQCD_charm: shape process=AllMC correlated
-JECFlavorQCD_light: shape process=AllMC correlated
-JEC_HF: shape process=AllMC correlated
-JEC_HF_2018: shape process=AllMC correlated corrEra
-JEC_RelativeBal: shape process=AllMC correlated
-JEC_RelativeSample_2018: shape process=AllMC correlated corrEra
-HEMIssue: shape process=AllMC correlated
+#JEC_Absolute: shape process=AllMC correlated
+#JEC_Absolute_2018: shape process=AllMC correlated corrEra
+#JEC_BBEC1: shape process=AllMC correlated
+#JEC_BBEC1_2018: shape process=AllMC correlated corrEra
+#JEC_EC2: shape process=AllMC correlated
+#JEC_EC2_2018: shape process=AllMC correlated corrEra
+#JECFlavorQCD_bottom: shape process=AllMC correlated
+#JECFlavorQCD_charm: shape process=AllMC correlated
+#JECFlavorQCD_light: shape process=AllMC correlated
+#JEC_HF: shape process=AllMC correlated
+#JEC_HF_2018: shape process=AllMC correlated corrEra
+#JEC_RelativeBal: shape process=AllMC correlated
+#JEC_RelativeSample_2018: shape process=AllMC correlated corrEra
+
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name
-#BDTScore_Signal_TriClass_SR-2L sig_2l
-#BDTScore_Signal_TriClass_SR-3L sig_3l
+Cutbased_AN_SR-2L sig_all
+#Cutbased_AN_SR-3L sig_3l
 #Cutbased_AN_SR-4L sig_4l
 
-BDT_FinalresultSignal_TriClass_SR-2L bdt_DL_sig
-BDT_FinalresultTTV_TriClass_SR-2L bdt_DL_ttw
-BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
-#
-BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
-BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
-#
-BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
-# BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
-BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
+#BDT_FinalresultSignal_TriClass_SR-2L bdt_DL_sig
+#BDT_FinalresultTTV_TriClass_SR-2L bdt_DL_ttw
+#BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
 ##
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
+#BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
+#BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
+#BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
+##
+#BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
+## BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
+#BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
+#
+Yield_CR-2L-45J2B crw
 #BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
 #TriClass_Fit_CR-3L-2J1B cro_3L
-N_jets_CR-3L-Z crz
+Yield_CR-3L-Z crz
 #N_jets_CR-4L-Z crz_4L
 
-#Yield_CR-2L-45J2B crw
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
-TriClass_Fit_CR-3L-2J1B cro_3L
-#Yield_CR-3L-Z crz
-N_jets_CR-4L-Z crz_4L
 
 #N_jets_SR-2L N_jets_SR-2L
 #N_jets_SR-3L N_jets_SR-3L

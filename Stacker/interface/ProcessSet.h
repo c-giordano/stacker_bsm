@@ -24,6 +24,7 @@ class ProcessSet : public Process {
         virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era="");
 
         virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);
+        virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
 };
 
 #endif

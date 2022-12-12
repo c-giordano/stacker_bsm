@@ -20,10 +20,14 @@ class Histogram {
         bool drawUncertainties = false;
         std::vector<std::string>* xBinLabels = nullptr;
 
+        std::string xAxisName = "";
+
         std::map<TString, bool> relevance;
 
         int RebinFixed = 1;
         double* RebinVar = nullptr;
+
+        bool uniWidthBins = false;
     public:
         Histogram(TString histID);
         Histogram(TString histID, bool requireLogScale);
@@ -61,6 +65,11 @@ class Histogram {
         bool HasRebin() const {if (RebinVar || RebinFixed != 1) return true; else return false;}
         double* GetRebinVar() {return RebinVar;}
         int GetRebin() {return RebinFixed;}
+
+        bool HasXAxisNameOverwrite() {return (xAxisName != "");}
+        std::string GetXAxisName() {return xAxisName;}
+
+        bool hasUniWidthBins() {return uniWidthBins;}
 };
 
 //bool searchHist(Histogram*, std::string&);

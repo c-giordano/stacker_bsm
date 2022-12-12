@@ -10,7 +10,7 @@ draw canvas, call uncertainty histograms
 void Stacker::drawAllUncertaintyImpacts() {
     setUncertaintyImpactStyle();
     gROOT->ForceStyle();
-    std::vector<std::string> uncToDraw = {"JEC", "bTagShape_hf", "bTagShape_cferr1"};
+    std::vector<std::string> uncToDraw = {"JEC_FlavorQCD", "bTagShape_hf", "bTagShape_cferr1"};
     for (auto histogramID : histogramVec) {
         histogramID->setPrintToFile(false);
         drawUncertaintyImpacts(histogramID, uncToDraw);
@@ -45,7 +45,11 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
 
     int colIndex=0;
     int step = (cols.GetSize() - 1) / (uncToDraw.size() - 1);
+
+    TH1D* memup = nullptr;
+
     for (auto it : uncToDraw) {
+        //std::cout << it;
         std::pair<TH1D*, TH1D*> upAndDown = variations[it];
         
         // uncertainty / nominal
@@ -54,6 +58,7 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
 
         upVar->Divide(nominal);
         downVar->Divide(nominal);
+        if (memup == nullptr) memup = upVar;
 
         if (std::max(upVar->GetMaximum(), downVar->GetMaximum()) > max) {
             max = std::max(upVar->GetMaximum(), downVar->GetMaximum());
@@ -83,9 +88,9 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
 
         colIndex += step;
     }
-    auto it = variations.begin();
-    it->second.first->SetMaximum(max * 1.2);
-    it->second.first->SetMinimum(min * 0.95); 
+    //auto it = variations[uncToDraw[0]];
+    memup->SetMaximum(max * 1.2);
+    memup->SetMinimum(min * 0.95); 
 
     TLine* line = new TLine(nominal->GetBinLowEdge(1), 1., nominal->GetXaxis()->GetBinUpEdge(nominal->GetNbinsX()), 1.);
     line->Draw("SAME");

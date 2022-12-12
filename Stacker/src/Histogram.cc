@@ -63,4 +63,12 @@ void Histogram::readSetting(std::string& setting, std::pair<std::string, std::st
         }
         return;
     }
+
+    if (setting == "xAxisName") {
+        xAxisName = currSetAndVal.second;
+    }
+
+    if (setting == "UnifyBinWidth") {
+        uniWidthBins = true;
+    }
 }

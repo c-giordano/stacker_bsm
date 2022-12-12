@@ -131,63 +131,99 @@ void DatacardWriter::WriteDatacardVariationUncertainties(std::ofstream& datacard
     std::vector<TString> relevantProcesses = uncertainty->getRelevantProcesses();
 
     unsigned k = 1;
-    if (!uncertainty->getCorrelatedAmongProcesses())
-        k = relevantProcesses.size();
+    if (!uncertainty->getCorrelatedAmongProcesses()) k = relevantProcesses.size();
 
-    for (unsigned j = 0; j < k; j++)
-    {
-        std::string tempName = name;
-        if (k > 1)
-            tempName += relevantProcesses[j].Data();
-        if (eraSpecific)
-            tempName += yearID;
-        datacardVar << std::setw(30) << tempName << "\t";
-
-        double errorValue = 1.0;
-
-        if (uncertainty->isFlat())
-        {
-            datacardVar << std::setw(15) << "lnN"
-                        << "\t";
-            if (eraSpecific)
-                errorValue = uncertainty->getFlatRateEra();
-            else
-                errorValue = uncertainty->getFlatRateAll();
-        }
-        else
-        {
-            datacardVar << std::setw(15) << "shape"
-                        << "\t";
-            uncertainty->setOutputName(tempName);
-        }
-
-        std::stringstream interString;
-
-        Process *proc = allProc->getTail();
-        while (proc)
-        {
-            TString currentName = proc->getName();
-            if (!histogram->isRelevant(currentName))
-            {
-                proc = proc->getPrev();
-                continue;
+    bool isUnspecifiedEraSpecific = stringContainsSubstr(uncertainty->getName(), "201");
+    for (unsigned j = 0; j < k; j++) {
+        for (auto era : relevantEras) {
+            if (isUnspecifiedEraSpecific) {
+                if (stringContainsSubstr(uncertainty->getName(), "2016Pre")) era = "2016PreVFP";
+                else if (stringContainsSubstr(uncertainty->getName(), "2016Post")) era = "2016PostVFP";
+                else if (stringContainsSubstr(uncertainty->getName(), "2016")) era = "2016";
+                else if (stringContainsSubstr(uncertainty->getName(), "2017")) era = "2017";
+                else if (stringContainsSubstr(uncertainty->getName(), "2018")) era = "2018";
             }
-            if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j]))
-            {
-                interString << std::setw(15) << "-"
+            std::string tempName = name;
+            if (k > 1)  tempName += relevantProcesses[j].Data();
+            if (eraSpecific) tempName += era;
+            if (uncertainty->isIndivudalPDFVariations()) tempName += "0";
+
+
+            datacardVar << std::setw(30) << tempName << "\t";
+            double errorValue = 1.0;
+
+            if (uncertainty->isFlat())             {
+                datacardVar << std::setw(15) << "lnN"
                             << "\t";
-                proc = proc->getPrev();
-                continue;
+                if (eraSpecific) errorValue = uncertainty->getFlatRateEra();
+                else errorValue = uncertainty->getFlatRateAll();
+            } else {
+                datacardVar << std::setw(15) << "shape"
+                            << "\t";
+                uncertainty->setOutputName(tempName);
             }
-            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
 
-            proc = proc->getPrev();
+            std::stringstream interString;
+
+            Process *proc = allProc->getTail();
+            while (proc) {
+                TString currentName = proc->getName();
+                if (!histogram->isRelevant(currentName)) {
+                    proc = proc->getPrev();
+                    continue;
+                } 
+                if (!containsProcess(relevantProcesses, currentName) || (k != 1 && currentName != relevantProcesses[j])) {
+                    interString << std::setw(15) << "-"
+                                << "\t";
+                    proc = proc->getPrev();
+                    continue;
+                }
+                interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                proc = proc->getPrev();
+            }
+
+            // loop over number of histograms we consider
+            datacardVar << interString.str();
+
+            if (uncertainty->getName() == "qcdScale" || uncertainty->getName() == "pdfShapeVar") {
+                unsigned nVariations = 100;
+                if (uncertainty->getName() == "qcdScale") nVariations = 6;
+                for (unsigned countPDFs = 1; countPDFs < nVariations; countPDFs++) {
+                    datacardVar << std::endl;
+
+                    std::string tempNamePDF = name + std::to_string(countPDFs);
+                    datacardVar << std::setw(30) << tempNamePDF << "\t";
+                    datacardVar << std::setw(15) << "shape" << "\t";
+                
+                    std::stringstream interString;
+
+                    Process* proc = allProc->getTail();
+                    while (proc) {
+                        TString currentName = proc->getName();
+                        if (!histogram->isRelevant(currentName)) {
+                            proc = proc->getPrev();
+                            continue;
+                        }
+                        if (! containsProcess(relevantProcesses, currentName)
+                            || (k != 1 && currentName != relevantProcesses[j])) {
+                            interString << std::setw(15) << "-" << "\t";
+                            proc = proc->getPrev();
+                            continue;
+                        }
+                        interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                        proc = proc->getPrev();
+                    }
+                    datacardVar << interString.str();
+                
+                    // loop over number of histograms we consider
+                }
+            }
+
+            datacardVar << std::endl;
+            if (! eraSpecific) break;
         }
-
-        // loop over number of histograms we consider
-        datacardVar << interString.str();
-
-        datacardVar << std::endl;
     }
 
     if (eraSpecific)

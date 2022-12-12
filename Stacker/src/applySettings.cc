@@ -24,6 +24,10 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
                 stack->GetXaxis()->SetBinLabel(i, TString(bins->at(i - 1)));
             }
         }
+
+        if (hist->HasXAxisNameOverwrite()) {
+            stack->GetXaxis()->SetTitle(hist->GetXAxisName().c_str());
+        }
     } else {
         stack->GetXaxis()->SetTitle("");
         stack->GetXaxis()->SetLabelSize(0);
@@ -45,9 +49,20 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
             stack->SetMaximum(dataHist->GetMaximum() * 10); 
         } else {
-            stack->SetMaximum(stack->GetMaximum() * 10); 
+            stack->SetMaximum(stack->GetMaximum() * 10);
+        }
+        if (dataHist) {
+            double min = 1.e10;
+            for (int i=1; i<dataHist->GetNbinsX()+1; i++) {
+                if (dataHist->GetBinContent(i) > 0.1 && dataHist->GetBinContent(i) < min && dataHist->GetBinContent(i) > 0.) {
+                    min = dataHist->GetBinContent(i) / 10;
+                    std::cout << min << std::endl;
+                }
+            }
+            stack->SetMinimum(min);
         }
         stack->SetMinimum(0.8);
+        
     } else {
         if (dataHist && dataHist->GetMaximum() > stack->GetMaximum()) {
             stack->SetMaximum(dataHist->GetMaximum() * 1.6); 

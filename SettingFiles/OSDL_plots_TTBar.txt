@@ -1,0 +1,21 @@
+# Processname       color       -> Processes in order: last to first
+ttbar              801          B
+DY                 593          B
+Xgam               882          B   ttG+ZG
+# Others             906          B   ZZ+WW
+
+BROAD SETTINGS
+# general settings
+Lumi=HIST
+Drawopt=HIST
+OutFolder=Most_recent_plots/Nominal/
+RatioPlots=True
+
+HISTOGRAMS
+# list of histgorams for which modified conditions are applied, together with the modified conditions
+N_MediumB_jets_TTBar logscale
+N_jets_TTBar logscale
+deltaR_HighPT_Jets_TTBar logscale
+deltaR_HighPT_MedB_TTBar logscale
+N_MediumBjets_TTBar logscale
+NjetNbjet_TTBar logscale

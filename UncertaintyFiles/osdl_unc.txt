@@ -1,0 +1,49 @@
+# unc  Flat or shape    correlationProc     yearCorrelations
+Lumi:   flat=1.025
+isrShape: shape process=AllMC uncorrelated
+fsrShape: shape process=AllMC uncorrelated
+electronReco: shape process=AllMC correlated
+muonIDStat: shape process=AllMC correlated corrEra
+muonIDSyst: shape process=AllMC correlated
+electronIDStat: shape process=AllMC correlated corrEra
+electronIDSyst: shape process=AllMC correlated
+pileup: shape process=AllMC correlated
+# JER_1p93: shape process=AllMC correlated corrEra
+# JER_2p5: shape process=AllMC correlated corrEra
+# JEC: shape process=AllMC correlated
+qcdScale: envelope process=AllMC correlated
+pdfShapeVar: envelope process=AllMC correlated 
+#bTagShape_cferr1: shape process=AllMC correlated
+#bTagShape_cferr2: shape process=AllMC correlated
+#bTagShape_hf: shape process=AllMC correlated
+#bTagShape_hfstats1: shape process=AllMC correlated corrEra
+#bTagShape_hfstats2: shape process=AllMC correlated corrEra
+#bTagShape_lf: shape process=AllMC correlated
+#bTagShape_lfstats1: shape process=AllMC correlated corrEra
+#bTagShape_lfstats2: shape process=AllMC correlated corrEra
+prefire: shape process=AllMC correlated
+# WZSF_Stat_0Jet: shape process=WZ correlated
+# WZSF_Stat_1Jet: shape process=WZ correlated
+# WZSF_Stat_2Jet: shape process=WZ correlated
+# WZSF_Stat_3Jet: shape process=WZ correlated
+# WZSF_Stat_4Jet: shape process=WZ correlated
+# WZSF_Stat_5Jet: shape process=WZ correlated
+# WZSF_Stat_6PlusJet: shape process=WZ correlated
+#WZSF_Stat_7PlusJet: shape process=WZ correlated
+# MET: shape process=AllMC correlated corrEra
+#JEC_Absolute: shape process=AllMC correlated
+## JEC_Absolute_2018: shape process=AllMC correlated corrEra
+#JEC_BBEC1: shape process=AllMC correlated
+## JEC_BBEC1_2018: shape process=AllMC correlated corrEra
+#JEC_EC2: shape process=AllMC correlated
+## JEC_EC2_2018: shape process=AllMC correlated corrEra
+#JEC_FlavorQCD: shape process=AllMC correlated
+#JEC_HF: shape process=AllMC correlated
+## JEC_HF_2018: shape process=AllMC correlated corrEra
+#JEC_RelativeBal: shape process=AllMC correlated
+# JEC_RelativeSample_2018: shape process=AllMC correlated corrEra
+# JEC_Total: shape process=AllMC correlated
+
+
+HISTOGRAMS
+## shapes to print to outputfiles together with cleaned name

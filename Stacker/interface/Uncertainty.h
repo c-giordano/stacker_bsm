@@ -19,6 +19,7 @@ class Uncertainty {
         bool flat;
         bool envelope;
         bool buildEnvelope = true;
+        bool indivudalPDFVariations = false;
         bool correlatedAmongProcesses;
         bool eraSpecific;
         bool isBoth;
@@ -68,6 +69,10 @@ class Uncertainty {
         std::pair<TH1D*, TH1D*> getUpAndDownShapeUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& nominalHists, std::string era="");
         TH1D* getFlatUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
         TH1D* getUncertainty(Histogram* histogram, Process* head, std::vector<TH1D*>& histVec);
+
+        void writeIndividualPDFVariations(Histogram* histogram, TH1D* nominalHist, Process* current, int n);
+        bool isIndivudalPDFVariations() {return indivudalPDFVariations;}
+        void setIsIndivudalPDFVariations(bool newSet) {indivudalPDFVariations = newSet;}
 
         void printOutShapeUncertainty(Histogram* histogram, Process* head);
 

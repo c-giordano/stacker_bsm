@@ -180,6 +180,8 @@ void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
         inputFilesData.push_back(newInputFile);
 
         newInputFile->cd("Nominal");
+        //std::cout << cmdArgs[i] << std::endl;
+        //std::cout << gDirectory->GetListOfKeys() << std::endl;
         TString nameInter = gDirectory->GetListOfKeys()->At(0)->GetName();
 
         if (name != nameInter && name != "something") {
@@ -264,6 +266,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         bool allEras = false;
         bool corrProcess = true;
         bool corrEra = false;
+        bool pdfVariations = false;
         double flatTot = 0.;
         double flatUncertaintyEra = 0.;
         double flatUncertaintyAll = 0.;
@@ -290,6 +293,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
             if (part == "uncorrelated") corrProcess = false;
             if (part == "correlated") corrProcess = true;
             if (part == "corrEra") eraSpec = true;
+            if (part == "AllPDFVariations") pdfVariations = true;
             if (currSetAndVal.first == "process") {
                 if (currSetAndVal.second == "AllMC") {
                     relProcess = allProcesses;
@@ -299,6 +303,26 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                     }
 
                     it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptDD"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
+
+                    it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptMuon"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
+
+                    it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptElectron"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
+
+                    it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptMu"));
+                    if (it != relProcess.end()) {
+                        relProcess.erase(it);
+                    }
+
+                    it = std::find(relProcess.begin(), relProcess.end(), TString("nonPromptEl"));
                     if (it != relProcess.end()) {
                         relProcess.erase(it);
                     }
@@ -342,6 +366,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         } else {
             newUnc->setEraSpec(eraSpec);
             newUnc->setBoth(eraSpec && allEras);
+            newUnc->setIsIndivudalPDFVariations(pdfVariations);
         }
     }
 

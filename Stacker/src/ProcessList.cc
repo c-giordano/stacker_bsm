@@ -122,7 +122,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
             if (veryVerbose) {
                 std::cout << " & ";
                 for (int i=1; i < histToAdd->GetNbinsX() + 1; i++) {
-                    std::cout << histToAdd->GetBinContent(i) << " & ";
+                    std::cout << std::setprecision(5) << histToAdd->GetBinContent(i) << " & ";
                 }
                 std::cout << std::endl;
             } else {
@@ -238,6 +238,9 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
                     histToAdd->SetBinContent(j, 0.00001);
                     histToAdd->SetBinError(j, 0.00001);
                 }
+                //if (histToAdd->GetBinContent(j) - histToAdd->GetBinError(j) <= 0.) {
+                //    histToAdd->SetBinError(j, histToAdd->GetBinContent(j));
+                //}
             }
             histToAdd->Write(current->getName(), TObject::kOverwrite);
         }
@@ -312,7 +315,8 @@ std::map<std::string, std::pair<TH1D*, TH1D*>> ProcessList::UpAndDownHistograms(
         }
         // getShapeUncertainty or apply flat uncertainty
         std::pair<TH1D*, TH1D*> newUncertainty = currUnc->getUpAndDownShapeUncertainty(hist, head, nominalHists);
-
+        //newUncertainty.first->GetBinContent(1);
+        //std::cout << currUnc->getName() << std::endl;
         returnValue[currUnc->getName()] = newUncertainty;
 
         currUnc = currUnc->getNext();
@@ -329,6 +333,12 @@ std::vector<TH1D*> ProcessList::CreateHistogramAllProcesses(Histogram* hist) {
 
     while (current) {
         TH1D* histToAdd = current->getHistogram(hist);
+        for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+            if (histToAdd->GetBinContent(j) <= 0.) {
+                histToAdd->SetBinContent(j, 0.00001);
+                histToAdd->SetBinError(j, 0.00001);
+            }
+        }
         if (histToAdd == nullptr) {
             current = current->getNext();
         }

@@ -101,3 +101,19 @@ TH2D* ProcessSet::get2DHistogram(TString& histName, TLegend* legend) {
     return output;
 }
 
+std::vector<std::shared_ptr<TH1D>> ProcessSet::GetAllVariations(Histogram* histogram, int nVars, std::string& uncName) {
+    std::vector<std::shared_ptr<TH1D>> output;
+
+    for (auto it : subProcesses) {
+        std::vector<std::shared_ptr<TH1D>> tmp = it->GetAllVariations(histogram, nVars, uncName);        
+        
+        if (output.size() == 0) {
+            output = tmp;
+        } else {
+            for (int i=0; i<nVars; i++) {
+                output[i]->Add(tmp[i].get());
+            }
+        }
+    }
+    return output;
+}

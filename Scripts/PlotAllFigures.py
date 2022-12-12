@@ -5,7 +5,7 @@ import time
 
 # execute in Stacker_v2 dir. Use python3 PlotAllFigures.py with location relative to Stacker_v2 dir
 
-eras = ["16PreVFP", "16PostVFP", "17", "18"]
+eras = ["16", "16PreVFP", "16PostVFP", "17", "18"]
 
 def PlotFigures(inputFiles, settingFile, uncertaintyFile="", observationFiles=[], additionalArguments=""):
     # set cwd to be /user/nivanden/Stacker_v2
@@ -61,10 +61,20 @@ def PlotSeperateEras(inputFiles, observationFiles):
 
         if (GetCR(inputFilesEra[0])):
             uncFile = "fullCR.txt"
-        else:
+            if ("DY" in inputFilesEra[0] or "TTBar" in inputFilesEra[0]):
+                settingFile = "OSDL_plots.txt"
+                uncFile = ""
+            else:
+                settingFile = "mainCRDD.txt"
+        elif GetDD(inputFilesEra[0]):
             uncFile = "20" + era + ".txt"
+            settingFile = "mainDD20" + era + ".txt"
+        else:
+            uncFile = "cuts20"+era+".txt"
+            settingFile = "main.txt"
 
-        settingFile = GetSettingfile(inputFilesEra[0])
+
+        #settingFile = GetSettingfile(inputFilesEra[0])
         PlotFigures(inputFilesEra, settingFile, uncFile, obsFilesEra)
 
     return
@@ -73,6 +83,8 @@ def PlotAllErasCombined(inputFiles, observationFiles):
     uncFile = "full.txt"
     if (GetCR(inputFiles[0])):
         uncFile = "fullCR.txt"
+    elif not GetDD(inputFiles[0]):
+        uncFile = "cutbasedTests.txt"
 
     settingFile = GetSettingfile(inputFiles[0])
     PlotFigures(inputFiles, settingFile, uncFile, observationFiles)

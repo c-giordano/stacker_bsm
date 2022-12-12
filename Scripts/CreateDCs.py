@@ -5,19 +5,27 @@ import os
 import subprocess
 import sys
 
-eras = ["16PreVFP", "16PostVFP", "17", "18"]
-# eras = ["16", "17", "18"]
+#eras = ["16PreVFP", "16PostVFP", "17", "18"]
+eras = ["16", "17", "18", "all"]
 
-def DCSeparateEras(inputFiles, observationFiles):
+def DCSeparateEras(inputFiles, observationFiles, extra=""):
     for era in eras:
-        inputFilesEra = [filename for filename in inputFiles if ("20" + era in filename) or ("Data"+era in filename)]
-        obsFilesEra = [filename for filename in observationFiles if ("20" + era in filename) or ("Data"+era in filename)]
-        if (GetCR(inputFilesEra[0])):
-            uncFile = "fullCR.txt"
+        if era != "all":
+            inputFilesEra = [filename for filename in inputFiles if ("20" + era in filename) or ("Data"+era in filename)]
+            obsFilesEra = [filename for filename in observationFiles if ("20" + era in filename) or ("Data"+era in filename)]
+            if (GetCR(inputFilesEra[0])):
+                uncFile = "fullCR.txt"
+                settingFile = "mainDD.txt"
+            else:
+                uncFile = "20" + era + extra + ".txt"
+                settingFile = "mainDD20" + era + ".txt"
         else:
-            uncFile = "20" + era + ".txt"
+            inputFilesEra = inputFiles
+            obsFilesEra = observationFiles
+            uncFile = "full_for_DC.txt"
+            settingFile = "mainDD.txt"
 
-        settingFile = GetSettingfile(inputFilesEra[0])
+        # settingFile = GetSettingfile(inputFilesEra[0])
         PlotFigures(inputFilesEra, settingFile, uncFile, obsFilesEra, "-DC")
 
     return
@@ -27,16 +35,25 @@ def SubmitDatacardCreation(inputArgs):
     DCSeparateEras(inputfiles, obsfiles)
 
 def LocalDatacardCreation(inputArgs):
-    inputfiles, obsfiles = ParseInputArguments(inputArgs[1:])
+    extra = ""
+    if (inputArgs[2] == "extra"):
+        extra = inputArgs[3]
+        inputfiles, obsfiles = ParseInputArguments(inputArgs[3:])
+    else:
+        inputfiles, obsfiles = ParseInputArguments(inputArgs[1:])
     for era in eras:
         inputFilesEra = [filename for filename in inputfiles if ("20" + era in filename) or ("Data"+era in filename)]
         obsFilesEra = [filename for filename in obsfiles if ("20" + era in filename) or ("Data"+era in filename)]
         if (GetCR(inputFilesEra[0])):
             uncFile = "fullCR.txt"
-        else:
-            uncFile = "20" + era + ".txt"
+            settingFile = "mainDD.txt"
 
-        settingFile = GetSettingfile(inputFilesEra[0])
+        else:
+            uncFile = "20" + era + extra + ".txt"
+            settingFile = "mainDD20" + era + ".txt"
+
+
+        #settingFile = GetSettingfile(inputFilesEra[0])
         PlotFiguresLocal(inputFilesEra, settingFile, uncFile, obsFilesEra, "-DC")
 
     return

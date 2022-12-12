@@ -13,6 +13,7 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     // split between root files and settings file
 
     TH1::AddDirectory(false);
+    std::cout << "Building stacker" << std::endl;
 
     unsigned settingFileNb = 0;
     bool era_16Pre = false;
@@ -25,23 +26,31 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     for (auto it : cmdArgs) {
         // if string does not contain .root: break
         if (! stringContainsSubstr(it, ".root")) break;
+        std::cout << it << std::endl;
+        //std::cout << "Loading input file" << std::endl;
         
         TFile* newInputFile = new TFile(it.c_str(), "read");
+        //std::cout << "Loaded input file" << std::endl;
+
         inputfiles.push_back(newInputFile);
 
         if (stringContainsSubstr(it, "2016Pre")) era_16Pre = true;
         if (stringContainsSubstr(it, "2016Post")) era_16Post = true;
         if (stringContainsSubstr(it, "2017")) era_17 = true;
         if (stringContainsSubstr(it, "2018")) era_18 = true;
+        //std::cout << "era chosen" << std::endl;
 
         settingFileNb++;
     }
+    //std::cout << "ran over files" << std::endl;
+
 
     unsigned sumYears = unsigned(era_16Pre) + unsigned(era_16Post) + unsigned(era_17) + unsigned(era_18);
-    if (sumYears > 1) {
-        yearID = "AllEras";
-    } else  if (era_16Pre && era_16Post && !era_17 && !era_18) {
+    
+    if (era_16Pre && era_16Post && !era_17 && !era_18) {
         yearID = "2016";
+    } else if (sumYears > 1) {
+        yearID = "AllEras";
     } else {
         if (era_16Pre) yearID = "2016PreVFP";
         else if (era_16Post) yearID = "2016PostVFP";
@@ -49,6 +58,9 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
         else if (era_18) yearID = "2018";
         else yearID = getYearFromRootFile(cmdArgs[0]);
     }
+
+    //std::cout << "got year " << yearID << std::endl;
+
     
     std::string outputfilename = "combineFiles/Tmp/" + yearID + ".root";
     
@@ -62,6 +74,7 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     } else {
         pathToOutput = "Output/";
     }
+    //std::cout << "going to read settingfile" << yearID << std::endl;
 
     ReadSettingFile(cmdArgs[settingFileNb]);
 }
@@ -195,7 +208,7 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
             pathToOutput = baseDir + subDir + datestring + "/";
 
-            std::vector<std::string> subdirs = {"CRWZ", "CRZZ", "CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-2L-23J1B++", "CR-2L-23J1B--", "CR-2L-23J1Bee", "CR-2L-23J1Bem", "CR-2L-23J1Bmm", "CR-3L-2J1B", "CR-2L-45J2B", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
+            std::vector<std::string> subdirs = {"CRWZ", "CR-3L-ZSigZVeto", "DY", "TTBar", "CRZZ", "CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-2L-23J1B++", "CR-2L-23J1B--", "CR-2L-23J1Bee", "CR-2L-23J1Bem", "CR-2L-23J1Bmm", "CR-3L-2J1B", "CR-2L-45J2B", "CR-2L-45J2B++", "CR-2L-45J2B--", "CR-2L-45J2Bee", "CR-2L-45J2Bem", "CR-2L-45J2Bmm", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-2LpureSig", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
             // {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CR", "CRO", "CRZ", "CRO-3L", "CRZ-4L", "CRWZ"};
             //std::vector<std::string> subdirs = {"DL", "3L", "4L"};
             
@@ -230,7 +243,10 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
     for (auto it : inputfiles) {
         curr = processes->getHead();
         it->cd("Nominal");
+        std::cout << gDirectory->GetListOfKeys()->At(0)->GetName() << std::endl;
+        
         while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
+            std::cout << curr->getName() << std::endl;
             curr = curr->getNext();
         }
         if (curr != nullptr && gDirectory->GetDirectory(curr->getName())) {

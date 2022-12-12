@@ -1,8 +1,8 @@
 # Processname       color       -> Processes in order: last to first
-TTVV                851         B
-Xgamma              593         B
-ttbar               882         B               
-Rare                906         B   
+#TT+X                851         B    TTVV+TTX
+# Xgam                593         B    Z+ZG
+ttbar               882         B    ttbar+ttG          
+# Rare                906         B    VVV+SSWW+ZZ-H+WZ
 #nonPrompt           801         B   
 TTH                 803         B   
 TTZ                 407         B   

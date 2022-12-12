@@ -11,7 +11,7 @@
 
 #include "../../Helpers/interface/StringTools.h"
 #include "Histogram.h"
-
+#include "Tools.h"
 // Processes as linkedlist: first element of list is pointed to by ProcessList
 // Should make it relatively easy to work in a specific order?
 // 

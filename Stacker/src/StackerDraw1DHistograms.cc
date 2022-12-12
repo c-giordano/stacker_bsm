@@ -8,7 +8,8 @@ void Stacker::printAllHistograms() {
         tempCount++;
         histogramID->setPrintToFile(false);
         //std::cout << std::string(histogramID->getID().Data()) << std::endl;
-        if (std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-2L") continue;
+        //if (std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-2Lee" && std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-3L") continue;
+        //if (! stringContainsSubstr(std::string(histogramID->getID().Data()), "SR-3L")) continue;
 
         if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
             printHistogram(histogramID);
@@ -58,7 +59,11 @@ void Stacker::printHistogram(Histogram* hist) {
                     std::cout << ": " << dataHistogram->Integral() << " events" << std::endl;
                 }
             }
-            dataHistogram->SetTitle("Data");
+            if (dataProcess->getName() != "Obs") {
+                dataHistogram->SetTitle(dataProcess->getName());
+            } else {
+                dataHistogram->SetTitle("Data");
+            }
             dataHistogram->SetName("Data");
         }
 
@@ -177,14 +182,14 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
         for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
             double statError = allHistograms->GetBinError(bin);
             double systError = (*sysUnc)->GetBinContent(bin); // is already squared
-            totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
-            //totalUnc->SetBinError(bin, sqrt(systError) );
+            //totalUnc->SetBinError(bin, sqrt( statError*statError + systError) );
+            totalUnc->SetBinError(bin, sqrt(systError) );
 
             //std::cout << totalUnc->GetBinError(bin) << "\t";
 
         }
         //std::cout << std::endl;
-        totalUnc->SetFillStyle(3244); //3005  3244
+        totalUnc->SetFillStyle(3344); //3005  3244
         totalUnc->SetFillColor(kGray+2);
         totalUnc->SetMarkerStyle(0); //1
         totalUnc->Draw("E2 SAME");
@@ -225,7 +230,7 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
     }
 
     if (change) {
-        histStack->GetXaxis()->SetRangeUser(xmin, xmax);
+        //histStack->GetXaxis()->SetRangeUser(xmin, xmax);
     }
 
     pad->Update();
@@ -300,6 +305,11 @@ TH1D* Stacker::drawRatioMC(Histogram* hist, std::vector<TH1D*>& histoVec, std::v
         }
     }
 
+    if (hist->HasXAxisNameOverwrite()) {
+        signalTotal->GetXaxis()->SetTitle(hist->GetXAxisName().c_str());
+    }
+
+
     smallPad->Update();
     smallPad->Modified();
     //signalTotal->UseCurrentStyle();
@@ -348,6 +358,10 @@ TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** 
         }
     }
 
+    if (hist->HasXAxisNameOverwrite()) {
+        dataTotal->GetXaxis()->SetTitle(hist->GetXAxisName().c_str());
+    }
+
 
     int nrBins = mcTotal->GetNbinsX();
     for (int i = 1; i < nrBins + 1; i++) {
@@ -365,14 +379,19 @@ TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** 
     TLine* line = new TLine(dataTotal->GetBinLowEdge(1), 1., dataTotal->GetXaxis()->GetBinUpEdge(dataTotal->GetNbinsX()), 1.);
     line->Draw("SAME");
 
-    if (dataTotal->GetMaximum() > 2. || dataTotal->GetMaximum() + sqrt(dataTotal->GetMaximum()) > 2.) {
+    if (dataTotal->GetMaximum() > 1.5) {
+        dataTotal->SetMaximum(2.45); 
+    } else {
+        dataTotal->SetMaximum(1.5);
     }
 
-    if (dataTotal->GetMinimum() < 0. || dataTotal->GetMinimum() - sqrt(dataTotal->GetMinimum()) < 0.) {
+    if (dataTotal->GetMinimum() < 0.5) {
+        dataTotal->SetMinimum(0.5);
+    } else if (dataTotal->GetMinimum() > 1.) {
+        dataTotal->SetMinimum(0.9);
     }
 
-    dataTotal->SetMaximum(2.45); 
-    dataTotal->SetMinimum(0.5);
+    //dataTotal->SetMinimum(0.5);
 
     smallPad->Update();
     smallPad->Modified();
@@ -380,3 +399,4 @@ TH1D* Stacker::drawRatioData(Histogram* hist, TH1D* uncHist, TH1D* data, TPad** 
 
     return dataTotal;
 }
+

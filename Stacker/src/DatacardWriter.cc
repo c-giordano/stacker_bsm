@@ -173,6 +173,7 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
 
             if (k > 1) tempName += relevantProcesses[j].Data();
             if (eraSpecific) tempName += era;
+            if (uncertainty->isIndivudalPDFVariations()) tempName += "0";
 
             datacard << std::setw(30) << tempName << "\t";
             double errorValue = 1.0;
@@ -183,13 +184,14 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
                 else errorValue = uncertainty->getFlatRateAll();
             } else {
                 datacard << std::setw(15) << "shape" << "\t";
-                uncertainty->setOutputName(tempName);
+                if (! uncertainty->isIndivudalPDFVariations()) uncertainty->setOutputName(tempName);
+                else uncertainty->setOutputName(name);
             }
 
             for (unsigned i=0; i < allHistograms.size(); i++) {
                 if (! uncertainty->isFlat() && (eraSpecific || isUnspecifiedEraSpecific)) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i], era);
                 else if (! uncertainty->isFlat()) uncertainty->getUpAndDownShapeUncertainty(allHistograms[i], allProc->getHead(), allHistogramTH1Ds[i]);
-
+                
                 std::stringstream interString;
 
                 Process* proc = allProc->getTail();
@@ -212,6 +214,42 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
 
                 // loop over number of histograms we consider
                 datacard << interString.str();
+            }
+
+            if (uncertainty->isIndivudalPDFVariations()) {
+                unsigned nVariations = 100;
+                if (uncertainty->getName() == "qcdScale") nVariations = 6;
+                for (unsigned countPDFs = 1; countPDFs < nVariations; countPDFs++) {
+                    datacard << std::endl;
+
+                    std::string tempNamePDF = name + std::to_string(countPDFs);
+                    datacard << std::setw(30) << tempNamePDF << "\t";
+                    datacard << std::setw(15) << "shape" << "\t";
+                    
+                    for (unsigned i=0; i < allHistograms.size(); i++) {
+                        std::stringstream interString;
+
+                        Process* proc = allProc->getTail();
+                        while (proc) {
+                            TString currentName = proc->getName();
+                            if (! allHistograms[i]->isRelevant(currentName)) {
+                                proc = proc->getPrev();
+                                continue;
+                            }
+                            if (! containsProcess(relevantProcesses, currentName)
+                                || (k != 1 && currentName != relevantProcesses[j])) {
+                                interString << std::setw(15) << "-" << "\t";
+                                proc = proc->getPrev();
+                                continue;
+                            }
+                            interString << std::setw(15) << std::setprecision(5) << errorValue << "\t";
+
+                            proc = proc->getPrev();
+                        }
+                        datacard << interString.str();
+                    }
+                    // loop over number of histograms we consider
+                }
             }
 
             datacard << std::endl;
