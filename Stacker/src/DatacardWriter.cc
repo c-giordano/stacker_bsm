@@ -185,7 +185,12 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
             } else {
                 datacard << std::setw(15) << "shape" << "\t";
                 if (! uncertainty->isIndivudalPDFVariations()) uncertainty->setOutputName(tempName);
-                else uncertainty->setOutputName(name);
+                else {
+                    std::string tmptmpName = name;
+                    if (k > 1) tmptmpName += relevantProcesses[j].Data();
+
+                    uncertainty->setOutputName(tmptmpName);
+                }
             }
 
             for (unsigned i=0; i < allHistograms.size(); i++) {
@@ -221,8 +226,10 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
                 if (uncertainty->getName() == "qcdScale") nVariations = 6;
                 for (unsigned countPDFs = 1; countPDFs < nVariations; countPDFs++) {
                     datacard << std::endl;
-
-                    std::string tempNamePDF = name + std::to_string(countPDFs);
+                    std::string tempNamePDF = name;
+                    if (k > 1) tempNamePDF += relevantProcesses[j].Data();
+                    tempNamePDF += std::to_string(countPDFs);
+                    
                     datacard << std::setw(30) << tempNamePDF << "\t";
                     datacard << std::setw(15) << "shape" << "\t";
                     

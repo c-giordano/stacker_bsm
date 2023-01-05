@@ -21,8 +21,8 @@ pileup: shape process=AllMC correlated
 JER_1p93: shape process=AllMC correlated corrEra
 JER_2p5: shape process=AllMC correlated corrEra
 #JEC: shape process=AllMC correlated
-qcdScale: envelope process=AllMC correlated
-#qcdScale: envelope process=AllMC correlated AllPDFVariations
+#qcdScale: envelope process=AllMC uncorrelated
+qcdScale: envelope process=AllMC uncorrelated AllPDFVariations
 #pdfShapeVar: envelope process=AllMC correlated AllPDFVariations
 pdfShapeVar: envelope process=AllMC correlated
 bTagShape_cferr1: shape process=AllMC correlated
@@ -55,6 +55,7 @@ JEC_HF: shape process=AllMC correlated
 JEC_HF_2018: shape process=AllMC correlated corrEra
 JEC_RelativeBal: shape process=AllMC correlated
 JEC_RelativeSample_2018: shape process=AllMC correlated corrEra
+HEMIssue: shape process=AllMC correlated
 
 HISTOGRAMS
 # shapes to print to outputfiles together with cleaned name

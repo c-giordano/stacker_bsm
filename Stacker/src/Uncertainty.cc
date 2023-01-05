@@ -543,7 +543,6 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     TString outputNameDown = outputName + "Down";
 
     if (histogram->getPrintToFile()) {
-        
         outfile->cd(histogram->getCleanName().c_str());
         gDirectory->mkdir(outputNameUp);
         gDirectory->mkdir(outputNameDown);

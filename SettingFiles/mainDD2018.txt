@@ -1,5 +1,5 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+TTX
+TT+X              851         B   TTVV+TTX+THQ
 Xgam              593         B   ttG+ZG+ttbar
 ChargeMisID         882         B  
 WZ                  893         B
@@ -11,9 +11,9 @@ VVV                 906         B   VVV+SSWW+ZZ-H
 #nonPrompt           801         B   nonPromptDD
 nonPromptElectron       801         B
 nonPromptMuon           800         B
-TTH                 803         B   
-TTZ                 407         B   
-TTW                 419         B   
+TTH                 803         B   TTH+TTHbb
+TTZ                 407         B   TTZ+TTZbb
+TTW                 419         B   TTW+TTWbb
 TTTT                633         S
 
 BROAD SETTINGS

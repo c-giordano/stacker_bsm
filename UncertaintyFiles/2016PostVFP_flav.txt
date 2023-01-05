@@ -6,7 +6,9 @@ TTHNorm: flat=1.276    AllEra=1.273 process=TTH
 WZNorm: flat=1.066    AllEra=1.066 process=WZ
 ZZHNorm: flat=1.06   AllEra=1.06 process=ZZ-H
 VVVNorm: flat=1.06   AllEra=1.06 process=VVV
-nonPromptNorm: flat=1.3    AllEra=1.3 process=nonPrompt
+#nonPromptNorm: flat=1.3   AllEra=1.3 process=nonPrompt
+nonPromptMuNorm: flat=1.3   AllEra=1.3 process=nonPromptMuon
+nonPromptElNorm: flat=1.3   AllEra=1.3 process=nonPromptElectron
 ChargeMisIDNorm: flat=1.15    AllEra=1.15 process=ChargeMisID
 TTXNorm: flat=1.2    AllEra=1.2 process=TT+X
 XgammaNorm: flat=1.05    AllEra=1.05 process=Xgam
