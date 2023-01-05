@@ -51,3 +51,5 @@ ugent2016-master/*
 
 .vscode/*
 *.code-workspace
+
+stackerScripts/**
