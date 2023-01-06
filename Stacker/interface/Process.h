@@ -8,6 +8,7 @@
 #include <TLegend.h>
 
 #include <iostream>
+#include <algorithm>
 
 #include "../../Helpers/interface/StringTools.h"
 #include "Histogram.h"
