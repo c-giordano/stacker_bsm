@@ -31,6 +31,8 @@ class Process {
 
         bool isSignal;
         bool isData;
+
+        std::vector<std::string> ignoredChannels;
     public:
         Process(TString& procName, int procColor, TFile* procInputfile, TFile* outputFile, bool signal, bool data, bool OldStuff);
         Process(TString& procName, int procColor, std::vector<TFile*>& inputfiles, TFile* outputFile, bool signal, bool data, bool OldStuff);
@@ -52,12 +54,14 @@ class Process {
         std::vector<TFile*> GetInputfiles() {return inputfiles;};
 
         virtual TH1D* getHistogram(Histogram* histogram);
-        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era="");
+        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, bool envelope, std::string era="");
 
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
 
         virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);
 
+        void AddIgnoredChannel(std::string channel) {ignoredChannels.push_back(channel);}
+        bool IsChannelIgnored(std::string& channel);
 };
 
 #endif

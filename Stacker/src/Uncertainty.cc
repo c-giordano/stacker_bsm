@@ -64,12 +64,14 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
             current = current->getNext();
 
             continue;
+        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
+            current = current->getNext();
+            continue;
         }
-        //std::cout << current->getName();
 
         TH1D* histNominal = histVec[histCount];
-        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
-        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope());
+        TH1D* histUp = current->getHistogramUncertainty(name, up, histogram, isEnvelope());
+        TH1D* histDown = current->getHistogramUncertainty(name, down, histogram, isEnvelope());
 
         if (histUp == nullptr && histDown == nullptr) {
             current = current->getNext();
@@ -186,6 +188,9 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
 
         if (current->getName() != relevantProcesses[procCount]) {
             histCount++;
+            current = current->getNext();
+            continue;
+        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
             current = current->getNext();
             continue;
         }
@@ -343,7 +348,7 @@ std::pair<TH1D*, TH1D*> Uncertainty::buildPDFFromSumSquaredCollections(Histogram
     downVar->SetTitle(histogram->getID() + currentProcess->getName() + TString(name + "Down"));
 
     std::string up = "Up";
-    TH1D* totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope());
+    TH1D* totalVar = currentProcess->getHistogramUncertainty(name, up, histogram, isEnvelope());
 
     // get all histograms in up variation -> Should automatically sum in process
 
@@ -492,13 +497,21 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     ret->SetTitle(histogramID + name);
 
     std::vector<double> var(histVec[0]->GetNbinsX(), 0.);
+    int histCount = 0;
     int procCount = 0;
 
-    for (unsigned histCount = 0; histCount < histVec.size(); histCount++) {
+    //for (unsigned histCount = 0; histCount < histVec.size(); histCount++) {
+    while (current) {
+    
         if (current->getName() != relevantProcesses[procCount]) {
+            current = current->getNext();
+            histCount++;
+            continue;
+        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
             current = current->getNext();
             continue;
         }
+
 
         for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
             double variation = 0.;
@@ -514,6 +527,7 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
 
         current = current->getNext();
         procCount++;
+        histCount++;
     }
 
     for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
@@ -558,10 +572,9 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     //std::cout << name << " " << envelope << buildEnvelope << indivudalPDFVariations << std::endl;
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
-        if (current->getName() != relevantProcesses[procCount]) {
+        if (current->getName() != relevantProcesses[procCount] || current->IsChannelIgnored(histogram->GetChannel())) {
             histCount++;
             current = current->getNext();
-
             continue;
         }
 
@@ -570,8 +583,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
         TH1D* histNominal = nominalHists[histCount];
         if (! envelope || (envelope && (! buildEnvelope && ! indivudalPDFVariations))) {
             //std::cout << "process " << current->getName().Data() << " has " << current->isSet() << std::endl;
-            upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
-            downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
+            upVar = current->getHistogramUncertainty(name, up, histogram, isEnvelope(), era);
+            downVar = current->getHistogramUncertainty(name, down, histogram, isEnvelope(), era);
 
             if (histogram->HasRebin()) {
                 if (histogram->GetRebinVar() == nullptr) {
@@ -600,8 +613,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             } else {
                 writeIndividualPDFVariations(histogram, histNominal, current, 100);
 
-                upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
-                downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
+                upVar = current->getHistogramUncertainty(name, up, histogram, isEnvelope(), era);
+                downVar = current->getHistogramUncertainty(name, down, histogram, isEnvelope(), era);
             }
         } else if (name == "qcdScale") {
             if (! indivudalPDFVariations) {
@@ -611,8 +624,8 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             } else {
                 writeIndividualPDFVariations(histogram, histNominal, current, 6);
 
-                upVar = current->getHistogramUncertainty(name, up, histogram, outputName, isEnvelope(), era);
-                downVar = current->getHistogramUncertainty(name, down, histogram, outputName, isEnvelope(), era);
+                upVar = current->getHistogramUncertainty(name, up, histogram, isEnvelope(), era);
+                downVar = current->getHistogramUncertainty(name, down, histogram, isEnvelope(), era);
             }
         } else {
             std::pair<TH1D*, TH1D*> histVars = buildEnvelopeForProcess(histogram, current, histNominal);
@@ -746,5 +759,7 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
     }
 }
 
-
+bool Uncertainty::IsIgnoredChannel(std::string channel) {
+    return std::find(ignoredChannels.begin(), ignoredChannels.end(), channel) != ignoredChannels.end();
+}
 

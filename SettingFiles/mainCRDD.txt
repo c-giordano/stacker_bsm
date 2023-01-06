@@ -1,6 +1,6 @@
 # Processname       color       -> Processes in order: last to first
 TT+X              851         B   TTVV+TTX
-Xgam_int              593         B   Z+ttbar
+Xgam_int              593         B  Z+ttbar
 Xgam_ext          590            B ZG+ttG
 ChargeMisID         882         B  
 WZ                  893         B

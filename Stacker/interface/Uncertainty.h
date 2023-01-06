@@ -30,6 +30,7 @@ class Uncertainty {
         double flatUncertainty1718=0.0; // for datacards: all eras
 
         std::vector<TString> relevantProcesses;
+        std::vector<std::string> ignoredChannels;
 
         TFile* outfile;
 
@@ -89,6 +90,8 @@ class Uncertainty {
 
         bool getCorrelatedAmongProcesses() const {return correlatedAmongProcesses;}
 
+        void AddIgnoredChannels(std::vector<std::string> newIgnore) {ignoredChannels = newIgnore;};
+        bool IsIgnoredChannel(std::string channel);
 };
 
 

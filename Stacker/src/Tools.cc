@@ -9,7 +9,7 @@ TH1D* ApplyBinWidthUnification(TH1D* HistToReplace) {
 
     TH1D* tmpOut = new TH1D(newName, newName, HistToReplace->GetNbinsX(), 0., 1.);
 
-    for (unsigned i=1; i<HistToReplace->GetNbinsX()+1; i++) {
+    for (int i=1; i<HistToReplace->GetNbinsX()+1; i++) {
         tmpOut->SetBinContent(i, HistToReplace->GetBinContent(i));
         tmpOut->SetBinError(i, HistToReplace->GetBinError(i));
     }

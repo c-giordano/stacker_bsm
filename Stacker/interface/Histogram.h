@@ -15,6 +15,7 @@ class Histogram {
     private:
         TString id;
         std::string cleanName;
+        std::string channel;
         bool printToFile = false;
         bool logScale; // 0 for lin, 1 for log
         bool drawUncertainties = false;
@@ -40,6 +41,7 @@ class Histogram {
         void setDrawUncertainties(bool draw) {drawUncertainties = draw;}
         
         std::vector<std::string>* getXBinLabels() const {return xBinLabels;};
+        std::string& GetChannel() {return channel;};
 
         void setXBinLabels(std::vector<std::string>& binlabels) {
             xBinLabels = new std::vector<std::string>(binlabels);

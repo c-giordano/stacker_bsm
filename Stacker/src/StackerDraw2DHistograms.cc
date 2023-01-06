@@ -19,7 +19,7 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
 
     THStack* histStack = new THStack(histID, histID);
     TLegend* legend = getLegend();
-    std::vector<TH2D*> histVec = processes->fill2DStack(histStack, histID, legend, outputfile);
+    std::vector<TH2D*> histVec = processes->fill2DStack(histStack, histID, legend);
 
     TCanvas* canv = getCanvas(histID);
     canv->Draw();

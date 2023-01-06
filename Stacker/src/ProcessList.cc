@@ -1,7 +1,7 @@
 #include "../interface/ProcessList.h"
 #include <iomanip>
 
-void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+Process* ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
     Process* brandNewObj = new Process(name, color, inputfile, outputfile, signal, data, oldStuff);
@@ -15,9 +15,11 @@ void ProcessList::addProcess(TString& name, int color, TFile* inputfile, TFile* 
     if (! head) {
         head = brandNewObj;
     }
+
+    return brandNewObj;
 }
 
-void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+Process* ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
     Process* brandNewObj = new Process(name, color, inputfiles, outputfile, signal, data, oldStuff);
@@ -31,9 +33,11 @@ void ProcessList::addProcess(TString& name, int color, std::vector<TFile*>& inpu
     if (! head) {
         head = brandNewObj;
     }
+
+    return brandNewObj;
 }
 
-void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+Process* ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, TFile* inputfile, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
     Process* brandNewObj = new ProcessSet(name, procNames, color, inputfile, outputfile, signal, data, oldStuff);
@@ -47,9 +51,11 @@ void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int
     if (! head) {
         head = brandNewObj;
     }
+
+    return brandNewObj;
 }
 
-void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
+Process* ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int color, std::vector<TFile*>& inputfiles, TFile* outputfile, bool signal, bool data, bool oldStuff) {
     // TODO: Create new process object
     allProcessNames.push_back(name);
     Process* brandNewObj = new ProcessSet(name, procNames, color, inputfiles, outputfile, signal, data, oldStuff);
@@ -63,6 +69,7 @@ void ProcessList::addProcess(TString& name, std::vector<TString>& procNames, int
     if (! head) {
         head = brandNewObj;
     }
+    return brandNewObj;
 }
 
 Uncertainty* ProcessList::addUncertainty(std::string& name, bool flat, bool envelope, bool corrProcess, bool eraSpec, std::vector<TString>& processes, TFile* outputfile) {
@@ -101,9 +108,16 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
+        if (current->IsChannelIgnored(hist->GetChannel())) {
+            current = current->getNext();
+            continue;
+        }
         TH1D* histToAdd = current->getHistogram(hist);
         if (histToAdd == nullptr) {
             current = current->getNext();
+            std::cerr << "nullptr returned in ProcessList::fillStack. Quitting..." << std::endl;
+            exit(1);
+            //continue; // seems strange to not continue
         }
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
@@ -216,7 +230,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         }
         histVec.push_back(histToAdd);
 
-        output[current->getName()] = (histToAdd->Integral() > 0);
+        output[current->getName()] = (histToAdd->Integral() > 0 && ! current->IsChannelIgnored(hist->GetChannel())); // easily add "&& !current->ignoreRegion(hist->region())"
 
         if (verbose) {
             std::cout << current->getName();
@@ -267,7 +281,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
 }
 
 
-std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID, TLegend* legend, TFile* outfile) {
+std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID, TLegend* legend) {
     Process* current = head;
     std::vector<TH2D*> histVec;
 

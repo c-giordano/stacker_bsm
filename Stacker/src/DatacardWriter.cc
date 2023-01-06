@@ -200,6 +200,7 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
                 std::stringstream interString;
 
                 Process* proc = allProc->getTail();
+                bool isIgnoredChannel = uncertainty->IsIgnoredChannel(allHistograms[i]->GetChannel());
                 while (proc) {
                     TString currentName = proc->getName();
                     if (! allHistograms[i]->isRelevant(currentName)) {
@@ -207,7 +208,8 @@ void DatacardWriter::writeUncertainties(Uncertainty* uncertainty, bool eraSpecif
                         continue;
                     }
                     if (! containsProcess(relevantProcesses, currentName)
-                        || (k != 1 && currentName != relevantProcesses[j])) {
+                        || (k != 1 && currentName != relevantProcesses[j])
+                        || isIgnoredChannel) {
                         interString << std::setw(15) << "-" << "\t";
                         proc = proc->getPrev();
                         continue;

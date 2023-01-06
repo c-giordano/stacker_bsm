@@ -272,6 +272,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
         double flatUncertaintyAll = 0.;
         double flatUncertainty1718 = 0.;
         std::vector<TString> relProcess = allProcesses;
+        std::vector<std::string> ignoredChannels;
 
         std::istringstream uncLine(line);
         uncLine >> name;
@@ -334,6 +335,12 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                     continue;
                 } else if (currSetAndVal.second == "All") {
                     continue;
+                } else if (currSetAndVal.second == "AllEWK") {
+                    relProcess = {"TTW", "WZ", "VVV", "TT+X"};
+                    continue;
+                } else if (currSetAndVal.second == "AllQCD") {
+                    relProcess = {"TTTT", "TTZ", "TTH", "Xgam"};
+                    continue;
                 } else {
                     std::vector<TString> newProcess;
                     newProcess.push_back(TString(currSetAndVal.second));
@@ -351,7 +358,9 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                 flatUncertaintyAll = std::stod(currSetAndVal.second);
             }
             if (currSetAndVal.first == "1718") flatUncertainty1718 = std::stod(currSetAndVal.second);
-            
+            if (currSetAndVal.first == "IgnoreChannels") {
+                ignoredChannels = split(currSetAndVal.second, ",");
+            }
         }
 
 
@@ -368,6 +377,7 @@ void Stacker::readUncertaintyFile(std::string& filename) {
             newUnc->setBoth(eraSpec && allEras);
             newUnc->setIsIndivudalPDFVariations(pdfVariations);
         }
+        newUnc->AddIgnoredChannels(ignoredChannels);
     }
 
     std::vector<Histogram*> histForDC;

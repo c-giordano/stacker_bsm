@@ -121,11 +121,11 @@ void Stacker::DrawSF(TH1D* sfHistogram) {
 
     const float l = pad->GetLeftMargin() + gStyle->GetTickLength()*1.2;
   	const float t = pad->GetTopMargin();
-  	const float r = pad->GetRightMargin();
+  	//const float r = pad->GetRightMargin();
   	//const float b = pad->GetBottomMargin();
 
 	float CMSTextSize = pad->GetTopMargin()*0.75;
-	float lumiTextSize = pad->GetTopMargin()*0.6;
+	//float lumiTextSize = pad->GetTopMargin()*0.6;
 
 	//float CMSTextOffset = pad->GetTopMargin()*0.2;
 	float lumiTextOffset = pad->GetTopMargin()*0.2;

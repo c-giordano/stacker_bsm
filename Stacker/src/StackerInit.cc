@@ -6,6 +6,8 @@
 #include <sstream>
 #include <functional>
 #include <TObjString.h>
+#include <set>
+#include <boost/filesystem.hpp>
 
 #include <TKey.h>
 
@@ -124,7 +126,9 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
         // check for special stuff
         std::string part;
-        if (stream >> part) { 
+        Process* newProcess;
+        bool read = bool(stream >> part);
+        if (read && stringContainsSubstr(part, "merge")) {
             // check if it contains a plus. If so, the current process must be modified to take into account multiple subdirectories
             // maybe make a process object containing multiple processes
             std::vector<std::string> processNamesStrings = split(part, "+");
@@ -133,11 +137,22 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
                 processNamesSet.push_back(TString(it));
             }
 
-            processes->addProcess(processNameAlt, processNamesSet, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
-
+            newProcess = processes->addProcess(processNameAlt, processNamesSet, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
         } else {
-            processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
+            newProcess = processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
         }
+
+        if (read && stringContainsSubstr(part, "merge")) read = bool(stream >> part);
+
+        if (read) {
+            std::pair<std::string, std::string> currSetAndVal = splitSettingAndValue(line);
+            std::vector<std::string> ignoredChannels = split(currSetAndVal.second, ",");
+
+            for (auto& channel : ignoredChannels) {
+                newProcess->AddIgnoredChannel(channel);
+            }
+        }
+        
     }
 
     while (getline(infile, line)) {
@@ -207,18 +222,6 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
 
 
             pathToOutput = baseDir + subDir + datestring + "/";
-
-            std::vector<std::string> subdirs = {"CRWZ", "CR-3L-ZSigZVeto", "DY", "TTBar", "CRZZ", "CR-Conversion","CR-3L-Z", "CR-4L-Z", "CR-2L-23J1B", "CR-2L-23J1B++", "CR-2L-23J1B--", "CR-2L-23J1Bee", "CR-2L-23J1Bem", "CR-2L-23J1Bmm", "CR-3L-2J1B", "CR-2L-45J2B", "CR-2L-45J2B++", "CR-2L-45J2B--", "CR-2L-45J2Bee", "CR-2L-45J2Bem", "CR-2L-45J2Bmm", "SR-2L", "SR-2Lee", "SR-2Lem", "SR-2Lmm", "SR-2L++", "SR-2L--", "SR-2LpureSig", "SR-3L", "SR-3LnoOSSF", "SR-3LOSSF", "SR-4L"};
-            // {"DL", "3L", "4L", "3LnoOSSF", "3LOSSF", "DLee", "DLem", "DLmm", "DL++", "DL--", "CR", "CRO", "CRZ", "CRO-3L", "CRZ-4L", "CRWZ"};
-            //std::vector<std::string> subdirs = {"DL", "3L", "4L"};
-            
-            for (auto currSub : subdirs) {
-                response = std::system( ("mkdir " + baseDir + subDir + datestring + "/" + currSub).c_str());
-                if (response < 0) std::cout << "mkdir failed for " << currSub << std::endl;
-
-                response = std::system( ("cp /user/nivanden/public_html/index.php " + baseDir + subDir + datestring + "/" + currSub).c_str());
-                if (response < 0) std::cout << "cp failed" << std::endl;
-            }
         } else if (currSetAndVal.first == "RatioPlots" && currSetAndVal.second == "True") {
             isRatioPlot = true;
         } else if (currSetAndVal.first == "SignalYield" && currSetAndVal.second == "True") {
@@ -230,15 +233,6 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
     // walk in inputfile to first process, check all histogram names   
     inputfile->cd("Nominal");
     Process* curr = processes->getHead();
-    //while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
-    //    for (auto it : inputfiles) {
-    //        it->cd("Nominal");>
-    //        if (gDirectory->GetDirectory(curr->getName())) {
-    //            break;
-    //        }
-    //    }
-    //    curr = curr->getNext();
-    //}
 
     for (auto it : inputfiles) {
         curr = processes->getHead();
@@ -252,26 +246,18 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         if (curr != nullptr && gDirectory->GetDirectory(curr->getName())) {
             break;
         }
-        
     }
-    //if (curr == nullptr) {
-    //    curr = processes->getHead();
-    //
-    //    for (auto it : inputfiles) {
-    //        it->cd("Nominal");
-    //        if (gDirectory->GetDirectory(curr->getName())) {
-    //            break;
-    //        }
-    //    }
-    //}
+
     gDirectory->cd(curr->getName());
     gDirectory->cd(gDirectory->GetListOfKeys()->At(0)->GetName());
 
     TList* histogramsAvailable = gDirectory->GetListOfKeys();
+    std::set<std::string> channels;
 
     for (auto const&& obj : *histogramsAvailable) {
         if (std::string(((TKey*) obj)->GetClassName()) == "TH1D") {
             Histogram* hist = new Histogram(TString(obj->GetName()));
+            channels.insert(hist->GetChannel());
             histogramVec.push_back(hist);
         } else if (std::string(((TKey*) obj)->GetClassName()) == "TH2D") {
             Histogram2D* hist = new Histogram2D(TString(obj->GetName()));
@@ -279,6 +265,33 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         }
     }
 
+    int response;
+    for (auto& currSub : channels) {
+        if (stringContainsSubstr(currSub, "-CH-")) {
+            std::vector< std::string > channelAndSubchannel = split(currSub, "-CH-");
+            if (! boost::filesystem::exists((pathToOutput + channelAndSubchannel[0]).c_str())) {
+                response = std::system( ("mkdir " + pathToOutput + channelAndSubchannel[0]).c_str());
+                if (response < 0) std::cout << "mkdir failed for " << channelAndSubchannel[0] << std::endl;
+
+                response = std::system( ("cp /user/nivanden/public_html/index.php " + pathToOutput + channelAndSubchannel[0]).c_str());
+                if (response < 0) std::cout << "cp failed" << std::endl;
+            }
+
+            response = std::system( ("mkdir " + pathToOutput + channelAndSubchannel[1]).c_str());
+            if (response < 0) std::cout << "mkdir failed for " << channelAndSubchannel[1] << std::endl;
+
+            response = std::system( ("cp /user/nivanden/public_html/index.php " + pathToOutput + channelAndSubchannel[1]).c_str());
+            if (response < 0) std::cout << "cp failed" << std::endl;
+
+        } else {
+            // if region is region-CH-subregion, split in two, check if first exists and then build second
+            response = std::system( ("mkdir " + pathToOutput + currSub).c_str());
+            if (response < 0) std::cout << "mkdir failed for " << currSub << std::endl;
+
+            response = std::system( ("cp /user/nivanden/public_html/index.php " + pathToOutput + currSub).c_str());
+            if (response < 0) std::cout << "cp failed" << std::endl;
+        }
+    }
 
     while (getline(infile, line)) {
         // parse histogramspecific settings

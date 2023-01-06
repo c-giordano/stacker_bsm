@@ -21,7 +21,7 @@ class ProcessSet : public Process {
 
         // overloading of getHistogram functions which basically does the same but sums over all the thingies?
         virtual TH1D* getHistogram(Histogram* histogram);
-        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era="");
+        virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, bool envelope, std::string era="");
 
         virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);

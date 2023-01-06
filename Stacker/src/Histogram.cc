@@ -2,10 +2,14 @@
 
 Histogram::Histogram(TString histID) : id(histID) {
     logScale = false;
+    std::string histIDstr = histID.Data();
+    channel = getChannel(histIDstr);
 }
 
 Histogram::Histogram(TString histID, bool reqLog) : id(histID), logScale(reqLog) {
     // Do stuff
+    std::string histIDstr = histID.Data();
+    channel = getChannel(histIDstr);
 }
 
 bool Histogram::searchHist(Histogram* hist, std::string& idToFind) {

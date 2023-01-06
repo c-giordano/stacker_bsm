@@ -137,7 +137,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
         output->SetName((std::string(output->GetName()) + "_PreUni").c_str());
         TH1D* tmpOut = new TH1D(newName.c_str(), newName.c_str(), output->GetNbinsX(), 0., 1.);
 
-        for (unsigned i=1; i<output->GetNbinsX()+1; i++) {
+        for (int i=1; i<output->GetNbinsX()+1; i++) {
             tmpOut->SetBinContent(i, output->GetBinContent(i));
             tmpOut->SetBinError(i, output->GetBinError(i));
         }
@@ -155,7 +155,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
     return output;
 }
 
-TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, std::string& outputFolder, bool envelope, std::string era) {
+TH1D* Process::getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, bool envelope, std::string era) {
     TString histName = hist->getID(); // + "_" + uncName + "_" + upOrDown;
     TH1::AddDirectory(false);
     // std::cout << histName << std::endl;
@@ -346,4 +346,8 @@ TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
     legend->AddEntry(output, cleanedName);
 
     return output;
+}
+
+bool Process::IsChannelIgnored(std::string& channel) {
+    return std::find(ignoredChannels.begin(), ignoredChannels.end(), channel) != ignoredChannels.end();
 }

@@ -80,17 +80,17 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->cd();
 
     TPad** smallPad = new TPad*(); 
-    TH1D* ratioPlot = nullptr;
+    //TH1D* ratioPlot = nullptr;
     if (getData()) {
         if (! totalUnc) {
             TH1D* allHistograms = sumVector(histVec);
-            ratioPlot = drawRatioData(hist, allHistograms, dataHistogram, smallPad);
+            drawRatioData(hist, allHistograms, dataHistogram, smallPad);
 
         } else {
-            ratioPlot = drawRatioData(hist, totalUnc, dataHistogram, smallPad);
+            drawRatioData(hist, totalUnc, dataHistogram, smallPad);
         }
     } else {
-        ratioPlot = drawRatioMC(hist, histVec, *signalVector, smallPad);
+        drawRatioMC(hist, histVec, *signalVector, smallPad);
     }
 
     // auto resize axis
