@@ -27,7 +27,7 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
     TPad* pad = getPad(histID);
     pad->Draw();
     pad->cd();
-    gStyle->SetMarkerSize(1.5);
+    //gStyle->SetMarkerSize(1.5);
     histStack->Draw("box");
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0], nullptr);
