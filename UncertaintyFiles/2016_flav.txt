@@ -1,31 +1,37 @@
 # unc  Flat or shape    correlationProc     yearCorrelations
 Lumi2016:   flat=1.01 AllEra=1.01    correlated  process=AllMC
 Lumi:   flat=1.006 AllEra=1.006     correlated process=AllMC
-TTWNorm: flat=1.119   AllEra=1.119 process=TTW
-TTZNorm: flat=1.102    AllEra=1.102 process=TTZ
+# TTWNorm: flat=1.119   AllEra=1.119 process=TTW
+# TTZNorm: flat=1.102    AllEra=1.102 process=TTZ
 TTHNorm: flat=1.084    AllEra=1.084 process=TTH
 WZNorm: flat=1.062    AllEra=1.062 process=WZ
 #ZZHNorm: flat=1.06   AllEra=1.06 process=ZZ-H
 VVVNorm: flat=1.06   AllEra=1.06 process=VVV
-nonPromptNorm: flat=1.075    AllEra=1.075 process=nonPrompt
+# nonPromptNorm: flat=1.075    AllEra=1.075 process=nonPrompt
+nonPromptMuNorm: flat=1.2   AllEra=1.2 process=nonPromptMuon
+nonPromptElNorm: flat=1.2   AllEra=1.2 process=nonPromptElectron
+nonPromptMuNorm2016: flat=1.2   AllEra=1.2 process=nonPromptMuon    
+nonPromptElNorm2016: flat=1.2   AllEra=1.2 process=nonPromptElectron
 ChargeMisIDNorm: flat=1.15    AllEra=1.15 process=ChargeMisID
-TTXNorm: flat=1.2    AllEra=1.2 process=TT+X
+Other_tNorm: flat=1.2    AllEra=1.2 process=Other_t
 XgammaNorm: flat=1.05    AllEra=1.05 process=Xgam
 isrShape: shape process=AllMC uncorrelated
 fsrShape: shape process=AllMC correlated
-electronReco: shape process=AllMC correlated
-muonIDStat: shape process=AllMC correlated corrEra
-muonIDSyst: shape process=AllMC correlated
-electronIDStat: shape process=AllMC correlated corrEra
-electronIDSyst: shape process=AllMC correlated
+electronReco: shape process=AllMC correlated IgnoreChannels=SR-2Lmm
+muonIDStat: shape process=AllMC correlated corrEra IgnoreChannels=SR-2Lee
+muonIDSyst: shape process=AllMC correlated IgnoreChannels=SR-2Lee
+electronIDStat: shape process=AllMC correlated corrEra IgnoreChannels=SR-2Lmm
+electronIDSyst: shape process=AllMC correlated IgnoreChannels=SR-2Lmm
 pileup: shape process=AllMC correlated
 JER_1p93: shape process=AllMC correlated corrEra
 JER_2p5: shape process=AllMC correlated corrEra
-# JEC: shape process=AllMC correlated
-#qcdScale: envelope process=AllMC uncorrelated
-qcdScale: envelope process=AllMC uncorrelated AllPDFVariations
-#pdfShapeVar: envelope process=AllMC correlated AllPDFVariations
-pdfShapeVar: envelope process=AllMC correlated
+## JEC: shape process=AllMC correlated
+##qcdScale: envelope process=AllMC uncorrelated
+##qcdScale: envelope process=AllMC uncorrelated AllPDFVariations
+qcdScale: envelope process=TTH,TTW,TTTT uncorrelated
+qcdScale: envelope process=Other_t,Xgam,WZ,VVV,TTZ uncorrelated AllPDFVariations
+pdfShapeVar: envelope process=AllMC correlated AllPDFVariations
+##pdfShapeVar: envelope process=AllMC correlated
 bTagShape_cferr1: shape process=AllMC correlated
 bTagShape_cferr2: shape process=AllMC correlated
 bTagShape_hf: shape process=AllMC correlated
@@ -35,14 +41,15 @@ bTagShape_lf: shape process=AllMC correlated
 bTagShape_lfstats1: shape process=AllMC correlated corrEra
 bTagShape_lfstats2: shape process=AllMC correlated corrEra
 prefire: shape process=AllMC correlated
-WZSF_Stat_0Jet: shape process=WZ correlated
-WZSF_Stat_1Jet: shape process=WZ correlated
-WZSF_Stat_2Jet: shape process=WZ correlated
-WZSF_Stat_3Jet: shape process=WZ correlated
+#WZSF_Stat_0Jet: shape process=WZ correlated
+#WZSF_Stat_1Jet: shape process=WZ correlated
+WZSF_Stat_2Jet: shape process=WZ correlated IgnoreChannels=SR-2Lee,SR-2Lem,SR-2Lmm,SR-2L,SR-3L,CR-2L-45J2B
+WZSF_Stat_3Jet: shape process=WZ correlated IgnoreChannels=SR-2Lee,SR-2Lem,SR-2Lmm,SR-2L,CR-2L-45J2B
 WZSF_Stat_4Jet: shape process=WZ correlated
 WZSF_Stat_5Jet: shape process=WZ correlated
 WZSF_Stat_6PlusJet: shape process=WZ correlated
-#WZSF_Stat_7PlusJet: shape process=WZ correlated
+ZZSF_Stat_2Jet: shape process=VVV correlated IgnoreChannels=SR-2Lee,SR-2Lem,SR-2Lmm,SR-2L,SR-3L,CR-2L-45J2B
+ZZSF_Stat_3PlusJet: shape process=VVV correlated IgnoreChannels=SR-2Lee,SR-2Lem,SR-2Lmm,SR-2L,CR-2L-45J2B
 MET: shape process=AllMC correlated corrEra
 JEC_Absolute: shape process=AllMC correlated
 JEC_Absolute_2016: shape process=AllMC correlated 
@@ -57,34 +64,203 @@ JEC_HF: shape process=AllMC correlated
 JEC_HF_2016: shape process=AllMC correlated 
 JEC_RelativeBal: shape process=AllMC correlated
 JEC_RelativeSample_2016: shape process=AllMC correlated 
+FRElectron: shape process=nonPromptElectron
+FRMuon: shape process=nonPromptMuon
+ttvNJetsUnc_AddJets: shape process=TTW
+ttvNJetsUnc_AddBJets: shape process=TTH,TTZ,TTW  
+####   JEC_AbsoluteMPFBias: shape    process=AllMC correlated
+####   JEC_AbsoluteScale:   shape    process=AllMC correlated
+####   JEC_AbsoluteStat:    shape    process=AllMC correlated      corrEra
+####   JEC_FlavorQCD:       shape    process=AllMC correlated
+####   JEC_Fragmentation:   shape    process=AllMC correlated
+####   JEC_PileUpDataMC:    shape    process=AllMC correlated
+####   JEC_PileUpPtBB:      shape    process=AllMC correlated
+####   JEC_PileUpPtEC1:     shape    process=AllMC correlated
+####   JEC_PileUpPtEC2:     shape    process=AllMC correlated
+####   JEC_PileUpPtHF:      shape    process=AllMC correlated
+####   JEC_PileUpPtRef:     shape    process=AllMC correlated
+####   JEC_RelativeFSR:     shape    process=AllMC correlated
+####   JEC_RelativeJEREC1:  shape    process=AllMC correlated      corrEra
+####   JEC_RelativeJEREC2:  shape    process=AllMC correlated      corrEra
+####   JEC_RelativeJERHF:   shape    process=AllMC correlated
+####   JEC_RelativePtBB:    shape    process=AllMC correlated
+####   JEC_RelativePtEC1:   shape    process=AllMC correlated      corrEra
+####   JEC_RelativePtEC2:   shape    process=AllMC correlated      corrEra
+####   JEC_RelativePtHF:    shape    process=AllMC correlated
+####   JEC_RelativeBal:     shape    process=AllMC correlated
+####   JEC_RelativeSample:  shape    process=AllMC correlated      corrEra
+####   JEC_RelativeStatEC:  shape    process=AllMC correlated      corrEra
+####   JEC_RelativeStatFSR: shape    process=AllMC correlated      corrEra
+####   JEC_RelativeStatHF:  shape    process=AllMC correlated      corrEra
+####   JEC_SinglePionECAL:  shape    process=AllMC correlated
+####   JEC_SinglePionHCAL:  shape    process=AllMC correlated
+####   JEC_TimePtEta:       shape    process=AllMC correlated      corrEra
+
 
 
 HISTOGRAMS
-# shapes to print to outputfiles together with cleaned name
-BDT_FinalresultSignal_TriClass_SR-2Lee bdt_DLee_sig
-BDT_FinalresultTTV_TriClass_SR-2Lee bdt_DLee_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lee bdt_DLee_ttbar
+###  ###    ## shapes to print to outputfiles together with cleaned name
+###  ## shapes to print to outputfiles together with cleaned name
+###  #BDT_FinalresultSignal_TriClass_SR-2Lee bdt_DLee_sig
+###  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lee bdt_DLee_sig
+###  BDT_FinalresultTTV_TriClass_SR-2Lee bdt_DLee_ttw
+###  #BDT_FinalresultTTBar_TriClass_SR-2Lee bdt_DLee_ttbar
+###  
+###  #BDT_FinalresultSignal_TriClass_SR-2Lem bdt_DLem_sig
+###  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lem bdt_DLem_sig
+###  BDT_FinalresultTTV_TriClass_SR-2Lem bdt_DLem_ttw
+###  #BDT_FinalresultTTBar_TriClass_SR-2Lem bdt_DLem_ttbar
+###  
+###  #BDT_FinalresultSignal_TriClass_SR-2Lmm bdt_DLmm_sig
+###  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lmm bdt_DLmm_sig
+###  BDT_FinalresultTTV_TriClass_SR-2Lmm bdt_DLmm_ttw
+###  #BDT_FinalresultTTBar_TriClass_SR-2Lmm bdt_DLmm_ttbar
+###  
+###  BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
+###  
+###  #BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
+###  BDT_Finalresult_tanh_Signal_TriClass_SR-3L bdt_3L_sig
+###  BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
+###  BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
+###  #
+###  BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
+###  # BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
+###  BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
+###  
+###  BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
+###  BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
+###  TriClass_Fit_CR-3L-2J1B cro_3L
+###  #BDTScore_TTV_TriClass_SR-4L_CR-3L-2J1B cro_3L
+###  N_jets_CR-3L-Z crz
+###  # N_jets_CR-3L-ZOneMedB crz
+###  N_jets_CR-4L-Z crz_4L
 
-BDT_FinalresultSignal_TriClass_SR-2Lem bdt_DLem_sig
-BDT_FinalresultTTV_TriClass_SR-2Lem bdt_DLem_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lem bdt_DLem_ttbar
+####   
+#  
+#  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lem bdt_DLem_sig
+#  
+#  N_jets_SR-2L      njets_DL
+#  N_Bjets_SR-2L   nb_loose_DL
+#  HT_SR-2L         ht_DL
+#  N_MediumBjets_SR-2L  nb_medium_DL
+#  
+N_jets_SR-2LpureSig_ee      njets_DL_TTTT_ee
+N_Bjets_SR-2LpureSig_ee   nb_loose_DL_TTTT_ee
+HT_SR-2LpureSig_ee         ht_DL_TTTT_ee
+N_MediumBjets_SR-2LpureSig_ee  nb_medium_DL_TTTT_ee
+MET_SR-2LpureSig_ee  met_DL_TTTT_ee
 
-BDT_FinalresultSignal_TriClass_SR-2Lmm bdt_DLmm_sig
-BDT_FinalresultTTV_TriClass_SR-2Lmm bdt_DLmm_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lmm bdt_DLmm_ttbar
+N_jets_SR-2LpureTTV_ee      njets_DL_TTX_ee
+N_Bjets_SR-2LpureTTV_ee   nb_loose_DL_TTX_ee
+HT_SR-2LpureTTV_ee         ht_DL_TTX_ee
+N_MediumBjets_SR-2LpureTTV_ee  nb_medium_DL_TTX_ee
+MET_SR-2LpureTTV_ee  met_DL_TTX_ee
 
-BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
+N_jets_SR-2LpureSig_em      njets_DL_TTTT_em
+N_Bjets_SR-2LpureSig_em   nb_loose_DL_TTTT_em
+HT_SR-2LpureSig_em         ht_DL_TTTT_em
+N_MediumBjets_SR-2LpureSig_em  nb_medium_DL_TTTT_em
+MET_SR-2LpureSig_em  met_DL_TTTT_em
 
-BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
-BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
-#
-BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
-# BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
-BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
+N_jets_SR-2LpureTTV_em      njets_DL_TTX_em
+N_Bjets_SR-2LpureTTV_em   nb_loose_DL_TTX_em
+HT_SR-2LpureTTV_em         ht_DL_TTX_em
+N_MediumBjets_SR-2LpureTTV_em  nb_medium_DL_TTX_em
+MET_SR-2LpureTTV_em  met_DL_TTX_em
 
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
-TriClass_Fit_CR-3L-2J1B cro_3L
-N_jets_CR-3L-Z crz
-N_jets_CR-4L-Z crz_4L
+N_jets_SR-2LpureSig_mm      njets_DL_TTTT_mm
+N_Bjets_SR-2LpureSig_mm   nb_loose_DL_TTTT_mm
+HT_SR-2LpureSig_mm         ht_DL_TTTT_mm
+N_MediumBjets_SR-2LpureSig_mm  nb_medium_DL_TTTT_mm
+MET_SR-2LpureSig_mm  met_DL_TTTT_mm
+
+N_jets_SR-2LpureTTV_mm      njets_DL_TTX_mm
+N_Bjets_SR-2LpureTTV_mm   nb_loose_DL_TTX_mm
+HT_SR-2LpureTTV_mm         ht_DL_TTX_mm
+N_MediumBjets_SR-2LpureTTV_mm  nb_medium_DL_TTX_mm
+MET_SR-2LpureTTV_mm  met_DL_TTX_mm
+
+N_jets_SR-2LpureTTB      njets_DL_TTB
+N_Bjets_SR-2LpureTTB   nb_loose_DL_TTB
+HT_SR-2LpureTTB         ht_DL_TTB
+N_MediumBjets_SR-2LpureTTB  nb_medium_DL_TTB
+MET_SR-2LpureTTB  met_DL_TTB
+
+N_jets_SR-3LpureSig      njets_3L_TTTT
+N_Bjets_SR-3LpureSig   nb_loose_3L_TTTT
+HT_SR-3LpureSig         ht_3L_TTTT
+N_MediumBjets_SR-3LpureSig  nb_medium_3L_TTTT
+MET_SR-3LpureSig  met_3L_TTTT
+
+N_jets_SR-3LpureTTV      njets_3L_TTX
+N_Bjets_SR-3LpureTTV   nb_loose_3L_TTX
+HT_SR-3LpureTTV         ht_3L_TTX
+N_MediumBjets_SR-3LpureTTV  nb_medium_3L_TTX
+MET_SR-3LpureTTV  met_3L_TTX
+
+N_jets_SR-3LpureTTB      njets_3L_TTB
+N_Bjets_SR-3LpureTTB   nb_loose_3L_TTB
+HT_SR-3LpureTTB         ht_3L_TTB
+N_MediumBjets_SR-3LpureTTB  nb_medium_3L_TTB
+MET_SR-3LpureTTB  met_3L_TTB
+#  
+#  N_jets_SR-2Lee      njets_DLee
+#  N_Bjets_SR-2Lee   nb_loose_DLee
+#  HT_SR-2Lee         ht_DLee
+#  N_MediumBjets_SR-2Lee  nb_medium_DLee
+#  
+#  N_jets_SR-2Lem      njets_DLem
+#  N_Bjets_SR-2Lem   nb_loose_DLem
+#  HT_SR-2Lem         ht_DLem
+#  N_MediumBjets_SR-2Lem  nb_medium_DLem
+#  
+#  N_jets_SR-2Lmm      njets_DLmm
+#  N_Bjets_SR-2Lmm   nb_loose_DLmm
+#  HT_SR-2Lmm         ht_DLmm
+#  N_MediumBjets_SR-2Lmm  nb_medium_DLmm
+#  
+#  N_jets_SR-3L      njets_3L
+#  N_Bjets_SR-3L   nb_loose_3L
+#  HT_SR-3L         ht_3L
+#  N_MediumBjets_SR-3L  nb_medium_3L
+#  
+#  N_jets_CR-3L-Z      njets_crz
+#  N_Bjets_CR-3L-Z   nb_loose_crz
+#  HT_CR-3L-Z         ht_crz
+#  N_MediumBjets_CR-3L-Z  nb_medium_crz
+#  
+#  N_jets_CR-3L-ZOneMedB      njets_crz_OneMedB
+#  N_Bjets_CR-3L-ZOneMedB   nb_loose_crz_OneMedB
+#  HT_CR-3L-ZOneMedB         ht_crz_OneMedB
+#  N_MediumBjets_CR-3L-ZOneMedB  nb_medium_crz_OneMedB
+#  
+#  N_jets_CR-3L-ZTwoMedB      njets_crz_TwoMedB
+#  N_Bjets_CR-3L-ZTwoMedB   nb_loose_crz_TwoMedB
+#  HT_CR-3L-ZTwoMedB         ht_crz_TwoMedB
+#  N_MediumBjets_CR-3L-ZTwoMedB  nb_medium_crz_TwoMedB
+#  
+#  N_jets_CR-4L-Z      njets_crz_4L
+#  N_Bjets_CR-4L-Z   nb_loose_crz_4L
+#  HT_CR-4L-Z         ht_crz_4L
+#  N_MediumBjets_CR-4L-Z  nb_medium_crz_4L
+#  
+#  N_jets_CR-3L-2J1B      njets_cro3L
+#  N_Bjets_CR-3L-2J1B   nb_loose_cro3L
+#  HT_CR-3L-2J1B         ht_cro3L
+#  N_MediumBjets_CR-3L-2J1B  nb_medium_cro3L
+#  
+#  N_jets_CR-2L-45J2B      njets_crw
+#  N_Bjets_CR-2L-45J2B   nb_loose_crw
+#  HT_CR-2L-45J2B         ht_crw
+#  N_MediumBjets_CR-2L-45J2B  nb_medium_crw
+#  
+#  N_jets_CR-2L-45J2Bmm      njets_crwmm
+#  N_Bjets_CR-2L-45J2Bmm   nb_loose_crwmm
+#  HT_CR-2L-45J2Bmm         ht_crwmm
+#  N_MediumBjets_CR-2L-45J2Bmm  nb_medium_crwmm
+#  
+#  N_jets_CR-2L-23J1B      njets_cro
+#  N_Bjets_CR-2L-23J1B   nb_loose_cro
+#  HT_CR-2L-23J1B         ht_cro
+#  N_MediumBjets_CR-2L-23J1B  nb_medium_cro
+#  

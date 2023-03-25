@@ -108,7 +108,9 @@ class Stacker {
             if (runT2B) pathToOutput = "/user/nivanden/public_html/Most_recent_plots/";
             else pathToOutput = "Output/";
         }
-        void setData(bool dataExists) {useData = dataExists;}
+        void setData(bool dataExists) {
+            useData = dataExists;
+            }
         bool getData() {return useData;}
         void readData(std::vector<std::string>& dataFile, unsigned i);
 

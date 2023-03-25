@@ -3,7 +3,7 @@
 #Xgamma              593         B
 #ChargeMisID         882         B
 #Rare                906         B
-nonPrompt           801         B
+MC           801         B         Set=nonPrompt
 #noAddBs              801         B
 #AddBs                810         B
 #TTH                 803         B
@@ -16,7 +16,7 @@ BROAD SETTINGS
 Lumi=HIST
 Drawopt=HIST
 OutFolder=Most_recent_plots/nonPromptDD/
-#RatioPlots=True
+RatioPlots=True
 
 HISTOGRAMS
 # list of histograms for which modified conditions are applied, together with the modified conditions

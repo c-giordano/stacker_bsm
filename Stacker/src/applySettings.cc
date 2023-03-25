@@ -42,6 +42,10 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
         stack->GetYaxis()->SetTitle(first->GetYaxis()->GetTitle());
     }
 
+    if (hist->HasYAxisNameOverwrite()) {
+        stack->GetYaxis()->SetTitle(hist->GetYAxisName().c_str());
+    }
+
     // Set maximum size of histogram to avoid overlap with legend
     if (noStack) {
         stack->SetMaximum(stack->GetMaximum("NOSTACK") * 1.6);

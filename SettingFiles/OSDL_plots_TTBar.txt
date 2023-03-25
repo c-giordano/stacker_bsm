@@ -1,8 +1,8 @@
 # Processname       color       -> Processes in order: last to first
-ttbar              801          B
+ttbar              801          B    Set=ttbar_incl
 DY                 593          B
-Xgam               882          B   ttG+ZG
-# Others             906          B   ZZ+WW
+Xgam               882          B   Set=ttG+ZG
+# Others             906          B   Set=ZZ+WW
 
 BROAD SETTINGS
 # general settings

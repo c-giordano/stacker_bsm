@@ -13,6 +13,7 @@ TString cleanTString(TString& toClean) {
     cleaned.ReplaceAll("T(T)", "t(#bar{t})");
     cleaned.ReplaceAll("tt", "t#bar{t}");
     cleaned.ReplaceAll("VVV", "VV(V)");
+    cleaned.ReplaceAll("_", " ");
 
 
     /*if (cleaned.Contains("e+")) {

@@ -108,16 +108,22 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
-        if (current->IsChannelIgnored(hist->GetChannel())) {
-            current = current->getNext();
-            continue;
-        }
         TH1D* histToAdd = current->getHistogram(hist);
         if (histToAdd == nullptr) {
             current = current->getNext();
             std::cerr << "nullptr returned in ProcessList::fillStack. Quitting..." << std::endl;
             exit(1);
             //continue; // seems strange to not continue
+        }
+        if (current->IsChannelIgnored(hist->GetChannel())) {
+            //std::cout << current->getName() << " ignored" << std::endl;
+            for (int j=1; j < histToAdd->GetNbinsX() + 1; j++) {
+                histToAdd->SetBinContent(j, 0.00001);
+                histToAdd->SetBinError(j, 0.00001);
+            }
+            histVec.push_back(histToAdd);
+            current = current->getNext();
+            continue;
         }
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
@@ -178,7 +184,7 @@ std::vector<TH1D*> ProcessList::fillStack(THStack* stack, Histogram* hist, TLege
     // loop uncertainties as well if required
     Uncertainty* currUnc = headUnc;
     std::vector<TH1D*> uncVec;
-    while (currUnc && hist->getDrawUncertainties()) {
+    while (currUnc && hist->getDrawUncertainties() && sysUnc) {
         // getShapeUncertainty or apply flat uncertainty
         TH1D* newUncertainty = currUnc->getUncertainty(hist, head, histVec);
 
@@ -221,7 +227,8 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
     if (hist->getPrintToFile()) outfile->mkdir(hist->getCleanName().c_str());
 
     if (verbose) std::cout << histogramID << std::endl;
-
+    
+    //std::cout << "channel " << hist->GetChannel() << std::endl;
     while (current) {
 
         TH1D* histToAdd = current->getHistogram(hist);
@@ -231,7 +238,7 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         histVec.push_back(histToAdd);
 
         output[current->getName()] = (histToAdd->Integral() > 0 && ! current->IsChannelIgnored(hist->GetChannel())); // easily add "&& !current->ignoreRegion(hist->region())"
-
+        // std::cout << "Process " << current->getName() << " " << (histToAdd->Integral() > 0) << (! current->IsChannelIgnored(hist->GetChannel())) << std::endl;
         if (verbose) {
             std::cout << current->getName();
             if (veryVerbose) {
@@ -256,10 +263,14 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
                 //    histToAdd->SetBinError(j, histToAdd->GetBinContent(j));
                 //}
             }
+            if (hist->HasCustomAxisRange()) {
+                histToAdd = rebin(histToAdd, hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+            }
             histToAdd->Write(current->getName(), TObject::kOverwrite);
         }
         current = current->getNext();
     }
+    //std::cout <<" done printing channel. Isdata: " << isData << std::endl;
     if (! isData && hist->getPrintToFile()) {
         TH1D* allHistograms = sumVector(histVec);
         allHistograms->SetName("data_obs");
@@ -268,12 +279,18 @@ std::map<TString, bool> ProcessList::printHistograms(Histogram* hist, TFile* out
         for (int j=1; j<allHistograms->GetNbinsX() + 1; j++) {
             allHistograms->SetBinError(j, sqrt(allHistograms->GetBinContent(j)));
         }
+        if (hist->HasCustomAxisRange()) {
+            allHistograms = rebin(allHistograms, hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+        }
         allHistograms->Write("data_obs", TObject::kOverwrite);
     } else if (isData && hist->getPrintToFile()) {
         TH1D* data = dataProc->getHistogram(hist);
         data->SetName("data_obs");
         data->SetTitle("data_obs");
         outfile->cd(hist->getCleanName().c_str());
+        if (hist->HasCustomAxisRange()) {
+            data = rebin(data, hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+        }
         data->Write("data_obs", TObject::kOverwrite);
     }
 

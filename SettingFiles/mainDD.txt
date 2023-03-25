@@ -1,19 +1,25 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+TTX+THQ
-Xgam              593         B   ttG+Z+ZG+ttbar
-ChargeMisID         882         B  
-WZ                  893         B
-##WWDS                436         B                       
-##SSWW                841         B    
+Other_t              851         B   Set=TTVV+TTX+THQ+TWZ
+Xgam              593         B   Set=ttG+ZG+ttbar+Z
+ChargeMisID         882         B  IgnoreChannels=SR-4L,CR-4L-Z,CR-3L-Z,CR-3L-ZZSigZVeto,CR-3L-2J1B,SR-3L,SR-3LOSSF,SR-3LnoOSSF
+WZ                  893         B  
+#WWDS                436         B                       
+#SSWW                841         B    
 #ZZ-H                  600         B
-VVV                 906         B   VVV+SSWW+ZZ-H
-nonPrompt           801         B   nonPromptElectron+nonPromptMuon
-#nonPrompt           801         B   nonPromptDD
-#nonPromptElectron       801         B
-#nonPromptMuon           800         B
-TTH                 803         B   TTH+TTHbb
-TTZ                 407         B   TTZ+TTZbb
-TTW                 419         B   TTW+TTWbb
+VVV                 906         B   Set=VVV+SSWW+ZZ-H
+#nonPrompt           801         B   Set=nonPromptElectron+nonPromptMuon
+#nonPrompt           801         B   Set=nonPromptDD
+nonPromptElectron       801         B    IgnoreChannels=SR-2Lmm
+nonPromptMuon           800         B    IgnoreChannels=SR-2Lee
+#TTH                 803         B   
+#TTHbb                 804         B   
+# TTZ                 401         B   
+# TTZbb                 393         B   
+# TTW                 419         B   
+# TTWbb                 417         B   
+TTH                 804         B   Set=TTH+TTHbb
+TTZ                 407         B   Set=TTZ+TTZbb
+TTW                 419         B   Set=TTW+TTWbb
 TTTT                633         S
 
 BROAD SETTINGS
@@ -25,12 +31,21 @@ RatioPlots=True
 #SignalYield=True
 
 HISTOGRAMS
+#N_jets_CRZZ rebinVar=5,-0.5,0.5,1.5,2.5,4.5 UnifyBinWidth  Xbinlabels=0,1,2,3 xAxisName=N_{jets}
+
 Cutbased_AN_SR-2L logscale Xbinlabels=0,SR1,SR2,SR3,SR4,SR5,SR6,SR7,SR8,SR9,SR10,SR11,SR12,SR13,SR14
 Cutbased_AN_SR-2Lee logscale
 Cutbased_AN_SR-2Lem logscale
 Cutbased_AN_SR-2Lmm logscale
 Cutbased_AN_SR-3L logscale
 Cutbased_AN_SR-4L logscale
+
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lee rebin=25
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lem rebin=10
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lmm rebin=25
+BDT_Finalresult_tanh_Signal_TriClass_SR-2L rebin=10
+BDT_Finalresult_tanh_Signal_TriClass_SR-3L rebin=20
+
 # list of histgorams for which modified conditions are applied, together with the modified conditions
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=240
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=240
@@ -65,6 +80,50 @@ BDTScore_TTV_TriClass_SR-4L_CR-4L-Z rebin=20
 N_jets_CR-Conversion logscale
 N_jets_CRWZ logscale
 
+InvMassSpectruml1l2_CR-2L-23J1B rebin=3
+InvMassSpectruml1l2_CR-2L-45J2B rebin=3
+InvMassSpectruml1l2_SR-2L rebin=3
+InvMassSpectruml1l2_SR-3L rebin=3
+InvMassSpectruml1l2_SR-3LOSSF rebin=3
+InvMassSpectruml1l2_SR-2Lee rebin=3
+InvMassSpectruml1l2_SR-2Lmm rebin=3
+InvMassSpectruml1l2_SR-2Lem rebin=3
+min_DR_ll_SR-3L rebin=4
+min_DPhi_l1l2_SR-3L rebin=4
+min_DEta_l1l2_SR-3L rebin=4
+min_DR_ll_SR-3LOSSF rebin=4
+min_DPhi_l1l2_SR-3LOSSF rebin=4
+min_DEta_l1l2_SR-3LOSSF rebin=4
+InvMass3L_SR-3L rebin=2
+DR_l1l2_SR-2Lee rebin=4
+DR_l1l2_SR-2Lem rebin=4
+DR_l1l2_SR-2Lmm rebin=4
+DPhi_l1l2_SR-2Lee rebin=4
+DPhi_l1l2_SR-2Lem rebin=4
+DPhi_l1l2_SR-2Lmm rebin=4
+DEta_l1l2_SR-2Lee rebin=4
+DEta_l1l2_SR-2Lem rebin=4
+DEta_l1l2_SR-2Lmm rebin=4
+DPhi_l1l2_SR-2LpureSig rebin=4
+DPhi_l1l2_SR-2L rebin=4
+DEta_l1l2_SR-2L rebin=4
+DR_l1l2_SR-2L rebin=4
+
+DPhi_l1l2_SR-3L rebin=4
+DEta_l1l2_SR-3L rebin=4
+DR_l1l2_SR-3L rebin=4
+
+DPhi_l1l2_SR-4L rebin=4
+DEta_l1l2_SR-4L rebin=4
+DR_l1l2_SR-4L rebin=4
+
+DR_l1l2_CR-2L-45J2B rebin=4
+DPhi_l1l2_CR-2L-45J2B rebin=4
+InvMassSpectruml1l2_CR-2L-45J2B rebin=4
+
+DR_l1l2_CR-2L-23J1B rebin=4
+DPhi_l1l2_CR-2L-23J1B rebin=4
+InvMassSpectruml1l2_CR-2L-23J1B rebin=4
 
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=14,0.4,0.55,0.65,0.72,0.77,0.81,0.84,0.87,0.89,0.91,0.94,0.96,0.98,1. logscale
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 
@@ -117,7 +176,7 @@ BDT_FinalresultTTV_TriClass_SR-3L rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-3LnoOSSF rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-3LOSSF rebinVar=4,0.4,0.6,0.7,1.
 BDT_FinalresultTTV_TriClass_SR-4L rebin=120
-BDTScore_Signal_TriClass_SR-2L rebinVar=14,0.,0.2,0.4,0.59,0.71,0.8,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. logscale
+BDTScore_Signal_TriClass_SR-2L rebinVar=13,0.,0.12,0.2,0.28,0.36,0.44,0.52,0.6,0.68,0.76,0.84,0.92,1. logscale
 BDTScore_Signal_TriClass_SR-2L-- rebin=20
 BDTScore_Signal_TriClass_SR-2L++ rebin=20
 BDTScore_Signal_TriClass_SR-2Lee rebin=20
@@ -161,3 +220,15 @@ NB_Tight_SR-3L      xAxisName=N_{b}^{tight}
 NB_Loose_SR-4L      xAxisName=N_{b}^{loose}
 NB_Medium_SR-4L     xAxisName=N_{b}^{medium}
 NB_Tight_SR-4L      xAxisName=N_{b}^{tight}
+
+NpNm_N_jets_SR-2L          yAxisName=N^{+}-N^{-}
+NpNm_N_looseB_jets_SR-2L   yAxisName=N^{+}-N^{-}
+NpNm_N_mediumB_jets_SR-2L  yAxisName=N^{+}-N^{-}
+NpNm_N_tightB_jets_SR-2L   yAxisName=N^{+}-N^{-}
+NpNm_Yield_SR-2L           yAxisName=N^{+}-N^{-}
+
+NpNm_N_jets_SR-2LpureTTV          yAxisName=N^{+}-N^{-}
+NpNm_N_looseB_jets_SR-2LpureTTV   yAxisName=N^{+}-N^{-}
+NpNm_N_mediumB_jets_SR-2LpureTTV  yAxisName=N^{+}-N^{-}
+NpNm_N_tightB_jets_SR-2LpureTTV   yAxisName=N^{+}-N^{-}
+NpNm_Yield_SR-2LpureTTV           yAxisName=N^{+}-N^{-}

@@ -10,6 +10,7 @@
 
 #include "Process.h"
 #include "Histogram.h"
+#include "../../Helpers/interface/thTools.h"
 
 class Uncertainty {
     private:

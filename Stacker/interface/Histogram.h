@@ -22,11 +22,16 @@ class Histogram {
         std::vector<std::string>* xBinLabels = nullptr;
 
         std::string xAxisName = "";
+        std::string yAxisName = "";
 
         std::map<TString, bool> relevance;
 
         int RebinFixed = 1;
         double* RebinVar = nullptr;
+
+        bool axisRangeCustom = false;
+        int nBinsNew;
+        std::pair<double, double> xMinMax;
 
         bool uniWidthBins = false;
     public:
@@ -71,7 +76,14 @@ class Histogram {
         bool HasXAxisNameOverwrite() {return (xAxisName != "");}
         std::string GetXAxisName() {return xAxisName;}
 
+        bool HasYAxisNameOverwrite() {return (yAxisName != "");}
+        std::string GetYAxisName() {return yAxisName;}
+
         bool hasUniWidthBins() {return uniWidthBins;}
+
+        bool HasCustomAxisRange() {return axisRangeCustom;}
+        std::pair<double, double> GetCustomAxisRange() {return xMinMax;};
+        int GetCustomNBins() {return nBinsNew;};
 };
 
 //bool searchHist(Histogram*, std::string&);

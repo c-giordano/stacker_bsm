@@ -10,7 +10,7 @@ draw canvas, call uncertainty histograms
 void Stacker::drawAllUncertaintyImpacts() {
     setUncertaintyImpactStyle();
     gROOT->ForceStyle();
-    std::vector<std::string> uncToDraw = {"JEC_FlavorQCD", "bTagShape_hf", "bTagShape_cferr1"};
+    std::vector<std::string> uncToDraw = {"ttvNJetsUnc_AddJets", "ttvNJetsUnc_AddBJets", "qcdScale", "isrShape", "fsrShape"}; // ttvNJetsUnc_AddJets
     for (auto histogramID : histogramVec) {
         histogramID->setPrintToFile(false);
         drawUncertaintyImpacts(histogramID, uncToDraw);
@@ -23,6 +23,7 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     TPad* pad = new TPad(name, name, 0., 0., 1., 1.);
 
     gStyle->SetPalette(kRainBow);
+    gStyle->SetHistLineWidth(2.);
     auto cols = TColor::GetPalette();
 
     canvas->Draw();
@@ -47,6 +48,23 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
     int step = (cols.GetSize() - 1) / (uncToDraw.size() - 1);
 
     TH1D* memup = nullptr;
+
+    std::map<std::string, std::string> naming = {
+        {"ttvNJetsUnc_AddJets", "ttW + jets"}, 
+        {"ttvNJetsUnc_AddBJets", "ttW + HF"}, 
+        {"qcdScale", "QCD Scale"}, 
+        {"pdfShapeVar", "PDF"}, 
+        {"isrShape", "ISR"}, 
+        {"fsrShape", "FSR"}};
+
+
+    std::map<std::string, int> colors = {
+        {"ttvNJetsUnc_AddJets", 633}, 
+        {"ttvNJetsUnc_AddBJets", 419}, 
+        {"qcdScale", 407}, 
+        {"pdfShapeVar", 800}, 
+        {"isrShape", 906}, 
+        {"fsrShape", 882}};
 
     for (auto it : uncToDraw) {
         //std::cout << it;
@@ -74,12 +92,12 @@ void Stacker::drawUncertaintyImpacts(Histogram* hist, std::vector<std::string>& 
         upVar->UseCurrentStyle();
         downVar->UseCurrentStyle();
         // no fill color
-        upVar->SetLineColor(cols.At(colIndex));
-        downVar->SetLineColor(cols.At(colIndex));
+        upVar->SetLineColor(colors[it]);
+        downVar->SetLineColor(colors[it]);
         downVar->SetLineStyle(2);
 
         // add to legend
-        legend->AddEntry(upVar, it.c_str());
+        legend->AddEntry(upVar, naming[it].c_str());
 
         // draw in optimal way
         // use SAME option

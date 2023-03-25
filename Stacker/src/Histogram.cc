@@ -71,8 +71,27 @@ void Histogram::readSetting(std::string& setting, std::pair<std::string, std::st
     if (setting == "xAxisName") {
         xAxisName = currSetAndVal.second;
     }
+    if (setting == "yAxisName") {
+        yAxisName = currSetAndVal.second;
+    }
 
     if (setting == "UnifyBinWidth") {
         uniWidthBins = true;
+    }
+
+    if (setting == "AxisRange") {
+        std::istringstream stream(currSetAndVal.second);
+        std::string nBins;
+        std::string edgeMin;
+        std::string edgeMax;
+        getline(stream, nBins, ',');
+        getline(stream, edgeMin, ',');
+        getline(stream, edgeMax, ',');
+
+        xMinMax = {std::stod(edgeMin), std::stod(edgeMax)};
+
+        nBinsNew = std::stoi(nBins);
+        axisRangeCustom = true;
+        return;
     }
 }

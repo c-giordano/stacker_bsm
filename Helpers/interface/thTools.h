@@ -14,5 +14,5 @@
 
 void normalizeHistograms(std::vector<TH1D*>& histos);
 TH1D* sumVector(std::vector<TH1D*>& histoVec);
-
+TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh);
 #endif

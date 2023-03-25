@@ -171,7 +171,7 @@ void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
     TString name = "Data";
 
     std::vector<TFile*> inputFilesData;
-
+    std::vector<TString> processNames;
     for (; i < cmdArgs.size(); i++) {
         // if string does not contain .root: break
         if (! stringContainsSubstr(cmdArgs[i], ".root")) break;
@@ -182,14 +182,18 @@ void Stacker::readData(std::vector<std::string>& cmdArgs, unsigned i) {
         newInputFile->cd("Nominal");
         //std::cout << cmdArgs[i] << std::endl;
         //std::cout << gDirectory->GetListOfKeys() << std::endl;
-        TString nameInter = gDirectory->GetListOfKeys()->At(0)->GetName();
-
-        if (name != nameInter && name != "something") {
-            name = nameInter;
+        for (const auto&& key : *(gDirectory->GetListOfKeys())) {            
+            TString nameInter = key->GetName();
+            //std::cout << nameInter.Data() << " ? " << (std::string(nameInter.Data()) == std::string("something")) << std::endl;
+            if (std::string(nameInter.Data()) == std::string("something") || std::string(nameInter.Data()) == std::string("somethingbb")) continue;
+            if (std::find(processNames.begin(), processNames.end(), nameInter) != processNames.end()) continue;
+            processNames.push_back(nameInter);
         }
     }
-    std::cout << "Pulling out data under the name: " << name.Data() << std::endl;
-    dataProcess = new Process(name, kBlack, inputFilesData, outputfile, false, true, false);
+    //std::cout << "Pulling out data under the name: " << name.Data() << std::endl;
+    dataProcess = new ProcessSet(name, processNames, kBlack, inputFilesData, outputfile, false, true, false);
+
+    dcwriter->addData(dataProcess);
 }
 
 
@@ -342,8 +346,11 @@ void Stacker::readUncertaintyFile(std::string& filename) {
                     relProcess = {"TTTT", "TTZ", "TTH", "Xgam"};
                     continue;
                 } else {
+                    std::vector<std::string> splitProcesses = split(currSetAndVal.second, ",");
                     std::vector<TString> newProcess;
-                    newProcess.push_back(TString(currSetAndVal.second));
+                    for (auto& proc : splitProcesses) {
+                        newProcess.push_back(TString(proc));
+                    }
                     relProcess = newProcess;
                     continue;
                 }

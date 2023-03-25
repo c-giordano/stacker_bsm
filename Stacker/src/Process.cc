@@ -71,6 +71,7 @@ TH1D* Process::getHistogram(Histogram* histogram) {
     //if (stringContainsSubstr(std::string(histName.Data()), "Yield")) {
     //    std::cout << "Process " << name << std::endl;
     //}
+    //std::cout << getName().Data() << " ";
     for (unsigned i = 0; i < inputfiles.size(); i++) {
         TFile* currFile = inputfiles[i];
         std::vector<const char*>* subdirectories = subdirectoriesPerFile[i];
@@ -116,7 +117,9 @@ TH1D* Process::getHistogram(Histogram* histogram) {
 
             gDirectory->cd("..");
         }
+
     }
+    //std::cout << output->Integral() << std::endl;
 
     if (output == nullptr) {
         std::cerr << "Process " << name.Data() << " is not available in any file. Is this expected? " << std::endl;

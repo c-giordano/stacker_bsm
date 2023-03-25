@@ -9,7 +9,7 @@ void Stacker::printAllHistograms() {
         histogramID->setPrintToFile(false);
         //std::cout << std::string(histogramID->getID().Data()) << std::endl;
         //if (std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-2Lee" && std::string(histogramID->getID().Data()) != "BDT_FinalresultSignal_TriClass_SR-3L") continue;
-        //if (! stringContainsSubstr(std::string(histogramID->getID().Data()), "SR-3L")) continue;
+        //if (! stringContainsSubstr(std::string(histogramID->getID().Data()), "CR-3L-Z")) continue;
 
         if (! onlyDC || (onlyDC && histogramID->getPrintToFile())) {
             printHistogram(histogramID);
@@ -47,6 +47,8 @@ void Stacker::printHistogram(Histogram* hist) {
             }
         } else {
             dataHistogram = dataProcess->getHistogram(hist);
+            //std::cout << "data: " << dataHistogram->Integral() << " events" << std::endl;
+
             if (verbose) {
                 std::cout << "Obs";
                 if (veryVerbose) {
@@ -80,14 +82,14 @@ void Stacker::printHistogram(Histogram* hist) {
     canv->cd();
 
     TPad** smallPad = new TPad*(); 
-    //TH1D* ratioPlot = nullptr;
+    TH1D* ratioPlot = nullptr;
     if (getData()) {
         if (! totalUnc) {
             TH1D* allHistograms = sumVector(histVec);
-            drawRatioData(hist, allHistograms, dataHistogram, smallPad);
+            ratioPlot = drawRatioData(hist, allHistograms, dataHistogram, smallPad);
 
         } else {
-            drawRatioData(hist, totalUnc, dataHistogram, smallPad);
+            ratioPlot = drawRatioData(hist, totalUnc, dataHistogram, smallPad);
         }
     } else {
         drawRatioMC(hist, histVec, *signalVector, smallPad);
@@ -131,8 +133,8 @@ void Stacker::printHistogram(Histogram* hist) {
 
     if (change) {
         // temp disabled -> dont really like the effect it has on some plots. Definitely a want for later versions but not now.
-        //histStack->GetXaxis()->SetRangeUser(xmin, xmax);
-        //if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
+        histStack->GetXaxis()->SetRangeUser(xmin, xmax);
+        if (ratioPlot) ratioPlot->GetXaxis()->SetRangeUser(xmin, xmax);
     }
 
     (*mainPad)->Update();
@@ -187,6 +189,19 @@ TH1D* Stacker::drawStack(Histogram* hist, THStack* histStack, std::vector<TH1D*>
 
             //std::cout << totalUnc->GetBinError(bin) << "\t";
 
+        }
+        //std::cout << std::endl;
+        totalUnc->SetFillStyle(3344); //3005  3244
+        totalUnc->SetFillColor(kGray+2);
+        totalUnc->SetMarkerStyle(0); //1
+        totalUnc->Draw("E2 SAME");
+    } else {
+        totalUnc = new TH1D(*allHistograms);
+        
+        //std::cout << "printing uncertainties:\t";
+        for(int bin = 1; bin < totalUnc->GetNbinsX() + 1; ++bin){
+            double statError = allHistograms->GetBinError(bin);
+            totalUnc->SetBinError(bin, sqrt( statError*statError) );
         }
         //std::cout << std::endl;
         totalUnc->SetFillStyle(3344); //3005  3244

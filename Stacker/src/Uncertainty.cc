@@ -55,17 +55,25 @@ TH1D* Uncertainty::getShapeUncertainty(Histogram* histogram, Process* head, std:
 
     //std::cout << outputName << std::endl;
     //std::cout << name << std::endl;
+    //std::cout << "uncertainty " << name << " for histogram " << histogramID.Data() << " histvec size " << histVec.size() << " " << relevantProcesses.size() << std::endl;
 
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
-        //std::cout << current->getName().Data() << std::endl;
-        if (current->getName() != relevantProcesses[procCount]) {
-            histCount++;
-            current = current->getNext();
+        //std::cout << current->getName().Data() << std::endl;        
+        //std::cout << "Process " << current->getName() << " " << (current->getName() != relevantProcesses[procCount]) << (current->IsChannelIgnored(histogram->GetChannel())) << std::endl;
+        //std::cout << histCount << " " << procCount << std::endl;
+        
+        bool isIrrelevant = (current->getName() != relevantProcesses[procCount]);
+        bool isIgnored = current->IsChannelIgnored(histogram->GetChannel());
 
-            continue;
-        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
+        if (! isIrrelevant && isIgnored) {
             current = current->getNext();
+            procCount++;
+            histCount++;
+            continue;
+        } else if (isIrrelevant || isIgnored) {
+            current = current->getNext();
+            histCount++;
             continue;
         }
 
@@ -185,13 +193,17 @@ TH1D* Uncertainty::getEnvelope(Histogram* histogram, Process* head, std::vector<
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
         //std::cout << current->getName().Data() << " " << relevantProcesses[procCount] << std::endl;
+        bool isIrrelevant = (current->getName() != relevantProcesses[procCount]);
+        bool isIgnored = current->IsChannelIgnored(histogram->GetChannel());
 
-        if (current->getName() != relevantProcesses[procCount]) {
+        if (! isIrrelevant && isIgnored) {
+            current = current->getNext();
+            procCount++;
             histCount++;
-            current = current->getNext();
             continue;
-        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
+        } else if (isIrrelevant || isIgnored) {
             current = current->getNext();
+            histCount++;
             continue;
         }
 
@@ -501,18 +513,27 @@ TH1D* Uncertainty::getFlatUncertainty(Histogram* histogram, Process* head, std::
     int procCount = 0;
 
     //for (unsigned histCount = 0; histCount < histVec.size(); histCount++) {
+    //std::cout << "uncertainty " << name << " for histogram " << histogramID.Data() << " histvec size " << histVec.size() << " " << relevantProcesses.size() << std::endl;
     while (current) {
-    
-        if (current->getName() != relevantProcesses[procCount]) {
+        //std::cout << "Process " << current->getName() << " " << (current->getName() != relevantProcesses[procCount]) << (current->IsChannelIgnored(histogram->GetChannel())) << std::endl;
+        //std::cout << histCount << " " << procCount << std::endl;
+
+        bool isIrrelevant = (current->getName() != relevantProcesses[procCount]);
+        bool isIgnored = current->IsChannelIgnored(histogram->GetChannel());
+
+        if (! isIrrelevant && isIgnored) {
+            current = current->getNext();
+            procCount++;
+            histCount++;
+            continue;
+        } else if (isIrrelevant || isIgnored) {
             current = current->getNext();
             histCount++;
             continue;
-        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
-            current = current->getNext();
-            continue;
         }
 
-
+        //std::cout << correlatedAmongProcesses << std::endl;
+        //std::cout << histVec[histCount]->GetBinContent(1) << std::endl;
         for (int bin = 1; bin < histVec[0]->GetNbinsX() + 1; bin++) {
             double variation = 0.;
             if (correlatedAmongProcesses) {
@@ -569,11 +590,24 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
     TH1D* downVarReturn = nullptr;
 
 
-    //std::cout << name << " " << envelope << buildEnvelope << indivudalPDFVariations << std::endl;
+    //std::cout << name << " in channel " << histogram->GetChannel() << std::endl;
+//
+    //std::cout << name << " rel processes: ";
+    //for (auto el :relevantProcesses ) {
+    //    std::cout << el.Data() << " ";
+    //}
+    //std::cout<< std::endl;
+    
     while (current) {
         // TODO: check if uncertainty needs this process, otherwise continue and put stuff to next one;
-        if (current->getName() != relevantProcesses[procCount] || current->IsChannelIgnored(histogram->GetChannel())) {
+        //std::cout << "Process " << current->getName() << " " << (current->getName() != relevantProcesses[procCount]) << (current->IsChannelIgnored(histogram->GetChannel())) << std::endl;
+        if (current->getName() != relevantProcesses[procCount]) {
             histCount++;
+            current = current->getNext();
+            continue;
+        } else if (current->IsChannelIgnored(histogram->GetChannel())) {
+            histCount++;
+            procCount++;
             current = current->getNext();
             continue;
         }
@@ -604,6 +638,12 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                 upVar = ApplyBinWidthUnification(upVar);
                 downVar = ApplyBinWidthUnification(downVar);
             }
+            //if (name == "ttvNJetsUnc_AddJets") {
+            //    for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
+            //        double nom = histNominal->GetBinContent(j);
+            //        downVar->SetBinContent(j, (2 * nom) - upVar->GetBinContent(j));
+            //    }
+            //}
         } else if (name == "pdfShapeVar") {
             if (! indivudalPDFVariations) {
                 //std::cout << "building vars" << std::endl;
@@ -662,6 +702,13 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                     downVar->SetBinError(j, 0.00001);
                 }
                 //std::cout << "\t after clean: " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j) << std::endl;
+            }
+
+            if (histogram->HasCustomAxisRange()) {
+                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                upVar = rebin(upVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+                downVar = rebin(downVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
             }
 
             gDirectory->cd(outputNameUp);
@@ -747,6 +794,14 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
             if (! gDirectory->GetDirectory(outputNameUp)) {
                 gDirectory->mkdir(outputNameUp);
                 gDirectory->mkdir(outputNameDown);
+            }
+            if (histogram->HasCustomAxisRange()) {
+                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+
+                var = rebin(var, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+                nominalHist = rebin(nominalHist, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+
             }
 
             gDirectory->cd(outputNameUp);

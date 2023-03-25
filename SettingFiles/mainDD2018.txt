@@ -1,20 +1,28 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+TTX+THQ
-Xgam              593         B   ttG+ZG+ttbar
-ChargeMisID         882         B  
-WZ                  893         B
+Other_t              851         B   Set=TTVV+TTX+THQ+TWZ+TTT
+# TTT              850         B  
+Xgam              593         B   Set=ttG+ZG+ttbar   IgnoreChannels=SR-4L,CR-4L-Z
+ChargeMisID         882         B  IgnoreChannels=SR-4L,CR-4L-Z,CR-3L-Z,CR-3L-ZZSigZVeto,CR-3L-2J1B,SR-3L,SR-3LOSSF,SR-3LnoOSSF
+WZ                  893         B  IgnoreChannels=SR-4L,CR-4L-Z
 #WWDS                436         B                       
 #SSWW                841         B    
 #ZZ-H                  600         B
-VVV                 906         B   VVV+SSWW+ZZ-H
-#nonPrompt           801         B   nonPromptElectron+nonPromptMuon
-#nonPrompt           801         B   nonPromptDD
-nonPromptElectron       801         B
-nonPromptMuon           800         B
-TTH                 803         B   TTH+TTHbb
-TTZ                 407         B   TTZ+TTZbb
-TTW                 419         B   TTW+TTWbb
+VVV                 906         B   Set=VVV+SSWW+ZZ-H
+#nonPrompt           801         B   Set=nonPromptElectron+nonPromptMuon
+#nonPrompt           801         B   Set=nonPromptDD
+nonPromptElectron       801         B    IgnoreChannels=SR-4L,CR-4L-Z,SR-2Lmm
+nonPromptMuon           800         B    IgnoreChannels=SR-4L,CR-4L-Z,SR-2Lee
+# TTH                 803         B   Set=TTHbb
+# TTHbb                 804         B   Set=TTH
+# TTZ                 401         B   Set=TTZbb
+# TTZbb                 393         B   Set=TTZ
+# TTW                 419         B   Set=TTWbb IgnoreChannels=SR-4L,CR-4L-Z
+# TTWbb                 417         B   Set=TTW IgnoreChannels=SR-4L,CR-4L-Z
+TTH                 803         B   Set=TTH+TTHbb
+TTZ                 407         B   Set=TTZ+TTZbb
+TTW                 419         B   Set=TTW+TTWbb IgnoreChannels=SR-4L,CR-4L-Z
 TTTT                633         S
+#TTTT18                633         S  Set=TTTT
 
 BROAD SETTINGS
 # general settings
@@ -25,12 +33,120 @@ RatioPlots=True
 #SignalYield=True
 
 HISTOGRAMS
+#N_jets_CR-3L-Z rebinVar=6,1.5,2.5,3.5,4.5,5.5,8.5
+N_jets_CR-4L-Z rebinVar=6,1.5,2.5,3.5,4.5,5.5,8.5, AxisRange=6,1.5,7.5
+
+
+N_jets_SR-2LpureSig_ee                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureSig_ee                    AxisRange=5,1.5,6.5
+HT_SR-2LpureSig_ee                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureSig_ee              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureTTV_ee                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureTTV_ee                    AxisRange=5,1.5,6.5
+HT_SR-2LpureTTV_ee                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureTTV_ee              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureSig_em                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureSig_em                    AxisRange=5,1.5,6.5
+HT_SR-2LpureSig_em                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureSig_em              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureTTV_em                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureTTV_em                    AxisRange=5,1.5,6.5
+HT_SR-2LpureTTV_em                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureTTV_em              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureSig_mm                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureSig_mm                    AxisRange=5,1.5,6.5
+HT_SR-2LpureSig_mm                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureSig_mm              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureTTV_mm                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureTTV_mm                    AxisRange=5,1.5,6.5
+HT_SR-2LpureTTV_mm                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureTTV_mm              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2LpureTTB                     AxisRange=8,2.5,10.5
+N_Bjets_SR-2LpureTTB                    AxisRange=5,1.5,6.5
+HT_SR-2LpureTTB                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-2LpureTTB              AxisRange=5,-0.5,4.5
+
+N_jets_SR-3LpureSig                     AxisRange=8,2.5,10.5
+N_Bjets_SR-3LpureSig                    AxisRange=5,1.5,6.5
+HT_SR-3LpureSig                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-3LpureSig              AxisRange=5,-0.5,4.5
+
+N_jets_SR-3LpureTTV                     AxisRange=8,2.5,10.5
+N_Bjets_SR-3LpureTTV                    AxisRange=5,1.5,6.5
+HT_SR-3LpureTTV                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-3LpureTTV              AxisRange=5,-0.5,4.5
+
+N_jets_SR-3LpureTTB                     AxisRange=8,2.5,10.5
+N_Bjets_SR-3LpureTTB                    AxisRange=5,1.5,6.5
+HT_SR-3LpureTTB                         AxisRange=24,200.,1400.
+N_MediumBjets_SR-3LpureTTB              AxisRange=5,-0.5,4.5
+
+N_jets_SR-2L                 AxisRange=7,3.5,10.5
+N_Bjets_SR-2L                AxisRange=4,1.5,5.5
+HT_SR-2L                     AxisRange=11,250.,800.
+N_MediumBjets_SR-2L     AxisRange=3,1.5,4.5
+
+N_jets_SR-2Lee               AxisRange=7,3.5,10.5
+N_Bjets_SR-2Lee              AxisRange=4,1.5,5.5
+HT_SR-2Lee                   AxisRange=11,250.,800.
+N_MediumBjets_SR-2Lee        AxisRange=3,1.5,4.5
+
+N_jets_SR-2Lem               AxisRange=7,3.5,10.5
+N_Bjets_SR-2Lem              AxisRange=4,1.5,5.5
+HT_SR-2Lem                   AxisRange=11,250.,800.
+N_MediumBjets_SR-2Lem        AxisRange=3,1.5,4.5
+
+N_jets_SR-2Lmm               AxisRange=7,3.5,10.5
+N_Bjets_SR-2Lmm              AxisRange=4,1.5,5.5
+HT_SR-2Lmm                   AxisRange=11,250.,800.
+N_MediumBjets_SR-2Lmm        AxisRange=3,1.5,4.5
+
+N_jets_SR-3L                 AxisRange=6,2.5,8.5
+N_Bjets_SR-3L                AxisRange=3,1.5,4.5
+HT_SR-3L                     AxisRange=12,200.,800.
+N_MediumBjets_SR-3L          AxisRange=3,1.5,4.5
+
+N_Bjets_CR-3L-Z              AxisRange=4,0.5,4.5
+
+N_MediumBjets_CR-3L-Z        AxisRange=4,0.5,4.5
+N_MediumBjets_CR-3L-ZOneMedB AxisRange=4,0.5,4.5
+N_Bjets_CR-3L-ZOneMedB       AxisRange=4,0.5,4.5
+N_MediumBjets_CR-3L-ZTwoMedB AxisRange=4,1.5,5.5
+
+N_MediumBjets_CR-4L-Z        AxisRange=3,0.5,3.5
+
+N_Bjets_CR-3L-2J1B           AxisRange=2,0.5,2.5
+N_MediumBjets_CR-3L-2J1B     AxisRange=2,0.5,2.5
+
+N_jets_SR-2LTTVmm            AxisRange=5,3.5,8.5
+N_Bjets_SR-2LTTVmm           AxisRange=3,1.5,4.5
+HT_SR-2LTTVmm                AxisRange=11,250.,800.
+N_MediumBjets_SR-2LTTVmm     AxisRange=2,1.5,3.5
+
+N_jets_SR-2LTTVemee          AxisRange=5,3.5,8.5
+HT_SR-2LTTVemee              AxisRange=11,250.,800.
+N_MediumBjets_SR-2LTTVemee   AxisRange=4,1.5,5.5
+
+
 Cutbased_AN_SR-2L logscale Xbinlabels=0,SR1,SR2,SR3,SR4,SR5,SR6,SR7,SR8,SR9,SR10,SR11,SR12,SR13,SR14
 Cutbased_AN_SR-2Lee logscale
 Cutbased_AN_SR-2Lem logscale
 Cutbased_AN_SR-2Lmm logscale
 Cutbased_AN_SR-3L logscale
 Cutbased_AN_SR-4L logscale
+
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lee rebin=25
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lem rebin=10 AxisRange=9,0.75,3.
+BDT_Finalresult_tanh_Signal_TriClass_SR-2Lmm rebin=25
+BDT_Finalresult_tanh_Signal_TriClass_SR-2L rebin=10
+BDT_Finalresult_tanh_Signal_TriClass_SR-3L rebin=20
+
 # list of histgorams for which modified conditions are applied, together with the modified conditions
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-23J1B rebin=240
 BDT_FinalresultSignal_TriClass_SR-4L_CR-2L-45J2B rebin=240
@@ -64,7 +180,42 @@ BDTScore_TTV_TriClass_SR-4L_CR-3L-Z rebin=20
 BDTScore_TTV_TriClass_SR-4L_CR-4L-Z rebin=20
 N_jets_CR-Conversion logscale
 N_jets_CRWZ logscale
+InvMassSpectruml1l2_CR-2L-23J1B rebin=3
+InvMassSpectruml1l2_CR-2L-45J2B rebin=3
+InvMassSpectruml1l2_SR-2L rebin=3
+InvMassSpectruml1l2_SR-3L rebin=3
+InvMassSpectruml1l2_SR-3LOSSF rebin=3
+InvMassSpectruml1l2_SR-2Lee rebin=3
+InvMassSpectruml1l2_SR-2Lmm rebin=3
+InvMassSpectruml1l2_SR-2Lem rebin=3
+min_DR_ll_SR-3L rebin=4
+min_DPhi_l1l2_SR-3L rebin=4
+min_DEta_l1l2_SR-3L rebin=4
+min_DR_ll_SR-3LOSSF rebin=4
+min_DPhi_l1l2_SR-3LOSSF rebin=4
+min_DEta_l1l2_SR-3LOSSF rebin=4
+InvMass3L_SR-3L rebin=2
+DR_l1l2_SR-2Lee rebin=4
+DR_l1l2_SR-2Lem rebin=4
+DR_l1l2_SR-2Lmm rebin=4
+DPhi_l1l2_SR-2Lee rebin=4
+DPhi_l1l2_SR-2Lem rebin=4
+DPhi_l1l2_SR-2Lmm rebin=4
+DEta_l1l2_SR-2Lee rebin=4
+DEta_l1l2_SR-2Lem rebin=4
+DEta_l1l2_SR-2Lmm rebin=4
 
+DPhi_l1l2_SR-2L rebin=4
+DEta_l1l2_SR-2L rebin=4
+DR_l1l2_SR-2L rebin=4
+
+DPhi_l1l2_SR-3L rebin=4
+DEta_l1l2_SR-3L rebin=4
+DR_l1l2_SR-3L rebin=4
+
+DPhi_l1l2_SR-4L rebin=4
+DEta_l1l2_SR-4L rebin=4
+DR_l1l2_SR-4L rebin=4
 
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=14,0.4,0.55,0.65,0.72,0.77,0.81,0.84,0.87,0.89,0.91,0.94,0.96,0.98,1. logscale
 #BDT_FinalresultSignal_TriClass_SR-2L rebinVar=15,0.4,0.55,0.65,0.71,0.76,0.8,0.84,0.86,0.88,0.9,0.92,0.94,0.96,0.98,1. 

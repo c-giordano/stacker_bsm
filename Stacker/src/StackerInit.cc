@@ -128,10 +128,11 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         std::string part;
         Process* newProcess;
         bool read = bool(stream >> part);
-        if (read && stringContainsSubstr(part, "merge")) {
+        if (read && stringContainsSubstr(part, "Set=")) {
+            std::pair<std::string, std::string> currSetAndVal = splitSettingAndValue(part);
             // check if it contains a plus. If so, the current process must be modified to take into account multiple subdirectories
             // maybe make a process object containing multiple processes
-            std::vector<std::string> processNamesStrings = split(part, "+");
+            std::vector<std::string> processNamesStrings = split(currSetAndVal.second, "+");
             std::vector<TString> processNamesSet;
             for (auto it : processNamesStrings) {
                 processNamesSet.push_back(TString(it));
@@ -142,14 +143,19 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
             newProcess = processes->addProcess(processNameAlt, std::stoi(colorString), inputfiles, outputfile, signal, data, oldStuff);
         }
 
-        if (read && stringContainsSubstr(part, "merge")) read = bool(stream >> part);
+        if (read && stringContainsSubstr(part, "Set=")) {
+            read = bool(stream >> part);
+        }
 
         if (read) {
-            std::pair<std::string, std::string> currSetAndVal = splitSettingAndValue(line);
-            std::vector<std::string> ignoredChannels = split(currSetAndVal.second, ",");
+            std::pair<std::string, std::string> currSetAndVal = splitSettingAndValue(part);
 
-            for (auto& channel : ignoredChannels) {
-                newProcess->AddIgnoredChannel(channel);
+            if (currSetAndVal.first == "IgnoreChannels") {
+                std::vector<std::string> ignoredChannels = split(currSetAndVal.second, ",");
+
+                for (auto& channel : ignoredChannels) {
+                    newProcess->AddIgnoredChannel(channel);
+                }
             }
         }
         
@@ -241,6 +247,19 @@ void Stacker::ReadSettingFile(std::string& settingFile) {
         
         while (curr != nullptr && ! gDirectory->GetDirectory(curr->getName())) {
             std::cout << curr->getName() << std::endl;
+            if (curr != nullptr && curr->isSet()) {
+                std::vector<Process*> vec = ((ProcessSet*) curr)->getSubProcesses();
+                Process* tmp = nullptr;
+                for (auto& el : vec) {
+                    if (gDirectory->GetDirectory(el->getName())) {
+                        tmp = el;
+                        break;
+                    }
+                }
+                if (tmp) curr = tmp;
+                break;
+            }
+
             curr = curr->getNext();
         }
         if (curr != nullptr && gDirectory->GetDirectory(curr->getName())) {

@@ -75,6 +75,10 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     std::cout << releventContribution->GetName() << std::endl;
     histVec.erase(histVec.begin()+index);
 
+    // REMOVE AFTER
+    sf->SetBinContent(4, sf->GetBinContent(5)+sf->GetBinContent(4));
+    releventContribution->SetBinContent(4, releventContribution->GetBinContent(5)+releventContribution->GetBinContent(4));
+
     TH1D* sum = sumVector(histVec);
     sf->Add(sum, -1.);
     
@@ -83,6 +87,8 @@ void Stacker::GenerateSF(Histogram* histogram, TString& processName) {
     sf->SetTitle("SF_" + histogram->getID());
 
     sf->Divide(releventContribution);
+    //sf->SetBinContent(5, 0.);
+    //sf->SetBins(4, -0.5, 3.5);
     
     DrawSF(sf);
 

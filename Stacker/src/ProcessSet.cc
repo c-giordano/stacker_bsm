@@ -25,6 +25,7 @@ TH1D* ProcessSet::getHistogram(Histogram* histogram) {
     TString histName = histogram->getID();
 
     for (auto it : subProcesses) {
+        //std::cout << it->getName().Data() << std::endl;
         TH1D* tmp = it->getHistogram(histogram);
         if (tmp == nullptr) {
             continue;

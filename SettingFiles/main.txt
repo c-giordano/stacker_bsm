@@ -1,16 +1,13 @@
 # Processname       color       -> Processes in order: last to first
-TT+X              851         B   TTVV+TTX
-Xgam              593         B   ttG+Z+ZG+ttbar
-ChargeMisID         882         B  
-WZ                  893         B
-##WWDS                436         B                       
-##SSWW                841         B    
-#ZZ-H                  600         B
-VVV                 906         B   VVV+SSWW+ZZ-H
-nonPrompt           801         B 
-TTH                 803         B   
-TTZ                 407         B   
-TTW                 419         B   
+Other_t             851         B   Set=TTVV+TTX+THQ
+Xgam                593         B   Set=ttG+ZG+ttbar+Z
+ChargeMisID         882         B  IgnoreChannels=SR-4L,CR-4L-Z,CR-3L-Z,CR-3L-ZZSigZVeto,CR-3L-2J1B,SR-3L,SR-3LOSSF,SR-3LnoOSSF
+WZ                  893         B  
+VVV                 906         B   Set=VVV+SSWW+ZZ-H
+nonPrompt           801         B  
+TTH                 803         B   TTH
+TTZ                 407         B   TTZ
+TTW                 419         B   TTW
 TTTT                633         S
 
 

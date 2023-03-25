@@ -25,6 +25,7 @@ class ProcessSet : public Process {
 
         virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
+        std::vector<Process*> getSubProcesses() {return subProcesses;};
 };
 
 #endif
