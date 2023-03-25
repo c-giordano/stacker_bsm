@@ -12,6 +12,7 @@
 
 #include "../../Helpers/interface/StringTools.h"
 #include "Histogram.h"
+//#include "HistogramCalculator.h"
 #include "Tools.h"
 // Processes as linkedlist: first element of list is pointed to by ProcessList
 // Should make it relatively easy to work in a specific order?
@@ -55,11 +56,12 @@ class Process {
         std::vector<TFile*> GetInputfiles() {return inputfiles;};
 
         virtual TH1D* getHistogram(Histogram* histogram);
+        //virtual TH1D* getHistogram(HistogramCalculator* histogram);
         virtual TH1D* getHistogramUncertainty(std::string& uncName, std::string& upOrDown, Histogram* hist, bool envelope, std::string era="");
 
         virtual std::vector<std::shared_ptr<TH1D>> GetAllVariations(Histogram* histogram, int nVars, std::string& uncName);
 
-        virtual TH2D* get2DHistogram(TString& histName, TLegend* legend);
+        virtual TH2D* get2DHistogram(TString& histName);
 
         void AddIgnoredChannel(std::string channel) {ignoredChannels.push_back(channel);}
         bool IsChannelIgnored(std::string& channel);

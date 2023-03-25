@@ -310,7 +310,9 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     if (verbose) std::cout << histogramID << std::endl;
 
     while (current) {
-        TH2D* histToAdd = current->get2DHistogram(histogramID, legend);
+        TH2D* histToAdd = current->get2DHistogram(histogramID);
+        histToAdd->Scale(1./histToAdd->Integral());
+        legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
         histVec.push_back(histToAdd);
         

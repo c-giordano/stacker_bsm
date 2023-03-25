@@ -307,7 +307,7 @@ std::vector<std::shared_ptr<TH1D>> Process::GetAllVariations(Histogram* histogra
 }
 
 
-TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
+TH2D* Process::get2DHistogram(TString& histName) {
     TH2D* output = nullptr;// = new TH1D();// = new TH1D(histName + "_" + name, name)
     
     for (unsigned i = 0; i < inputfiles.size(); i++) {
@@ -345,8 +345,7 @@ TH2D* Process::get2DHistogram(TString& histName, TLegend* legend) {
     output->SetLineColor(color);
     output->SetFillColor(color);
     output->SetMarkerColor(color);
-    
-    legend->AddEntry(output, cleanedName);
+
 
     return output;
 }

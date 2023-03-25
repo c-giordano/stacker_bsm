@@ -69,11 +69,11 @@ TH1D* ProcessSet::getHistogramUncertainty(std::string& uncName, std::string& upO
     return output;
 }
 
-TH2D* ProcessSet::get2DHistogram(TString& histName, TLegend* legend) {
+TH2D* ProcessSet::get2DHistogram(TString& histName) {
     TH2D* output = nullptr;
 
     for (auto it : subProcesses) {
-        TH2D* tmp = it->get2DHistogram(histName, legend);
+        TH2D* tmp = it->get2DHistogram(histName);
 
         if (output == nullptr) {
             output = tmp;
