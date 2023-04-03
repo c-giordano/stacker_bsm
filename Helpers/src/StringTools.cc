@@ -8,7 +8,7 @@ TString cleanTString(TString& toClean) {
     } else {
         cleaned.ReplaceAll("gam", "#gamma");
     }
-    cleaned.ReplaceAll("TTX", "t(#bar{t})+X");
+    //cleaned.ReplaceAll("TTX", "t(#bar{t})+X");
     cleaned.ReplaceAll("TT", "t#bar{t}");
     cleaned.ReplaceAll("T(T)", "t(#bar{t})");
     cleaned.ReplaceAll("tt", "t#bar{t}");

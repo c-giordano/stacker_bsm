@@ -64,9 +64,12 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
         binError += input->GetBinError(j) * input->GetBinError(j);
         j++;
     }
-
+    
     output->SetBinContent(nbins, binContent);
     output->SetBinError(nbins, sqrt(binContent));
+
+    //input->SetDirectory(0);
+    //delete input;
 
     return output;
 }

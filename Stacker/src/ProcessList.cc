@@ -312,6 +312,9 @@ std::vector<TH2D*> ProcessList::fill2DStack(THStack* stack, TString& histogramID
     while (current) {
         TH2D* histToAdd = current->get2DHistogram(histogramID);
         histToAdd->Scale(1./histToAdd->Integral());
+        histToAdd->RebinX(2);
+        histToAdd->RebinY(2);
+        if (current->getName() == "TTB") histToAdd->Scale(1.3);
         legend->AddEntry(histToAdd, current->getCleanedName());
         stack->Add(histToAdd);
         histVec.push_back(histToAdd);

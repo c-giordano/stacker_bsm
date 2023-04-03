@@ -638,10 +638,11 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                 upVar = ApplyBinWidthUnification(upVar);
                 downVar = ApplyBinWidthUnification(downVar);
             }
-            //if (name == "ttvNJetsUnc_AddJets") {
+            //if (name == "ttvNJetsUnc_AddBJets") {
             //    for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
             //        double nom = histNominal->GetBinContent(j);
-            //        downVar->SetBinContent(j, (2 * nom) - upVar->GetBinContent(j));
+            //        upVar->SetBinContent(j, nom + 0.75 * (upVar->GetBinContent(j) - nom));
+            //        downVar->SetBinContent(j, nom - 0.75 * (nom - downVar->GetBinContent(j)));
             //    }
             //}
         } else if (name == "pdfShapeVar") {
@@ -753,6 +754,7 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
     std::vector<std::shared_ptr<TH1D>> allHistogramVariations = current->GetAllVariations(histogram, n, name);
 
     //std::cout << "writing variations for " << current->getName() << " with n = "  << allHistogramVariations.size() << std::endl; 
+    //std::cout << "nominal hist rebinned " << std::endl;
 
     for (unsigned i=0; i < allHistogramVariations.size(); i++) {
         TH1D* var = allHistogramVariations[i].get();
@@ -812,6 +814,8 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
             nominalHist->Write(current->getName());
         }
     }
+    //std::cout << "variations" << std::endl;
+
 }
 
 bool Uncertainty::IsIgnoredChannel(std::string channel) {

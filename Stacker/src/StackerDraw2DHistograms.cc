@@ -27,11 +27,18 @@ void Stacker::print2DHistogram(Histogram2D* hist) {
     TPad* pad = getPad(histID);
     pad->Draw();
     pad->cd();
+    gStyle->SetHistLineWidth(0);
+    gStyle->SetHistFillStyle(1001);
+
     //gStyle->SetMarkerSize(1.5);
     histStack->Draw("box");
 
     stackSettingsPostDraw(pad, histStack, hist, histVec[0], nullptr);
+    std::string xlabel = histStack->GetYaxis()->GetTitle();
+    std::string ylabel = histStack->GetXaxis()->GetTitle();
 
+    histStack->GetYaxis()->SetTitle(replace(xlabel, "_", " ").c_str());
+    histStack->GetXaxis()->SetTitle(replace(ylabel, "_", " ").c_str());
     pad->Update();
     pad->Modified();
 

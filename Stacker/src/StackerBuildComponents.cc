@@ -29,17 +29,18 @@ TPad* Stacker::getPad(TString& histID, int position) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 0.4;
+    double x1 = 0.4;//0.65
     double y1 = 0.69;
     double x2 = 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
-    double y2 = 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;
-    int nColumns = 2;
+    double y2 = 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;//-0.06;
+    int nColumns = 2; // 1 
 
     TLegend* legend = new TLegend(x1, y1, x2, y2);
     legend->SetNColumns(nColumns);
     legend->SetMargin(.4);
     legend->SetColumnSeparation(0.1);
 	legend->SetFillStyle(0);
+	//legend->SetTextSize(0.04);
 
     return legend;
 }
@@ -63,7 +64,7 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
     TString lumiText = intLumi + " fb^{-1} (13 TeV)";
     TString extraText = "Work in progress";
 
-    const float l = pad->GetLeftMargin() + gStyle->GetTickLength()*1.2;
+    const float l =pad->GetLeftMargin() + gStyle->GetTickLength()*1.2; // 0.65;//
   	const float t = pad->GetTopMargin();
   	const float r = pad->GetRightMargin();
   	//const float b = pad->GetBottomMargin();

@@ -34,7 +34,7 @@ void Stacker::stackSettingsPostDraw(TPad* pad, THStack* stack, Histogram* hist, 
     }
 
     // Set Y axis name
-    if (yAxisOverride != "") {
+    if (yAxisOverride != ""  && !hist->is2D()) {
         stack->GetYaxis()->SetTitle(yAxisOverride.c_str());
     } else if (hist->HasRebin()) {
         stack->GetYaxis()->SetTitle("Events / bin");
