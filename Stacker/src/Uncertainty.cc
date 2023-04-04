@@ -678,12 +678,6 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             outfile->cd();
             outfile->cd((histogram->getCleanName()).c_str());
             //std::cout << "process " << current->getName() << std::endl;
-            if (histogram->HasCustomAxisRange()) {
-                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-                upVar = rebin(upVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-                downVar = rebin(downVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-            }
             for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
 
                 //std::cout << "bin " << j << ": " << histNominal->GetBinContent(j) << " " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j);
@@ -709,6 +703,12 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                     downVar->SetBinError(j, 0.00001);
                 }
                 //std::cout << "\t after clean: " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j) << std::endl;
+            }
+            if (histogram->HasCustomAxisRange()) {
+                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                upVar = rebin(upVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+                downVar = rebin(downVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
             }
 
 
