@@ -35,6 +35,7 @@ TH1D* sumVector(std::vector<TH1D*>& histoVec) {
 
 TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
     TString nameOld = input->GetName();
+    //std::cout << nameOld.Data() << std::endl;
     input->SetName(nameOld+"OLD");
     TH1D* output = new TH1D(nameOld, input->GetTitle(), nbins, binLow, binHigh);
 
@@ -43,6 +44,7 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
     
     int j = 1;
     while (input->GetBinLowEdge(j) + input->GetBinWidth(j) <= binLow+output->GetBinWidth(1)) {
+        //std::cout << "old bin " << j << " content " << input->GetBinContent(j) << std::endl;
         binContent += input->GetBinContent(j);
         binError += (input->GetBinError(j) * input->GetBinError(j));
         //std::cout << "bin content: " << input->GetBinContent(j) << "; bin err: " << input->GetBinError(j) << "; summed err: " << binError << std::endl;
@@ -51,9 +53,12 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
 
     output->SetBinContent(1, binContent);
     output->SetBinError(1, sqrt(binError));
+    //std::cout << "bin 1 " << binContent << std::endl;
 
     for (int i = 2; i < output->GetNbinsX(); i++) {
         output->SetBinContent(i, input->GetBinContent(j));
+        //std::cout << "bin " << i << " " << input->GetBinContent(j) << std::endl;
+
         output->SetBinError(i, input->GetBinError(j));
         j++;
     }
@@ -62,10 +67,14 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
     binError = 0.;
 
     while (j < input->GetNbinsX()+1) {
+        //std::cout << "old bin " << j << " content " << input->GetBinContent(j) << std::endl;
         binContent += input->GetBinContent(j);
         binError += input->GetBinError(j) * input->GetBinError(j);
         j++;
     }
+
+    //std::cout << "bin " << nbins << " " << binContent << std::endl;
+
     
     output->SetBinContent(nbins, binContent);
     output->SetBinError(nbins, sqrt(binError));

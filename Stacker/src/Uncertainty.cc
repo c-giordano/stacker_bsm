@@ -678,6 +678,12 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
             outfile->cd();
             outfile->cd((histogram->getCleanName()).c_str());
             //std::cout << "process " << current->getName() << std::endl;
+            if (histogram->HasCustomAxisRange()) {
+                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                upVar = rebin(upVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+                downVar = rebin(downVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+            }
             for (int j=1; j < upVar->GetNbinsX() + 1; j++) {
 
                 //std::cout << "bin " << j << ": " << histNominal->GetBinContent(j) << " " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j);
@@ -705,12 +711,6 @@ std::pair<TH1D*, TH1D*> Uncertainty::getUpAndDownShapeUncertainty(Histogram* his
                 //std::cout << "\t after clean: " << upVar->GetBinContent(j) << " " << downVar->GetBinContent(j) << std::endl;
             }
 
-            if (histogram->HasCustomAxisRange()) {
-                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-                upVar = rebin(upVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-                downVar = rebin(downVar, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-            }
 
             gDirectory->cd(outputNameUp);
             upVar->Write(current->getName());
@@ -776,6 +776,21 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
             outfile->cd();
             outfile->cd((histogram->getCleanName()).c_str());
 
+
+            TString outputNameUp = outputName + std::to_string(i) + "Up";
+            TString outputNameDown = outputName + std::to_string(i) + "Down";
+            if (! gDirectory->GetDirectory(outputNameUp)) {
+                gDirectory->mkdir(outputNameUp);
+                gDirectory->mkdir(outputNameDown);
+            }
+            if (histogram->HasCustomAxisRange()) {
+                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
+                //std::cout << "last bin content before rebin "  << var->GetNbinsX() << " " << var->GetBinContent(var->GetNbinsX()) << std::endl;
+                var = rebin(var, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+                nominalHist = rebin(nominalHist, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
+
+            }
             for (int j=1; j < var->GetNbinsX() + 1; j++) {
                 if (nominalHist->GetBinError(j) > nominalHist->GetBinContent(j)) {
                     var->SetBinContent(j, nominalHist->GetBinContent(j));
@@ -789,21 +804,6 @@ void Uncertainty::writeIndividualPDFVariations(Histogram* histogram, TH1D* nomin
                     var->SetBinError(j, 0.00001);
                     var->SetBinContent(j, 0.00001);
                 }
-            }
-
-            TString outputNameUp = outputName + std::to_string(i) + "Up";
-            TString outputNameDown = outputName + std::to_string(i) + "Down";
-            if (! gDirectory->GetDirectory(outputNameUp)) {
-                gDirectory->mkdir(outputNameUp);
-                gDirectory->mkdir(outputNameDown);
-            }
-            if (histogram->HasCustomAxisRange()) {
-                //upVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-                //downVar->SetBins(hist->GetCustomNBins(), hist->GetCustomAxisRange().first, hist->GetCustomAxisRange().second);
-
-                var = rebin(var, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-                nominalHist = rebin(nominalHist, histogram->GetCustomNBins(), histogram->GetCustomAxisRange().first, histogram->GetCustomAxisRange().second);
-
             }
 
             gDirectory->cd(outputNameUp);
