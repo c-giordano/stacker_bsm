@@ -11,6 +11,7 @@
 #include <TLine.h>
 #include <TGaxis.h>
 #include <TColor.h>
+#include <iostream>
 
 void normalizeHistograms(std::vector<TH1D*>& histos);
 TH1D* sumVector(std::vector<TH1D*>& histoVec);

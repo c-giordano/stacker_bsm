@@ -44,11 +44,13 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
     int j = 1;
     while (input->GetBinLowEdge(j) + input->GetBinWidth(j) <= binLow+output->GetBinWidth(1)) {
         binContent += input->GetBinContent(j);
-        binError += input->GetBinError(j) * input->GetBinError(j);
-        j++;
+        binError += (input->GetBinError(j) * input->GetBinError(j));
+        //std::cout << "bin content: " << input->GetBinContent(j) << "; bin err: " << input->GetBinError(j) << "; summed err: " << binError << std::endl;
+        j++; 
     }
+
     output->SetBinContent(1, binContent);
-    output->SetBinError(1, sqrt(binContent));
+    output->SetBinError(1, sqrt(binError));
 
     for (int i = 2; i < output->GetNbinsX(); i++) {
         output->SetBinContent(i, input->GetBinContent(j));
@@ -66,7 +68,7 @@ TH1D* rebin(TH1D* input, int nbins, double binLow, double binHigh) {
     }
     
     output->SetBinContent(nbins, binContent);
-    output->SetBinError(nbins, sqrt(binContent));
+    output->SetBinError(nbins, sqrt(binError));
 
     //input->SetDirectory(0);
     //delete input;
