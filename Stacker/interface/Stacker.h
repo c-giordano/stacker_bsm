@@ -49,11 +49,6 @@ class Stacker {
         int canvWidthX = 600; // Possibly changing directly using gStyle... or save in style object being made. 
         int canvWidthY = 600;
 
-        // Build components of histogram based on settings
-        TCanvas* getCanvas(TString& histID);
-        TPad* getPad(TString& histID, int position=0);
-        TLegend* getLegend();
-        TLatex* getDatasetInfo(TPad* currentPad);
 
         // Main root file
         TFile* inputfile;
@@ -87,6 +82,12 @@ class Stacker {
         bool isSignalLine = false;
 
     public:
+        // Build components of histogram based on settings
+        TCanvas* getCanvas(TString& histID);
+        TPad* getPad(TString& histID, int position=0);
+        TLegend* getLegend();
+        TLatex* getDatasetInfo(TPad* currentPad);
+        
         Stacker(const char* rootFile, std::string& settingFile);
         Stacker(std::vector<std::string>& cmdArgs);
 
@@ -153,6 +154,16 @@ class Stacker {
         void GenerateSFs(std::string& SFFile);
         void GenerateSF(Histogram* histogram, TString& processName);
         void DrawSF(TH1D* sfHistogram);
+
+        bool GetUseT2B() const {return runT2B;}
+        std::string GetPathToOutput() const {return pathToOutput;}
+
+        TFile* GetOutputFile() {return outputfile;}
+
+        ProcessList* GetProcesses() {return processes;}
+        Process* GetDataProcess() {return dataProcess;}
+
+        std::vector<Histogram*> GetHistograms() {return histogramVec;}
 
 };
 

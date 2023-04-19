@@ -8,7 +8,7 @@ void setTDRStyle() {
     gStyle->SetCanvasColor(kWhite);
     gStyle->SetCanvasDefH(800); //Height of canvas
     gStyle->SetCanvasDefW(800); //Width of canvas
-    gStyle->SetCanvasDefX(0);   //POsition on screen
+    gStyle->SetCanvasDefX(0);   //Position on screen
     gStyle->SetCanvasDefY(0);
 
     // For the Pad:

@@ -2,6 +2,8 @@
 #include <iostream>
 #include "Styles/tdrStyle.h"
 
+#include "Plugins/interface/FivePadPlot.h"
+
 int main(int argc, char const *argv[])
 {
     if (argc < 3) {
@@ -57,6 +59,11 @@ int main(int argc, char const *argv[])
 
         if (currentElement == "-SF") {
             stacker.GenerateSFs(argvStr[i+1]);
+            exit(0);
+        }
+
+        if (currentElement == "FivePad") {
+            FivePadPlot::FivePadPlot(stacker);
             exit(0);
         }
     }
