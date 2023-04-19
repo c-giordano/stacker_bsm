@@ -1,43 +1,47 @@
 # unc  Flat or shape    correlationProc     yearCorrelations
+# qcdScale: envelope process=TTZ,TTW,TTTT uncorrelated AllPDFVariations
+#pdfShapeVar: envelope process=AllMC correlated AllPDFVariations
 isrShape: shape process=AllMC correlated
-fsrShape: shape process=AllMC correlated
-qcdScale: envelope process=TTW correlated
-#pdfShapeVar: envelope process=AllMC correlated
-ttvNJetsUnc_AddJets: shape process=TTW
-ttvNJetsUnc_AddBJets: shape process=TTW
+# fsrShape: shape process=AllMC correlated
+# qcdScale: envelope process=TTW correlated
+# #pdfShapeVar: envelope process=AllMC correlated
+# ttvNJetsUnc_AddJets: shape process=TTW
+# ttvNJetsUnc_AddBJets: shape process=TTW
 
 
 HISTOGRAMS
-# shapes to print to outputfiles together with cleaned name
-#BDT_FinalresultSignal_TriClass_SR-2Lee bdt_DLee_sig
-BDT_Finalresult_tanh_Signal_TriClass_SR-2Lee bdt_DLee_sig
-BDT_FinalresultTTV_TriClass_SR-2Lee bdt_DLee_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lee bdt_DLee_ttbar
-
-#BDT_FinalresultSignal_TriClass_SR-2Lem bdt_DLem_sig
+#  # shapes to print to outputfiles together with cleaned name
+#  #BDT_FinalresultSignal_TriClass_SR-2Lee bdt_DLee_sig
+#  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lee bdt_DLee_sig
+#  BDT_FinalresultTTV_TriClass_SR-2Lee bdt_DLee_ttw
+#  #BDT_FinalresultTTBar_TriClass_SR-2Lee bdt_DLee_ttbar
+#  
+#  #BDT_FinalresultSignal_TriClass_SR-2Lem bdt_DLem_sig
 BDT_Finalresult_tanh_Signal_TriClass_SR-2Lem bdt_DLem_sig
-BDT_FinalresultTTV_TriClass_SR-2Lem bdt_DLem_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lem bdt_DLem_ttbar
+#  BDT_FinalresultTTV_TriClass_SR-2Lem bdt_DLem_ttw
+#  #BDT_FinalresultTTBar_TriClass_SR-2Lem bdt_DLem_ttbar
+#  
+#  #BDT_FinalresultSignal_TriClass_SR-2Lmm bdt_DLmm_sig
+#  BDT_Finalresult_tanh_Signal_TriClass_SR-2Lmm bdt_DLmm_sig
+#  BDT_FinalresultTTV_TriClass_SR-2Lmm bdt_DLmm_ttw
+#  #BDT_FinalresultTTBar_TriClass_SR-2Lmm bdt_DLmm_ttbar
+#  
+#  BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
+#  
+#  #BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
+#  BDT_Finalresult_tanh_Signal_TriClass_SR-3L bdt_3L_sig
+#  BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
+#  BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
+#  #
+#  BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
+#  # BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
+#  BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
+#  
+#  BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
+#  BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
+#  TriClass_Fit_CR-3L-2J1B cro_3L
+#  #BDTScore_TTV_TriClass_SR-4L_CR-3L-2J1B cro_3L
+#  N_jets_CR-3L-Z crz
+#  N_jets_CR-4L-Z crz_4L
 
-#BDT_FinalresultSignal_TriClass_SR-2Lmm bdt_DLmm_sig
-BDT_Finalresult_tanh_Signal_TriClass_SR-2Lmm bdt_DLmm_sig
-BDT_FinalresultTTV_TriClass_SR-2Lmm bdt_DLmm_ttw
-#BDT_FinalresultTTBar_TriClass_SR-2Lmm bdt_DLmm_ttbar
-
-BDT_FinalresultTTBar_TriClass_SR-2L bdt_DL_ttbar
-
-#BDT_FinalresultSignal_TriClass_SR-3L bdt_3L_sig
-BDT_Finalresult_tanh_Signal_TriClass_SR-3L bdt_3L_sig
-BDT_FinalresultTTV_TriClass_SR-3L bdt_3L_ttw
-BDT_FinalresultTTBar_TriClass_SR-3L bdt_3L_ttbar
-#
-BDT_FinalresultSignal_TriClass_SR-4L bdt_4L_sig
-# BDT_FinalresultTTBar_TriClass_SR-4L bdt_4L_ttw
-BDT_FinalresultTTV_TriClass_SR-4L bdt_4L_ttw
-
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-45J2B crw
-BDTScore_TTBar_TriClass_SR-4L_CR-2L-23J1B cro
-TriClass_Fit_CR-3L-2J1B cro_3L
-#BDTScore_TTV_TriClass_SR-4L_CR-3L-2J1B cro_3L
-N_jets_CR-3L-Z crz
-N_jets_CR-4L-Z crz_4L
+# N_jets_SR-2LpureSig_em      njets_DL_TTTT_em
