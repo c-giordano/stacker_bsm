@@ -12,13 +12,13 @@ TPad* Stacker::getPad(TString& histID, int position) {
 	TPad* outputPad;
 	if (position == 0) {
 		if (isRatioPlot) {
-			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0.24, 1., 1.);
+			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0.3, 1., 1.);
 			outputPad->SetBottomMargin(margin);		
 		} else {
 			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 1.);
 		}
 	}  else if (position == 1) {
-		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.24);
+		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.28);
 		outputPad->SetTopMargin(margin);
 		outputPad->SetBottomMargin(0.4);
 	} else {
