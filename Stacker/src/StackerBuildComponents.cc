@@ -12,13 +12,13 @@ TPad* Stacker::getPad(TString& histID, int position) {
 	TPad* outputPad;
 	if (position == 0) {
 		if (isRatioPlot) {
-			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0.24, 1., 1.);
+			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0.3, 1., 1.);
 			outputPad->SetBottomMargin(margin);		
 		} else {
 			outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 1.);
 		}
 	}  else if (position == 1) {
-		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.24);
+		outputPad = new TPad(histID + "_pad", histID + "_pad", 0., 0., 1., 0.28);
 		outputPad->SetTopMargin(margin);
 		outputPad->SetBottomMargin(0.4);
 	} else {
@@ -29,18 +29,19 @@ TPad* Stacker::getPad(TString& histID, int position) {
 }
 
 TLegend* Stacker::getLegend() {
-    double x1 = 0.4;//0.65
-    double y1 = 0.69;
-    double x2 = 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
-    double y2 = 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;//-0.06;
+    double x1 = 1. - gPad->GetRightMargin() - 0.03 - 0.4; // 0.4;//0.65
+    double y1 = 1. - gPad->GetTopMargin() - 0.03 - 0.2;  // 0.69;
+    double x2 = 1. - gPad->GetRightMargin() - 0.03; // 1 - gStyle->GetPadLeftMargin() - gStyle->GetTickLength("X")*1.1 ;
+    double y2 = 1. - gPad->GetTopMargin() - 0.03; // 1 - gStyle->GetPadTopMargin() - gStyle->GetTickLength("Y")*1.1;//-0.06;
     int nColumns = 2; // 1 
 
-    TLegend* legend = new TLegend(x1, y1, x2, y2);
+    TLegend* legend = new TLegend(x1, y1, x2, y2, "", "NBNDC");
     legend->SetNColumns(nColumns);
-    legend->SetMargin(.4);
-    legend->SetColumnSeparation(0.1);
+    //legend->SetMargin(.4);
+    //legend->SetColumnSeparation(0.1);
 	legend->SetFillStyle(0);
-	//legend->SetTextSize(0.04);
+	legend->SetTextSize(0.035);
+	legend->SetTextFont(42);
 
     return legend;
 }
@@ -64,13 +65,16 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
     TString lumiText = intLumi + " fb^{-1} (13 TeV)";
     TString extraText = "Work in progress";
 
-    const float l =pad->GetLeftMargin() + gStyle->GetTickLength()*1.2; // 0.65;//
-  	const float t = pad->GetTopMargin();
-  	const float r = pad->GetRightMargin();
-  	//const float b = pad->GetBottomMargin();
-
-	float CMSTextSize = pad->GetTopMargin()*0.75;
-	float lumiTextSize = pad->GetTopMargin()*0.6;
+    const float l = pad->GetLeftMargin() + 0.045 * (1 - pad->GetLeftMargin() - pad->GetRightMargin()); //+ gStyle->GetTickLength()*1.2; // 0.65;//
+    const float t = pad->GetTopMargin();
+    const float r = pad->GetRightMargin();
+    //const float b = pad->GetBottomMargin();
+    double pad_ratio = (pad->GetWh() * pad->GetAbsHNDC()) / (pad->GetWw() * pad->GetAbsWNDC());
+    if (pad_ratio < 1.) {
+        pad_ratio = 1.;
+    }
+    float CMSTextSize = pad->GetTopMargin() * 1. * pad_ratio;
+    float lumiTextSize = pad->GetTopMargin() * 0.6 * pad_ratio;
 
 	//float CMSTextOffset = pad->GetTopMargin()*0.2;
 	float lumiTextOffset = pad->GetTopMargin()*0.2;
@@ -83,10 +87,11 @@ TLatex* Stacker::getDatasetInfo(TPad* pad) {
 	latex->SetTextColor(kBlack); 
 
 	latex->SetTextFont(61);
-	latex->SetTextAlign(11); 
+	latex->SetTextAlign(11);  // 13?
 	latex->SetTextSize(CMSTextSize);
 	//float cmsX = latex->GetXsize();
-	latex->DrawLatex(l,1  - (2 * t),"CMS");
+	double relPosY = 1. - t - 0.05 * (1. - t - pad->GetBottomMargin()); // 1 - (2*t)
+	latex->DrawLatex(l, relPosY,"CMS"); 
 
 	float extraTextSize = CMSTextSize*0.76;	 
 	latex->SetTextFont(52);

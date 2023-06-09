@@ -8,7 +8,7 @@ void setTDRStyle() {
     gStyle->SetCanvasColor(kWhite);
     gStyle->SetCanvasDefH(800); //Height of canvas
     gStyle->SetCanvasDefW(800); //Width of canvas
-    gStyle->SetCanvasDefX(0);   //POsition on screen
+    gStyle->SetCanvasDefX(0);   //Position on screen
     gStyle->SetCanvasDefY(0);
 
     // For the Pad:
@@ -79,7 +79,7 @@ void setTDRStyle() {
     // Margins:
     gStyle->SetPadTopMargin(0.05);
     gStyle->SetPadBottomMargin(0.13);
-    gStyle->SetPadLeftMargin(0.16);//0.14
+    gStyle->SetPadLeftMargin(0.14);//0.14
     gStyle->SetPadRightMargin(0.04);
 
     // For the Global title:
@@ -148,8 +148,8 @@ void setTDRStyle() {
     //For error in SF maps
     gStyle->SetMarkerSize(0.9); //TEMPORARY SIZE FOR DILEPTON PLOTS. SET BACK TO DEFAULT FOR TRILEPTON
     gStyle->SetPaintTextFormat("4.2f");  //4.2
-    //gStyle->SetHatchesLineWidth(5);
-    //gStyle->SetHatchesSpacing(0.05);
+    gStyle->SetHatchesLineWidth(1);
+    gStyle->SetHatchesSpacing(0.2);
 
     gStyle->SetLegendBorderSize(0);
     gStyle->SetLegendTextSize(0.035);

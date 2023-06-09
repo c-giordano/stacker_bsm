@@ -24,7 +24,6 @@ Stacker::Stacker(std::vector<std::string>& cmdArgs) {
     bool era_18 = false;
 
     if (cmdArgs.back() == "OLD") oldStuff = true;
-
     for (auto it : cmdArgs) {
         // if string does not contain .root: break
         if (! stringContainsSubstr(it, ".root")) break;
