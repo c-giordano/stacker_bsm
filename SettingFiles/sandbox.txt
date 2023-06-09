@@ -1,6 +1,28 @@
 # Processname       color       -> Processes in order: last to first
-TTW                 419         B   
-TT+X                633         S     TTTT+TTW
+Other_t              851         B   Set=TTVV+TTX+THQ+TWZ
+# TTT              850         B  
+# Xgam              593         B   Set=ttG+ZG+ttbar   IgnoreChannels=SR-4L,CR-4L-Z
+# ChargeMisID         882         B  IgnoreChannels=SR-4L,CR-4L-Z,CR-3L-Z,CR-3L-ZZSigZVeto,CR-3L-2J1B,SR-3L,SR-3LOSSF,SR-3LnoOSSF
+WZ                  893         B  IgnoreChannels=SR-4L,CR-4L-Z
+#WWDS                436         B                       
+##SSWW                841         B    
+##ZZ-H                  600         B
+#VVV                 906         B   Set=VVV+SSWW+ZZ-H
+##nonPrompt           801         B   Set=nonPromptElectron+nonPromptMuon
+##nonPrompt           801         B   Set=nonPromptDD
+#nonPromptElectron       801         B    IgnoreChannels=SR-4L,CR-4L-Z,SR-2Lmm
+#nonPromptMuon           800         B    IgnoreChannels=SR-4L,CR-4L-Z,SR-2Lee
+# TTH                 803         B   Set=TTHbb
+# TTHbb                 804         B   Set=TTH
+# TTZ                 401         B   Set=TTZbb
+# TTZbb                 393         B   Set=TTZ
+# TTW                 419         B   Set=TTWbb IgnoreChannels=SR-4L,CR-4L-Z
+# TTWbb                 417         B   Set=TTW IgnoreChannels=SR-4L,CR-4L-Z
+TTH                 803         B   Set=TTH+TTHbb
+TTZ                 407         B   Set=TTZ+TTZbb
+#TTW                 419         B   Set=TTW+TTWbb IgnoreChannels=SR-4L,CR-4L-Z
+#TTTT                633         S
+#TTTT18                633         S  Set=TTTT
 
 BROAD SETTINGS
 # general settings
