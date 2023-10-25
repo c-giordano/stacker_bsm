@@ -1,0 +1,68 @@
+{
+    "Figure 2" : {
+        "Figure 2-a" : {
+            "filename" : "",
+            "description" :  "Efficiency of selecting prompt leptons as a function of the misidentification probability for nonprompt leptons evaluated in simulated tt events for the electron (red solid line)and muon (blue dashed line) ID BDT, shown for leptons with 10 < pT < 25 GeV (left) andpT > 25 GeV (right). Indicated with filled markers are the efficiencies for the ID criteria appliedin this measurement and with empty markers for the ID criteria applied in Ref. [38], where redcircles and blue squares are used for electron and muon criteria, respectively"
+        },
+        "Figure 2-b" : {
+
+        }
+    },
+    "Figure 4" : {
+        "Figure 4-a" : {
+            "filename" : "srFit_pf_variables.txt_obs_bdt_DLmm_ttw_shapes.root",
+            "subtitle" : "TESTSUBTITLE",
+            "description" : "TEST",
+            "axislabel" : "",
+            "coverfigure" : "path"
+        },
+        "Figure 4-b" : {
+
+        },
+        "Figure 4-c" : {
+
+        }
+    },
+    "Figure 5" : {
+        "Figure 5-a" : {
+
+        },
+        "Figure 5-b" : {
+
+        },
+        "Figure 5-c" : {
+
+        }
+    },
+    "Figure 6" : {
+        "Figure 6-a" : {
+
+        },
+        "Figure 6-b" : {
+
+        },
+        "Figure 6-c" : {
+
+        }
+    },
+    "Figure 7" : {
+        "Figure 7-a" : {
+
+        },
+        "Figure 7-b" : {
+
+        },
+        "Figure 7-c" : {
+
+        },
+        "Figure 7-d" : {
+
+        },
+        "Figure 7-e" : {
+
+        },
+        "Figure 7-f" : {
+
+        }
+    }
+}

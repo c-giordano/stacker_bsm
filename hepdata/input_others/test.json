@@ -1,0 +1,12 @@
+{
+    "Figure 4" : {
+        "Figure 4a" : {
+            "filename" : "srFit_pf_variables.txt_obs_bdt_DLmm_ttw_shapes.root",
+            "location" : "Data corresponding to figure 4a (top left)",
+            "description" : "Comparison of the number of observed (points) and predicted (colored histograms) events in the BDT output score ttX in the ttX classes of SR-2l$\\ell$ in the $\\mu\\mu$ category (left), of SR-3$\\ell$ (middle), and of SR-4l (right). The vertical bars on the points represent the statistical uncertainties in the data, and the hatched bands the systematic uncertainty in the predictions.The predicted signal and background yields are shown with their best fit normalizations fromthe simultaneous fit to the data.",
+            "axislabel" : "BDT Score TTX",
+            "axisunits" : "",
+            "coverfigure" : "path"
+        }
+    }
+}

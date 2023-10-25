@@ -1,0 +1,97 @@
+{
+    "Table 1" : {
+        "name" : "Table 1",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLee_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 2" : {
+        "name" : "Table 2",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_3L_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 3" : {
+        "name" : "Table 3",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_3L_ttbar_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 4" : {
+        "name" : "Table 4",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_3L_ttw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 5" : {
+        "name" : "Table 5",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_4L_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 6" : {
+        "name" : "Table 6",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_4L_ttw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 7" : {
+        "name" : "Table 7",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLee_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 8" : {
+        "name" : "Table 8",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLee_ttw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 9" : {
+        "name" : "Table 9",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLem_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 10" : {
+        "name" : "Table 10",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLem_ttw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 11" : {
+        "name" : "Table 11",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLmm_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 12" : {
+        "name" : "Table 12",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DLmm_ttw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 13" : {
+        "name" : "Table 13",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DL_sig_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 14" : {
+        "name" : "Table 14",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_bdt_DL_ttbar_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 15" : {
+        "name" : "Table 15",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_cro_3L_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 16" : {
+        "name" : "Table 16",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_cro_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 17" : {
+        "name" : "Table 17",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_crw_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 18" : {
+        "name" : "Table 18",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_crz_4L_shapes_table.tex",
+        "location" : ""
+    },
+    "Table 19" : {
+        "name" : "Table 19",
+        "path" : "/home/njovdnbo/Documents/FourTop/AN-21-182/tables/postfit/pfPlot_srFit_obs_crz_shapes_table.tex",
+        "location" : ""
+    }
+}
