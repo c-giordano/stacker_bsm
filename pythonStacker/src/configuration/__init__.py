@@ -1,26 +1,40 @@
 import json
 
-
-class Config:
-    def __init__(self, filename):
-        self.filename = filename
-        self.contents = self.read_file()
-
-    def read_file(self):
-        with open(self.filename, 'r') as file:
-            return json.load(file)
+from src.configuration.Uncertainty import Uncertainty
 
 
-class UncertaintyConfig(Config):
-    def __init__(self, filename):
-        super().__init__(filename)
+def load_uncertainties(jsonfile, typefilter=None):
+    with open(jsonfile, 'r') as f:
+        all_data = json.load(f)
+    ret = []
+    for key, val in all_data.items():
+        if typefilter and val.get("type", "flat") != typefilter:
+            continue
+        ret.append(Uncertainty(key, val))
+    return ret
 
 
-class ProcessConfig(Config):
-    def __init__(self, filename):
-        super().__init__(filename)
+class Channel:
+    def __init__(self) -> None:
+        self.processes = []
+
+    def is_process_included(self, process: str):
+        return process in self.processes
 
 
-class PlottingConfig(Config):
-    def __init__(self, filename):
-        super().__init__(filename)
+# might replace with a class just keeping track of a few arrays.
+# TODO: start from json file or at least dict
+class Process:
+    def __init__(self) -> None:
+        self._isSignal = False
+        self.name = ""
+
+    @property
+    def isSignal(self):
+        return self._isSignal
+
+    @isSignal.setter
+    def isSignal(self, value):
+        if not isinstance(value, bool):
+            raise ValueError("isSignal must be a boolean value")
+        self._isSignal = value

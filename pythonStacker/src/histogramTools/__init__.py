@@ -1,57 +1,53 @@
-import uproot
-import numpy as np
+# import numpy as np
 import awkward as ak
+import os
+from typing import Union
 
 
-# TODO: add convenience functions for rebinning. Really necessary? Prob not
+class HistogramManager:
+    def __init__(self, storagepath: str, process: str, var_names: list[str], systematics: Union[list[str], None] = None):
+        self.store: str = storagepath
+        self.process: str = process
+        self.variables: list = var_names
 
-# not sure if class is needed
-class Histogramizer:
-    '''
-    Class to turn TTrees into Numpy Histograms. Should keep track of nominal weights.
-    '''
-    def __init__(self, inputfile, treename="test"):
-        self.inputfile = inputfile
-        self.tree: uproot.TTree = uproot.open(self.inputfile + ":" + treename)
-        self._weightname = "nominalWeight"
-        self._selector = None
+        self.systematics = ["nominal"]
+        if self.systematics is list:
+            self.systematics.extend(systematics)
 
-    def get_weights(self):
-        self._weights = self.tree.arrays([self.weightname], cut=self._selector).array()
+        filename = process.replace(" ", "_") + "_" # + sys + ".parquet"
+        self.cache_folder = dict()
+        self.base_name = dict()
+        for var in self.variables:
+            self.cache_folder[var] = os.path.join(storagepath, var)
+            self.base_name[var] = os.path.join(self.cache_folder[var], filename)
 
-    @property
-    def weights(self):
-        return self._weights
+    def get_name(self, var: str, sys: str = "nominal"):
+        return self.base_name[var] + sys + ".parquet"
 
-    @weights.setter
-    def weights(self, new_weights):
-        self._weights = new_weights
-        return
+    def load_all_histograms(self):
+        ret = dict()
+        for var in self.variables:
+            ret[var] = self.load_histograms_for_variable(var)
+        return ret
 
-    @property
-    def weightname(self):
-        return self._weightname
+    def load_histograms_for_variable(self, var):
+        ret = dict()
+        for sys in self.systematics:
+            ret[sys] = self.load_histogram(var, sys)
 
-    @weightname.setter
-    def weightname(self, newname):
-        self._weightname = newname
-        return
+        return ret
 
-    @property
-    def selector(self):
-        return self._selector
+    def load_histogram(self, var: str, sys: str = "nominal"):
+        content = ak.to_numpy(ak.from_parquet(self.get_name(var, sys)))
+        return content
 
-    @selector.setter
-    def selector(self, newselector):
-        self._selector = newselector
-        return
+    def save_all_histograms(self, content):
+        for var in self.variables:
+            self.save_histograms_for_variable(content[var], var)
 
-    def build_histogram(self, variablename, processing=None, aliases=None):
-        vars = self.tree.arrays([variablename], cut=self._selector, aliases=aliases)
+    def save_histograms_for_variable(self, content_variations, var):
+        for sys in self.systematics:
+            self.save_histogram(content_variations[sys], var, sys)
 
-        print(vars)
-
-    def build_all_histograms(self, list_of_variables):
-        for entry in list_of_variables:
-            self.build_histogram(entry)
-        return
+    def save_histogram(self, content, var: str, sys: str = "nominal"):
+        ak.to_parquet(content, self.get_name(var, sys))

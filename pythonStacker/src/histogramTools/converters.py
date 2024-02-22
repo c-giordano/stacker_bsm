@@ -11,8 +11,9 @@ def numpy_to_TH1D(hist, bins, err=None) -> ROOT.TH1D:
     # Fill the TH1D object with the histogram data
     for i in range(len(hist)):
         th1d.SetBinContent(i + 1, hist[i])
-        if err:
+        if not err is None:
             th1d.SetBinError(i + 1, err[i])
+    # th1d.Draw()
 
     return th1d
 
