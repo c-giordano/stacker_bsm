@@ -4,6 +4,20 @@ import mplhep as hep
 px = 1. / plt.rcParams['figure.dpi']
 
 
+def create_singleplot(lumi=None, wip=True):
+    plt.style.use(hep.style.CMS)
+    fig, nominal = plt.subplots(1, 1, figsize=(800 * px, 800 * px))  # 29
+    fig.subplots_adjust(left=0.14, right=0.96, top=0.94, bottom=0.12, hspace=0.02)
+
+    label = "WIP" if wip else ""
+    if lumi:
+        hep.cms.label(ax=nominal, label=label, lumi=lumi, data=True)
+    else:
+        hep.cms.label(ax=nominal, label=label)
+
+    return fig, nominal
+
+
 def create_ratioplot(lumi=None, wip=True):
     """
     Base function to create ratio plots. nominal is large Axes obj used for nominal plotting.

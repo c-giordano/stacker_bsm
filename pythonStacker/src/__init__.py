@@ -1,6 +1,11 @@
 import numpy as np
 
 
+def generate_binning(range, nbins):
+    raw_bins = np.linspace(range[0], range[1], nbins + 1)
+    return raw_bins
+
+
 def histogram_w_flow(data, range, wgts, nbins):
     """
     Creates a numpy histogram but takes into account the under- and overflow.

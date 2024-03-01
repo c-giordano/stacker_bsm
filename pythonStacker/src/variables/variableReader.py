@@ -24,22 +24,40 @@ class VariableReader:
         with open(self.filename, 'r') as file:
             data = json.load(file)
 
-        if variables[0] == "all":
-            self.variables = data.keys()
+        if variables is None or variables == "all":
+            self.variables = list(data.keys())
         else:
             self.variables = variables
 
         self.nvar = len(self.variables)
-        self.variable_objects = {}
+        self.variable_objects: dict[str, Variable] = {}
 
         for key, value in data.items():
             self.variable_objects[key] = Variable(key, value)
+        self.index = 0
 
-    def get_properties(self, variable):
+    def __getitem__(self, key) -> Variable:
+        return self.variable_objects[key]
+
+    def __setitem__(self, key, value):
+        self.variable_objects[key] = value
+
+    def get_properties(self, variable) -> Variable:
         return self.variable_objects[variable]
 
-    def get_variables(self):
+    def get_variables(self) -> list[str]:
         return self.variables
 
     def number_of_variables(self):
         return self.nvar
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if self.index < len(self.variables):
+            result = self.variable_objects[self.variables[self.index]]
+            self.index += 1
+            return result
+        else:
+            raise StopIteration
