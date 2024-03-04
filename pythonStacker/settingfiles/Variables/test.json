@@ -4,6 +4,7 @@
         "nbins": 20,
         "axis_label": "H_T",
         "branch_name": "jetPt",
-        "method_name": "sum_branch"
+        "method_name": "sum_branch",
+        "channels": ["all"]
     }
 }

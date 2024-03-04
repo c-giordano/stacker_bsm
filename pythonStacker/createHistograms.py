@@ -4,6 +4,7 @@ import argparse
 import sys
 import os
 import json
+import glob
 
 import uproot
 import awkward as ak
@@ -177,7 +178,15 @@ if __name__ == "__main__":
     output_histograms = HistogramManager(storagepath, args.process, variables, list(systematics.keys()))
 
     # TODO: get files based on process names -> processmanager can return this, depending on the sys unc?
-    for filebase in processinfo["files"]:
+    files = []
+    for filebase in processinfo["fileglobs"]:
+        fileglob = os.path.join(basedir, filebase)
+        if args.systematic == "weight" or args.systematic is None:
+            fileglob += "*base.root"
+        true_files = glob.glob(fileglob)
+        files.extend(true_files)
+
+    for filename in files:
         # filebase should not include a suffix
         # generate basepath with correct folder, folder has timestamp now
         # then:
@@ -186,11 +195,6 @@ if __name__ == "__main__":
         # then loop variables
         # if args.systematic == "weight":
         # loop variables
-        filename = os.path.join(basedir, filebase)
-        if args.systematic == "weight" or args.systematic is None:
-            pass
-            # filebase += "_base.root"
-
         current_tree = uproot.open(filename)["test"]
 
         # TODO: use masks somewhere
@@ -213,5 +217,4 @@ if __name__ == "__main__":
                     output_histograms[variable.name]["stat_unc"] += hist_unc
 
     output_histograms.save_histograms()
-
     exit(0)

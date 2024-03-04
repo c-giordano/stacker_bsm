@@ -1,0 +1,11 @@
+{
+    "TTTT_norm": {
+        "pretty_name": "FourTop norm",
+        "technical_name" : "TTTT_norm",
+        "channels": "all",
+        "processes": "TTTT",
+        "rate": 1.2,
+        "corr_proc": 0,
+        "type": "flat"
+    }
+}

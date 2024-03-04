@@ -2,11 +2,8 @@
     "Basedir": "testfiles",
     "Processes": {
         "SM TTTT": {
-            "files": ["MainTree_MCPrompt_2023-10-25_10-51_TTTT_TuneCP5_13TeV-amcatnlo-pythia8.root"]
-        },
-        "EFT TTTT": {
-            "files": ["MainTree_MCPrompt_2023-10-25_10-50_TTTT_EFT_MiniAOD2018_processed_localSubmission_tttt_eft_v1"],
-            "hasEFT": 1
+            "files": ["MainTree_MCPrompt_2023-10-25_10-51_TTTT_TuneCP5_13TeV-amcatnlo-pythia8.root"],
+            "color": "red"
         }
     }
 }

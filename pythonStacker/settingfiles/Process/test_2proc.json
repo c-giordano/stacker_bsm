@@ -1,0 +1,17 @@
+{
+    "Basedir": "testfiles",
+    "Processes": {
+        "TTTT": {
+            "fileglobs": ["Tree_TTTT_*_MCPrompt"],
+            "color": "red"
+        },
+        "TTTJ": {
+            "fileglobs": ["Tree_TTTJ_*MCPrompt"],
+            "color": "b"
+        },
+        "TTTW": {
+            "fileglobs": ["Tree_TTTW_*MCPrompt"],
+            "color": "b"
+        }
+    }
+}
