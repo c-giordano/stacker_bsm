@@ -25,6 +25,8 @@ def args_select_specifics(parser: argparse.ArgumentParser):
                         type=str, help='Specific process.')
     parser.add_argument('-c', '--channel', dest='channel', default=None,
                         type=str, help='Specific channel.')
+    parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2017", "2018"], nargs='+',
+                        help='Specific years.')
 
 
 def arguments():
@@ -59,30 +61,32 @@ if __name__ == "__main__":
     channellist = get_keys(args.channelfile)
 
     commandset = []
-    for process in processlist:
-        if process != args.process:
-            continue
-
-        commandset_process = []
-
-        for channel in channellist:
-            if args.channel is not None and channel != args.channel:
+    for year in args.years:
+        for process in processlist:
+            if process != args.process:
                 continue
-            # check if channel is subchannel! Otherwise no plot to be made.
-            # can just add the command and not care
 
-            command = basecommand
-            command += f" --process {process}"
-            command += f" --channel {channel}"
+            commandset_process = []
 
-            if args.variable is not None:
-                command += f" --variable {args.variable}"
-            if args.systematic is not None:
-                command += f" --systematic {args.systematic}"
+            for channel in channellist:
+                if args.channel is not None and channel != args.channel:
+                    continue
+                # check if channel is subchannel! Otherwise no plot to be made.
+                # can just add the command and not care
 
-            commandset_process.append(command)
+                command = basecommand
+                command += f" --process {process}"
+                command += f" --channel {channel}"
+                command += f" -y {year}"
 
-        commandset.append(commandset_process)
+                if args.variable is not None:
+                    command += f" --variable {args.variable}"
+                if args.systematic is not None:
+                    command += f" --systematic {args.systematic}"
+
+                commandset_process.append(command)
+
+            commandset.append(commandset_process)
 
     ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset)
     # submit commandset
