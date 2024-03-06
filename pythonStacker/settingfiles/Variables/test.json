@@ -1,7 +1,7 @@
 {
     "HT" : {
-        "range": [0.0, 2000.0],
-        "nbins": 20,
+        "range": [200.0, 2000.0],
+        "nbins": 18,
         "axis_label": "H_T",
         "branch_name": "jetPt",
         "method_name": "sum_branch",

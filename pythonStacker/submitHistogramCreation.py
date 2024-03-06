@@ -88,5 +88,5 @@ if __name__ == "__main__":
 
             commandset.append(commandset_process)
 
-    ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset)
+    ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset, scriptfolder="Scripts/condor/")
     # submit commandset
