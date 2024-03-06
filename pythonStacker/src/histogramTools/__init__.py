@@ -6,14 +6,14 @@ from src.variables.variableReader import VariableReader
 
 
 class HistogramManager:
-    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: list):
+    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: list, year="2018"):
         self.store: str = storagepath
         self.process: str = process
         self.variables: list = variables.get_variables()
 
         self.systematics = systematics
 
-        filename = process.replace(" ", "_") + "_"  # + sys + ".parquet"
+        filename = process.replace(" ", "_") + "_" + year + "_"  # + sys + ".parquet"
         self.cache_folder = dict()
         self.base_name = dict()
         self.histograms = dict()

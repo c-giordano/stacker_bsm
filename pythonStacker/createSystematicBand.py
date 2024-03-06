@@ -39,33 +39,40 @@ def parse_arguments() -> argparse.Namespace:
     return args
 
 
-def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty, histograms_proc: dict[str, HistogramManager]):
+def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty, histograms_proc: dict[str, dict[str, HistogramManager]]):
     up = np.zeros(variable.nbins)
     down = np.zeros(variable.nbins)
     if uncertainty.isFlat:
         return up, down
 
-    for process, hists in histograms_proc.items():
+    for process, hists_per_year in histograms_proc.items():
         if not uncertainty.is_process_relevant(process):
             continue
 
-        # get the up and down variation:
-        up_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"])
-        down_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"])
+        var_process_up = np.zeros(variable.nbins)
+        var_process_down = np.zeros(variable.nbins)
 
-        # keep only variations that are truly showing
-        true_up_diff = np.where(up_diff > down_diff, up_diff, down_diff)
-        true_up_diff[true_up_diff < 0] = 0.
+        for year, hists in hists_per_year.items():
+            # get the up and down variation:
+            up_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"])
+            down_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"])
 
-        true_down_diff = np.where(down_diff < up_diff, down_diff, up_diff)
-        true_down_diff[true_down_diff > 0] = 0.
+            # keep only variations that are truly showing
+            true_up_diff = np.where(up_diff > down_diff, up_diff, down_diff)
+            true_up_diff[true_up_diff < 0] = 0.
+
+            true_down_diff = np.where(down_diff < up_diff, down_diff, up_diff)
+            true_down_diff[true_down_diff > 0] = 0.
+
+            var_process_up += true_up_diff
+            var_process_down -= true_down_diff
 
         if uncertainty.correlated_process:
-            up += true_up_diff
-            down += true_down_diff
+            up += var_process_up
+            down -= var_process_down
         else:
-            up += (true_up_diff * true_up_diff)
-            down += (true_down_diff * true_down_diff)
+            up += (var_process_up * var_process_up)
+            down += (var_process_down * var_process_down)
 
     if uncertainty.correlated_process:
         up_sq = np.power(up, 2)
@@ -77,21 +84,26 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
     return up_sq, down_sq
 
 
-def get_uncertainty_variation_flat(variable: Variable, uncertainty: Uncertainty, histograms_proc: dict[str, HistogramManager]):
+def get_uncertainty_variation_flat(variable: Variable, uncertainty: Uncertainty, histograms_proc: dict[str, dict[str, HistogramManager]]):
     variation = np.zeros(variable.nbins)
     if not uncertainty.isFlat:
         return variation, variation
 
-    for process, hists in histograms_proc.items():
+    for process, hists_per_year in histograms_proc.items():
         if not uncertainty.is_process_relevant(process):
             continue
 
-        # get the up and down variation:
-        diff = ak.to_numpy(hists[variable.name]["nominal"]) * (1 - uncertainty.rate)
+        var_process = np.zeros(variable.nbins)
+        for year, hists in hists_per_year.items():
+
+            # get the up and down variation:
+            diff = ak.to_numpy(hists[variable.name]["nominal"]) * (1 - uncertainty.rate)
+            var_process += diff
+
         if uncertainty.correlated_process:
-            variation += diff
+            variation += var_process
         else:
-            variation += (diff * diff)
+            variation += (var_process * var_process)
 
     if uncertainty.correlated_process:
         return np.power(variation, 2)
@@ -101,7 +113,7 @@ def get_uncertainty_variation_flat(variable: Variable, uncertainty: Uncertainty,
     return
 
 
-def uncertaintyloop(variable: Variable, histograms_proc: dict[str, HistogramManager], uncertainties: dict[str, Uncertainty], channel: str):
+def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict[str, Uncertainty], channel: str):
     # NOTE: can automatically do asymm uncertainties in matplotlib!
     uncertainties_squared_up = np.zeros(variable.nbins)
     uncertainties_squared_down = np.zeros(variable.nbins)
@@ -128,30 +140,42 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, HistogramMana
     return {"Up": unc_up, "Down": unc_down}
 
 
-def variableloop(variables: VariableReader, histograms_proc: dict[str, HistogramManager], uncertainties: dict, channel: str):
+def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict, channel: str):
     ret = dict()
     for variable in variables:
         ret[variable.name] = uncertaintyloop(variable, histograms_proc, uncertainties, channel)
     return ret
 
 
-def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict):
+def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list):
     uncertainties = {**systematics_shape, **systematics_flat}
+
+    outputfilename = "total_systematic_"
+    if len(years) == 1:
+        outputfilename += years[0] + "_"
+    elif len(years) < 4:
+        outputfilename += "_".join(years)
+    else:
+        outputfilename += "all"
+    outputfilename += ".parquet"
+
     for channelname, info in channels.items():
         # update storagepath to include channel
         storagepath = args.storage
         storagepath = os.path.join(storagepath, channelname)
 
-        histograms_proc: dict[str, HistogramManager] = dict()
+        histograms_proc: dict[str, dict[str, HistogramManager]] = dict()
         for process, _ in processes.items():
-            histograms_proc[process] = HistogramManager(storagepath, process, variables, list(systematics_shape.keys()))
-            histograms_proc[process].load_histograms()
+            histograms_proc[process] = dict()
+            for year in years:
+                histograms_proc[process][year] = HistogramManager(storagepath, process, variables, list(systematics_shape.keys()), year=year)
+                histograms_proc[process][year].load_histograms()
 
         results = variableloop(variables, histograms_proc, uncertainties, channelname)
 
         # store results for each variable:
         for variable in variables.get_variables():
-            tmp_path = os.path.join(storagepath, variable, "total_systematic.parquet")
+            tmp_path = os.path.join(storagepath, variable, outputfilename)
             ak.to_parquet(ak.Record(results[variable]), tmp_path)
 
 
@@ -179,4 +203,4 @@ if __name__ == "__main__":
 
     # prepare channels:
     channels = load_channels(args.channelfile)
-    channelloop(channels, variables, systematics_shape, systematics_flat)
+    channelloop(channels, variables, systematics_shape, systematics_flat, args.years)

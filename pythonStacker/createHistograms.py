@@ -48,6 +48,10 @@ def parse_arguments() -> argparse.Namespace:
         parser.print_help(sys.stderr)
         exit(1)
 
+    if len(args.years) > 1:
+        print("Only accept a single year in CreateHistograms. Exiting...")
+        exit(1)
+
     if args.process is None:
         print("Need to specify a process to produce. Exiting...")
         exit(1)
@@ -136,12 +140,13 @@ if __name__ == "__main__":
 
     # update storagepath to include channel
     storagepath = os.path.join(storagepath, args.channel)
-    output_histograms = HistogramManager(storagepath, args.process, variables, list(systematics.keys()))
+    output_histograms = HistogramManager(storagepath, args.process, variables, list(systematics.keys()), year=args.years[0])
 
     # TODO: get files based on process names -> processmanager can return this, depending on the sys unc?
     files = []
     for filebase in processinfo["fileglobs"]:
         fileglob = os.path.join(basedir, filebase)
+        fileglob += f"*{args.years[0]}"
         if args.systematic == "weight" or args.systematic is None:
             fileglob += "*base.root"
         true_files = glob.glob(fileglob)

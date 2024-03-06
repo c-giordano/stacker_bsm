@@ -40,12 +40,21 @@ def parse_arguments():
     return args
 
 
-def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str):
+def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
     # get binning:
     binning = generate_binning(variable.range, variable.nbins)
 
     # load content:
-    path_to_unc = os.path.join(storagepath, variable.name, "total_systematic.parquet")
+    outputfilename = "total_systematic_"
+    if len(years) == 1:
+        outputfilename += years[0] + "_"
+    elif len(years) < 4:
+        outputfilename += "_".join(years)
+    else:
+        outputfilename += "all"
+    outputfilename += ".parquet"
+
+    path_to_unc = os.path.join(storagepath, variable.name, outputfilename)
     uncertainty_content = ak.from_parquet(path_to_unc)
     unc_up = np.array(ak.to_numpy(uncertainty_content["Up"]))
     unc_down = np.array(ak.to_numpy(uncertainty_content["Down"]))
@@ -70,11 +79,25 @@ def modify_yrange(total_content, axis, ratio=False):
     axis.set_ylim((cont_min, cont_max))
 
 
-def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, ratio=True, no_uncertainty=False, shapes=False):  # , samplelist: str, plotdir: str, storagepath: str):
+def get_lumi(years):
+    total_lumi = 0.
+    lumi = {
+        "2016PreVFP": 19.5,
+        "2016PostVFP": 16.8,
+        "2016": 36.3,
+        "2017": 41.5,
+        "2018": 59.8,
+    }
+    for year in years:
+        total_lumi += lumi[year]
+    return total_lumi
+
+
+def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, years: list, ratio=True, no_uncertainty=False, shapes=False):  # , samplelist: str, plotdir: str, storagepath: str):
     if ratio:
-        fig, (ax_main, ax_ratio) = fg.create_ratioplot(lumi=59.8)
+        fig, (ax_main, ax_ratio) = fg.create_ratioplot(lumi=get_lumi(years))
     else:
-        fig, ax_main = fg.create_singleplot()
+        fig, ax_main = fg.create_singleplot(lumi=get_lumi(years))
 
     binning = generate_binning(variable.range, variable.nbins)
 
@@ -85,9 +108,13 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
     sum_of_content = np.zeros(variable.nbins)
 
     for name, info in processes.items():
-        # fixes ordering based on ordering in json file. Honestly sufficient
-        content = ak.to_numpy(histograms[name][variable.name]["nominal"])
-        content = np.array(content)
+        content = np.zeros(variable.nbins)
+        for year in years:
+            # fixes ordering based on ordering in json file. Honestly sufficient
+            content_tmp = ak.to_numpy(histograms[name][year][variable.name]["nominal"])
+            content_tmp = np.array(content_tmp)
+            content += content_tmp
+
         # then add to figure, fix label and color, as well as legend
         pretty_name = generate_process_name(name, info)
         if shapes:
@@ -102,7 +129,7 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
             bkg += content
 
     if not shapes and not no_uncertainty:
-        plot_systematics_band(ax_main, sum_of_content, variable, storagepath)
+        plot_systematics_band(ax_main, sum_of_content, variable, storagepath, years)
 
     if ratio:
         ratio_content = np.nan_to_num(np.divide(signal, bkg))
@@ -143,17 +170,32 @@ if __name__ == "__main__":
     # set up histogrammanager per process
     storagepath = args.storage
 
-    # per channel
-    # per variable
-    # run plot loop
+    # outputfolder with year:
+    outputsubfolder = ""
+    if len(args.years) == 1:
+        outputsubfolder += "_" + args.years[0]
+    elif len(args.years) < 4:
+        outputsubfolder += "_" + "_".join(args.years)
+    else:
+        outputsubfolder += "_Run2"
+
+    outputfolder_base = os.path.join(args.outputfolder, outputsubfolder)
+
     for channel in channels:
         if args.channel is not None and channel != args.channel:
             continue
         storagepath_tmp = os.path.join(storagepath, channel)
         systematics = ["nominal"]
         histograms = dict()
+
+        outputfolder = os.path.join(outputfolder_base, channel)
+        if not os.path.exists(outputfolder):
+            os.makedirs(outputfolder)
+
         for process, info in processinfo.items():
-            histograms[process] = HistogramManager(storagepath_tmp, process, variables, systematics)
-            histograms[process].load_histograms()
+            histograms[process] = dict()
+            for year in args.years:
+                histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
+                histograms[process][year].load_histograms()
         for variable in variables:
-            plot_variable_base(variable, args.outputfolder, processinfo, histograms, storagepath=storagepath_tmp, no_uncertainty=args.no_unc)
+            plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)

@@ -3,16 +3,21 @@
 class Uncertainty:
     def __init__(self, name, dict_entry):
         self.name = name
+
         # extract dictionary and add defaults for every property
         self.pretty_name = dict_entry.get("pretty_name", name)
+
         self.channels = dict_entry.get("channels", ["all"])
         if type(self.channels) is not list:
             self.channels = [self.channels]
+
         self.processes = dict_entry.get("processes", ["all"])
         if type(self.processes) is not list:
             self.processes = [self.processes]
+
         self._correlated_process = bool(dict_entry.get("corr_proc", True))
 
+        self.correlated_years = True
         # Possible types: flat, weight, shape
         self.type = dict_entry.get("type", "flat")
         if self.type == "flat":
