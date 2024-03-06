@@ -1,5 +1,6 @@
 import argparse
 import numpy as np
+import awkward as ak
 import matplotlib.pyplot as plt
 import json
 import os
@@ -28,6 +29,9 @@ def parse_arguments():
     parser.add_argument("--storage", dest="storage", type=str,
                         default="Intermediate", help="Path at which the \
                         histograms are stored")
+    parser.add_argument("--no_unc", dest="no_unc", action="store_true",
+                        default=False, help="Switch to indicate whether the \
+                        total uncertainty should be plotted")
 
     args_add_settingfiles(parser)
     args_select_specifics(parser)
@@ -36,9 +40,39 @@ def parse_arguments():
     return args
 
 
-def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, ratio=True):  # , samplelist: str, plotdir: str, storagepath: str):
+def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str):
+    # get binning:
+    binning = generate_binning(variable.range, variable.nbins)
+
+    # load content:
+    path_to_unc = os.path.join(storagepath, variable.name, "total_systematic.parquet")
+    uncertainty_content = ak.from_parquet(path_to_unc)
+    unc_up = np.array(ak.to_numpy(uncertainty_content["Up"]))
+    unc_down = np.array(ak.to_numpy(uncertainty_content["Down"]))
+    axis.bar(x=binning[:-1], height=unc_up + unc_down, bottom=nominal_content - unc_down, width=np.diff(binning),
+             align='edge', linewidth=0, edgecolor='#BEC6C4', alpha=1., zorder=-1, hatch="xxxx", fill=False,
+             label="Total unc.")
+    return unc_up, unc_down
+
+
+def generate_process_name(name, processinfo):
+    pretty_name = processinfo.get("pretty_name", name)
+    if "\\" in pretty_name:
+        pretty_name = r"${}$".format(pretty_name)
+    elif "t" in pretty_name:
+        pretty_name = r"${}$".format(pretty_name)
+    return pretty_name
+
+
+def modify_yrange(total_content, axis, ratio=False):
+    cont_max = 1.8 * np.max(total_content)
+    cont_min = 0.
+    axis.set_ylim((cont_min, cont_max))
+
+
+def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, ratio=True, no_uncertainty=False, shapes=False):  # , samplelist: str, plotdir: str, storagepath: str):
     if ratio:
-        fig, (ax_main, ax_ratio) = fg.create_ratioplot()
+        fig, (ax_main, ax_ratio) = fg.create_ratioplot(lumi=59.8)
     else:
         fig, ax_main = fg.create_singleplot()
 
@@ -48,38 +82,42 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
         signal = np.zeros(len(binning[:-1]))
         bkg = np.zeros(len(binning[:-1]))
 
+    sum_of_content = np.zeros(variable.nbins)
+
     for name, info in processes.items():
         # fixes ordering based on ordering in json file. Honestly sufficient
-
-        content = histograms[name][variable.name]["nominal"]
-
+        content = ak.to_numpy(histograms[name][variable.name]["nominal"])
+        content = np.array(content)
         # then add to figure, fix label and color, as well as legend
-        ax_main.hist(binning[:-1], binning, weights=content, histtype="step", color=info["color"], label=name)
+        pretty_name = generate_process_name(name, info)
+        if shapes:
+            ax_main.hist(binning[:-1], binning, weights=content, histtype="step", color=info["color"], label=pretty_name)
+        else:
+            ax_main.bar(x=binning[:-1], height=content, bottom=sum_of_content, width=np.diff(binning), align='edge', linewidth=0, color=info["color"], zorder=-1, label=pretty_name)
 
-        if ratio and info.get("isSignal", 0) > 0:
+        sum_of_content += content
+        if ratio and int(info.get("isSignal", 0)) > 0:
             signal += content
         elif ratio:
             bkg += content
-        
-        # todo: uncertainty
-        # alternatives for uncertainty
-        # ax_main.bar(x=binning[:-1], height=2 * hist_unc, bottom=hist_content - hist_unc, width=np.diff(binning), align='edge', linewidth=0, color=processinfo["color"], alpha=0.10, zorder=-1)
-        # ax_main.errorbar((binning[:-1] + binning[1:]) / 2, hist_content, yerr=hist_unc, fmt='none', ecolor=processinfo["color"])
+
+    if not shapes and not no_uncertainty:
+        plot_systematics_band(ax_main, sum_of_content, variable, storagepath)
 
     if ratio:
-        ratio_content = np.divide(signal, bkg)
+        ratio_content = np.nan_to_num(np.divide(signal, bkg))
         ax_ratio.hist(binning[:-1], binning, weights=ratio_content, histtype="step", color="k")
 
         ax_ratio.set_xlim(variable.range)
+        ax_ratio.set_xlim([0, 500])
         ax_ratio.set_xlabel(variable.axis_label)
         ax_ratio.set_ylabel("Signal / bkg")
-
     else:
         ax_main.set_xlabel(variable.axis_label)
 
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("Events")
-
+    modify_yrange(sum_of_content, ax_main)
     ax_main.legend()
 
     # fix output name
@@ -109,6 +147,8 @@ if __name__ == "__main__":
     # per variable
     # run plot loop
     for channel in channels:
+        if args.channel is not None and channel != args.channel:
+            continue
         storagepath_tmp = os.path.join(storagepath, channel)
         systematics = ["nominal"]
         histograms = dict()
@@ -116,4 +156,4 @@ if __name__ == "__main__":
             histograms[process] = HistogramManager(storagepath_tmp, process, variables, systematics)
             histograms[process].load_histograms()
         for variable in variables:
-            plot_variable_base(variable, args.outputfolder, processinfo, histograms)
+            plot_variable_base(variable, args.outputfolder, processinfo, histograms, storagepath=storagepath_tmp, no_uncertainty=args.no_unc)

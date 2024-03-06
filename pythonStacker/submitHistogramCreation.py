@@ -1,6 +1,6 @@
 import argparse
 import json
-
+import src.jobSubmission.condorTools as ct
 
 def args_add_settingfiles(parser: argparse.ArgumentParser):
     # Add arguments here
@@ -84,4 +84,5 @@ if __name__ == "__main__":
 
         commandset.append(commandset_process)
 
+    ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset)
     # submit commandset

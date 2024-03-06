@@ -1,5 +1,6 @@
 import uproot
 import awkward as ak
+from src.configuration.Uncertainty import Uncertainty
 
 """
 Helper class to remove consistently loading of weights from file.
@@ -9,18 +10,28 @@ Also support for loading external weights with same dimensions.
 
 
 class WeightManager():
-    def __init__(self, file: uproot.ReadOnlyDirectory, xsec: float, weightExpr: str = "genWeight", normExpr: str = "genEventSumw", lumi: float = 138000., cut: str = None):
-        self.xsec: float = xsec
+    def __init__(self, tree: uproot.TTree, selection: str, systematics: dict[str, Uncertainty]):
+        aliases = self.construct_aliases(systematics)
+        keys = list(aliases.keys())
+        print(aliases)
+        print(keys)
+        print(selection)
+        self.weights = tree.arrays(keys, cut=selection, aliases=aliases)
 
-        weightNorm: ak.Array = file["Runs"].arrays(["norm"], aliases={"norm": normExpr}).norm[0]
-        self.norm: float = xsec * lumi / weightNorm
+    def construct_aliases(self, systematics: dict[str, Uncertainty]):
+        aliases = dict()
+        aliases["nominal"] = "nominalWeight"
+        # each Uncertainty should have a weightVar loaded up
+        for name, unc in systematics.items():
+            key_unc = unc.get_weight_keys()
+            alias_unc = unc.get_weight_aliases()
 
-        weightArray: ak.Array = file["Events"].arrays(["weights"], cut=cut, aliases={"weights": weightExpr}).weights
-        self.normalizedWeights: ak.Array = weightArray * self.norm
+            tmp = {key_cur: al_cur for key_cur, al_cur in zip(key_unc, alias_unc) if key_cur != "nominal"}
+            aliases.update(tmp)
+        return aliases
 
-    def loadExternalWeighs(self, path_to_weights: str):
-        ak.from_parquet(path_to_weights)
-        self.normalizedWeights *= path_to_weights
+    def __getitem__(self, key):
+        return self.weights[key]
 
-    def getWeights(self) -> ak.Array:
-        return self.normalizedWeights
+    def __setitem__(self, key, value):
+        pass

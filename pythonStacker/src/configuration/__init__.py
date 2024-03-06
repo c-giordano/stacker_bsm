@@ -8,14 +8,16 @@ def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=Tru
         all_data = json.load(f)
     ret = dict()
     for key, val in all_data.items():
-        if typefilter and val.get("type", "flat") != typefilter:
+        syst_type = val.get("type", "flat")
+        if typefilter and syst_type != typefilter:
             continue
         if namefilter and val["name"] != namefilter:
             continue
-        if not allowflat and val.get("type", "flat") == "flat":
+        if not allowflat and syst_type == "flat":
             continue
 
         ret[key] = Uncertainty(key, val)
+
     return ret
 
 

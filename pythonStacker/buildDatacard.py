@@ -37,6 +37,13 @@ def arguments():
     return args
 
 
+def datacard_name(year: str):
+    base = f"DC_{year}"
+    rootfile = base + ".root"
+    textfile = base + ".txt"
+    return rootfile, textfile
+
+
 if __name__ == "__main__":
     # do stuff
     # histograms should already be created, should just need:
@@ -55,9 +62,11 @@ if __name__ == "__main__":
     outputpath = "output/datacards/test.root"
     hist_content = ak.to_numpy(ak.from_parquet("/home/njovdnbo/Documents/Stacker_v2/pythonStacker/output/Intermediate/HT/SM_TTTT_nominal.parquet"))
     hist_err = ak.to_numpy(ak.from_parquet("/home/njovdnbo/Documents/Stacker_v2/pythonStacker/output/Intermediate/HT/SM_TTTT_uncertainty.parquet"))
+    print(hist_content)
     # transform to root:
     import src.histogramTools.converters as cnvrt
     raw_bins = np.linspace(0., 2000., 21)
+    print(raw_bins)
 
     ret_th1 = cnvrt.numpy_to_TH1D(hist_content, raw_bins, err=hist_err)
     file = uproot.recreate(outputpath)

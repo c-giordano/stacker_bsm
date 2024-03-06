@@ -206,7 +206,6 @@ def submitCommandsetsAsCondorCluster(name, commands, stdout=None, stderr=None, l
             for cmd in commandset:
                 script.write("  " + cmd + '\n')
             script.write("fi\n")
-            
 
     # then make the job description
     # first job:

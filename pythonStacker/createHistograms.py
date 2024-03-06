@@ -10,9 +10,10 @@ import uproot
 import awkward as ak
 import src
 from src.variables.variableReader import VariableReader, Variable
+from src.variables.weightManager import WeightManager
 from src.histogramTools import HistogramManager
 from submitHistogramCreation import args_add_settingfiles, args_select_specifics
-from src.configuration import load_uncertainties, Channel
+from src.configuration import load_uncertainties, Channel, Uncertainty
 
 """
 Script that takes as input a file or set of files, applies cross sections and necessary normalizations (if still needed), and then creates a histogram.
@@ -59,50 +60,13 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def prepare_histogram(data, wgts, variable: Variable):
-    hist_content, binning, hist_unc = src.histogram_w_unc_flow(data, range=variable.range, wgts=wgts, nbins=variable.nbins)
+    hist_content, binning, hist_unc = src.histogram_w_unc_flow(data, range=variable.range, wgts=ak.to_numpy(wgts), nbins=variable.nbins)
     return hist_content, binning, hist_unc
-
-
-# def analysis_histograms(processinfo: dict, processname: str, variables: VariableReader, storagepath: str, selection: str):
-#     basedir = processinfo["Basedir"]
-#     filelist = processinfo["Processes"][processname]["files"]
-#
-#     output_histograms = HistogramManager(storagepath, processname, variables)
-#     output_content = dict()  # variable: content
-#     output_unc = dict()
-#     for file in filelist:
-#         current_tree = uproot.open(os.path.join(basedir, file))["test"]
-#         weights = ak.to_numpy(current_tree.arrays("weights", cut=selection, aliases={"weights": "nominalWeight"}).weights)
-#         input()
-#         # just first do central, worry about systematics later
-#         print(f"number of variables: {variables.number_of_variables()}")
-#
-#         for variable in variables.get_variables():
-#             hist_content, hist_unc = create_histogram(variables.get_properties(variable), current_tree, weights, selection)
-#
-#             if variable in output_content:
-#                 output_content[variable]["nominal"] += hist_content
-#                 output_unc[variable]["nominal"] += hist_unc
-#             else:
-#                 output_content[variable] = dict()
-#                 output_unc[variable] = dict()
-#                 output_content[variable]["nominal"] = hist_content
-#                 output_unc[variable]["nominal"] = hist_unc
-#
-#         # load weights we need based on either systematics or diffeerent. Write function to get right weights
-#         # load central
-#         # Data stays the same for each variable in weight variations.
-#         # So load data once with correct cut, also need to specify the cut somewhere...
-#         # But then load: the data and the central weights, then for each systematic load the weights, but againthey should be stationary.
-#         # maybe store the systematic variation weights also somewhere?
-#
-#     # save output
-#     output_histograms.save_all_histograms(output_content)
 
 
 def get_histogram_data(variable: Variable, tree, channel: Channel):
     method = variable.get_method()
-    data = method(tree, variable.branch_name, channel.selection)
+    data = ak.to_numpy(method(tree, variable.branch_name, channel.selection))
     return data
 
 
@@ -110,10 +74,6 @@ def create_histogram(variable: Variable, data, weights):
     '''
     TODO
     '''
-    # get opts somewhere?
-    # method = variable.get_method()
-    # data = method(tree, variable.branch_name, selection)
-
     # to histogram:
     hist_content, _, hist_unc = prepare_histogram(data, weights, variable)
     return hist_content, hist_unc
@@ -150,9 +110,10 @@ if __name__ == "__main__":
         systematics: dict = dict()
 
     if args.systematic != "shape":
-        systematics["nominal"] = 0
-        systematics["stat_unc"] = 0
+        systematics["nominal"] = Uncertainty("nominal", {})
+        systematics["stat_unc"] = Uncertainty("stat_unc", {})
 
+    print(systematics.keys())
     # load process list:
     with open(args.processfile, 'r') as f:
         processfile = json.load(f)
@@ -195,7 +156,7 @@ if __name__ == "__main__":
         # then loop variables
         # if args.systematic == "weight":
         # loop variables
-        current_tree = uproot.open(filename)["test"]
+        current_tree: uproot.TTree = uproot.open(filename)["tree"]
 
         # TODO: use masks somewhere
         # generates masks for subchannels
@@ -203,18 +164,27 @@ if __name__ == "__main__":
 
         # no structure yet to load systematics weights. Weightmanager? Or move to systematics loop?
         # Does imply more overhead in reading, can try here, see what memory effect it has, otherwise move to systematics.
-        weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
+        # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
+        weights = WeightManager(current_tree, channel.selection, systematics)
 
         for variable in variables:
             # load data:
             data = get_histogram_data(variable, current_tree, channel)
 
-            for systematic in systematics:
-                hist_content, _, hist_unc = prepare_histogram(data, weights, variable)
-
-                output_histograms[variable.name][systematic] += hist_content
-                if systematic == "nominal":
+            for name, syst in systematics.items():
+                if name == "stat_unc":
+                    # don't need a dedicated run for this; should be filled before
+                    continue
+                if name == "nominal":
+                    hist_content, _, hist_unc = prepare_histogram(data, weights["nominal"], variable)
+                    output_histograms[variable.name]["nominal"] += hist_content
                     output_histograms[variable.name]["stat_unc"] += hist_unc
+                else:
+                    keys = syst.get_weight_keys()
+                    hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
+                    hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
+                    output_histograms[variable.name][name]["Up"] += hist_content_up
+                    output_histograms[variable.name][name]["Down"] += hist_content_down
 
     output_histograms.save_histograms()
     exit(0)

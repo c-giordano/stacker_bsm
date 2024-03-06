@@ -2,12 +2,11 @@
 import awkward as ak
 import numpy as np
 import os
-from typing import Union
 from src.variables.variableReader import VariableReader
 
 
 class HistogramManager:
-    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: Union[list[str], None] = None):
+    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: list):
         self.store: str = storagepath
         self.process: str = process
         self.variables: list = variables.get_variables()
@@ -24,9 +23,17 @@ class HistogramManager:
                 os.makedirs(self.cache_folder[var])
             self.base_name[var] = os.path.join(self.cache_folder[var], filename)
 
+            if self.systematics is None:
+                continue
+
             self.histograms[var] = dict()
-            for sys in self.systematics:
-                self.histograms[var][sys] = np.zeros(prop.nbins)
+            for sysname in self.systematics:
+                if sysname == "nominal" or sysname == "stat_unc":
+                    self.histograms[var][sysname] = np.zeros(prop.nbins)
+                else:
+                    self.histograms[var][sysname] = dict()
+                    self.histograms[var][sysname]["Up"] = np.zeros(prop.nbins)
+                    self.histograms[var][sysname]["Down"] = np.zeros(prop.nbins)
 
     def __getitem__(self, key):
         return self.histograms[key]
@@ -54,7 +61,11 @@ class HistogramManager:
         return ret
 
     def load_histogram(self, var: str, sys: str = "nominal"):
-        content = ak.to_numpy(ak.from_parquet(self.get_name(var, sys)))
+        content = ak.from_parquet(self.get_name(var, sys))
+        # if sys == "nominal" or sys == "stat_unc":
+        #     content = ak.from_parquet(self.get_name(var, sys))
+        # else:
+        #     content = ak.from_parquet(self.get_name(var, sys))
         return content
 
     # reconsider saving and loading routine. Can reprocess to use ak.Record to combine either many variables or many systematics
@@ -73,4 +84,8 @@ class HistogramManager:
             self.save_histogram(content_variations[sys], var, sys)
 
     def save_histogram(self, content, var: str, sys: str = "nominal"):
-        ak.to_parquet(content, self.get_name(var, sys))
+        if sys == "nominal" or sys == "stat_unc":
+            ak.to_parquet(content, self.get_name(var, sys))
+        elif type(content) is dict:
+            record = ak.Record(content)
+            ak.to_parquet(record, self.get_name(var, sys))
