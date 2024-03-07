@@ -53,3 +53,7 @@ ugent2016-master/*
 *.code-workspace
 
 stackerScripts/**
+**/Scripts/condor/**
+
+**__pycache__**
+**.pyc
