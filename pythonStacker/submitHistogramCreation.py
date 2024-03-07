@@ -57,13 +57,14 @@ if __name__ == "__main__":
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
 
-    processlist = get_keys(args.processfile)
+    with open(args.processfile, 'r') as f:
+        processlist = list(json.load(f)["Processes"].keys())
     channellist = get_keys(args.channelfile)
 
     commandset = []
     for year in args.years:
         for process in processlist:
-            if process != args.process:
+            if args.process is not None and process != args.process:
                 continue
 
             commandset_process = []

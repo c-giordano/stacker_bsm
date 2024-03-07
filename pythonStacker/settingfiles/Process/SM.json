@@ -4,37 +4,54 @@
         "TTTT": {
             "fileglobs": ["Tree_TTTT_*_MCPrompt"],
             "color": "#EF3340",
-            "isSignal": 1
+            "isSignal": 1,
+            "pretty_name": "t\\bar{t}t\\bar{t}"
         },
         "TTW": {
             "fileglobs": ["Tree_TTWJetsToLNu*MCPrompt", "Tree_ttWJetsToLNu_5f_EWK*MCPrompt"],
-            "color": "#006600"
+            "color": "#006600",
+            "pretty_name": "t\\bar{t}W"
         },
         "TTZ": {
             "fileglobs": ["Tree_TTZToLLNuNu*MCPrompt"],
+            "pretty_name": "t\\bar{t}Z",
             "color": "#99FF99"
         },
         "TTH": {
             "fileglobs": ["Tree_ttHJetToNonbb*MCPrompt"],
+            "pretty_name": "t\\bar{t}H",
             "color": "#715C2A"
         },
         "TTT": {
             "fileglobs": ["Tree_TTTW_*MCPrompt", "Tree_TTTJ_*MCPrompt"],
+            "pretty_name": "ttt",
             "color": "#EAD98B"
         },
         "other_t": {
             "fileglobs": ["Tree_THQ_*MCPrompt", "Tree_tZq_ll*MCPrompt", "*_TTHH_*MCPrompt", "*_TTWW_*MCPrompt", "*_TTWH_*MCPrompt", "*_TTWZ_*MCPrompt", "*_TTZH_*MCPrompt", "*_TTZZ_*MCPrompt"],
+            "pretty_name": "Other\\ t",
             "color": "#99CCFF"
         },
         "Xgamma": {
             "fileglobs": ["*TTTo2L2Nu*MCPrompt", "*TTToSemiLeptonic*MCPrompt", "*_TTGamma_*MCPrompt", "Tree_ZGToLLG*MCPrompt", "*DYJetsToLL*"],
+            "pretty_name": "X\\gamma",
             "color": "#6666FF"
         },
         "VVV": {
             "fileglobs": ["Tree_WWZ_*MCPrompt", "Tree_WZZ_*MCPrompt", "Tree_ZZZ_*MCPrompt", "Tree_SSWW*MCPrompt", 
                           "Tree_VHToNonbb*MCPrompt", "", "Tree_ZZTo4L*MCPrompt", "Tree_VBF_HToZZTo4L*MCPrompt",
                           "Tree_GluGlu*", "Tree_WZTo3LNu_*MCPrompt"],
+            "pretty_name": "VV(V)",
             "color": "#660033"
+        },
+        "nonPromptElectron": {
+            "fileglobs": ["*_nonPromptDD_*"]
+        },
+        "nonPromptMuon": {
+            "fileglobs": ["*_nonPromptDD_*"]
+        },
+        "ChargeMisID": {
+            "fileglobs": ["*_ChargeDD*"]
         }
     }
 }

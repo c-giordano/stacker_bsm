@@ -161,9 +161,8 @@ if __name__ == "__main__":
         # then loop variables
         # if args.systematic == "weight":
         # loop variables
-        current_tree: uproot.TTree = uproot.open(filename)["tree"]
+        current_tree: uproot.TTree = uproot.open(filename)[args.process]
 
-        # TODO: use masks somewhere
         # generates masks for subchannels
         subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
 

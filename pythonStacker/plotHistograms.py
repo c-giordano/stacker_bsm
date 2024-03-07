@@ -16,16 +16,11 @@ from submitHistogramCreation import args_add_settingfiles, args_select_specifics
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command line arguments.')
 
-    # generate choices:
-    # kinda think need to change this to same arguments as submitHistogram stuff
-    # variable_choices: dict = list(var.get_plotting_options("all").keys())
-    # variable_choices.append('all')
-    # parser.add_argument('-v', '--variables', dest="variables", type=str,
-    #                     required=True, help='Nickname of variable to plot')
-    # parser.add_argument('-s', '--samplelist', dest="samplelist", type=str,
-    #                     required=True, help='Path to the samplelist to use')
+    default_output = "/user/nivanden/public_html/Interpretations/Plots/"
+    if os.getenv("CMSSW_VERSION") is None:
+        default_output = "output/"
     parser.add_argument("-o", "--output", dest="outputfolder", action="store", required=False,
-                        default="output/", help="outputfolder to use for plots")
+                        default=default_output, help="outputfolder to use for plots")
     parser.add_argument("--storage", dest="storage", type=str,
                         default="Intermediate", help="Path at which the \
                         histograms are stored")
@@ -38,6 +33,15 @@ def parse_arguments():
 
     args = parser.parse_args()
     return args
+
+
+def copy_index_html(folder):
+    if os.getenv("CMSSW_VERSION"):
+        outputfile = os.path.join(folder, "index.php")
+        if os.path.exists(outputfile):
+            return
+        os.system(f"cp /user/nivanden/public_html/index.php {outputfile}")
+
 
 
 def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
@@ -90,6 +94,9 @@ def get_lumi(years):
     }
     for year in years:
         total_lumi += lumi[year]
+
+    if total_lumi >= 100.:
+        total_lumi = round(total_lumi)
     return total_lumi
 
 
@@ -180,6 +187,9 @@ if __name__ == "__main__":
         outputsubfolder += "_Run2"
 
     outputfolder_base = os.path.join(args.outputfolder, outputsubfolder)
+    if not os.path.exists(outputfolder_base):
+        os.makedirs(outputfolder_base)
+    copy_index_html(outputfolder_base)
 
     for channel in channels:
         if args.channel is not None and channel != args.channel:
@@ -191,6 +201,7 @@ if __name__ == "__main__":
         outputfolder = os.path.join(outputfolder_base, channel)
         if not os.path.exists(outputfolder):
             os.makedirs(outputfolder)
+        copy_index_html(outputfolder)
 
         for process, info in processinfo.items():
             histograms[process] = dict()
