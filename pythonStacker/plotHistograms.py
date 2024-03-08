@@ -152,7 +152,7 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("Events")
     modify_yrange(sum_of_content, ax_main)
-    ax_main.legend()
+    ax_main.legend(ncols=2)
 
     # fix output name
     fig.savefig(os.path.join(plotdir, f"{variable.name}.png"))

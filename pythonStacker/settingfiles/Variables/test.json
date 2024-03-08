@@ -6,5 +6,29 @@
         "branch_name": "jetPt",
         "method_name": "sum_branch",
         "channels": ["all"]
+    },
+    "NJets": {
+        "range": [-0.5, 10.5],
+        "nbins": 11,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "nMuons": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "branch_name": "nMuons",
+        "axis_label": "$N_{\\mu}$",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "nElectrons": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "branch_name": "nElectrons",
+        "axis_label": "$N_{e}$",
+        "method_name": "load",
+        "channels": ["all"]
     }
 }

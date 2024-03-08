@@ -89,7 +89,7 @@ def get_tree_from_file(filename, processname) -> uproot.TTree:
     try:
         current_tree: uproot.TTree = current_rootfile[processname]
     except KeyError:
-        print(f"{processname} not found in the root file. Trying other keys.")
+        print(f"{processname} not found in the file {filename}. Trying other keys.")
         for key, classname in current_rootfile.classnames().items():
             if classname != "TTree":
                 continue
@@ -216,4 +216,5 @@ if __name__ == "__main__":
     output_histograms[args.channel].save_histograms()
     for subchannel_name in subchannelnames:
         output_histograms[subchannel_name].save_histograms()
+    print("Finished")
     exit(0)

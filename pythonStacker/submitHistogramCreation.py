@@ -59,7 +59,10 @@ if __name__ == "__main__":
 
     with open(args.processfile, 'r') as f:
         processlist = list(json.load(f)["Processes"].keys())
-    channellist = get_keys(args.channelfile)
+    
+    with open(args.channelfile, 'r') as f:
+        channels = json.load(f)
+        channellist = list(channels.keys())
 
     commandset = []
     for year in args.years:
@@ -71,6 +74,8 @@ if __name__ == "__main__":
 
             for channel in channellist:
                 if args.channel is not None and channel != args.channel:
+                    continue
+                if channels[channel].get("isSubchannel", 0) > 0:
                     continue
                 # check if channel is subchannel! Otherwise no plot to be made.
                 # can just add the command and not care

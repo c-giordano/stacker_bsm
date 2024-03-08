@@ -49,7 +49,7 @@ def initJobScript(name, scriptfolder="", cwd=None):
     # write script
     with open(fname, 'w') as script:
         script.write('#!/bin/bash\n')
-        script.write('cd /user/nivanden/CMSSW_13_3_1/src\n')
+        script.write(f'cd /user/nivanden/{os.getenv("CMSSW_VERSION")}/src\n')
         script.write('source /cvmfs/cms.cern.ch/cmsset_default.sh\n')
         script.write('eval `scram runtime -sh`\n')
         script.write('export X509_USER_PROXY=/user/$USER/x509up_u$(id -u $USER)\n')

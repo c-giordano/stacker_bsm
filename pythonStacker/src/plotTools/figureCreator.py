@@ -12,7 +12,14 @@ def mod_style():
         'ytick.labelsize': 27,
         'xtick.labelsize': 27,
         'axes.labelsize': 32,
-        "axes.linewidth": 1
+        "axes.linewidth": 1,
+        "legend.labelspacing": 0.23,
+        "legend.handlelength": 1.,
+        "legend.handleheight": 1.,
+        "legend.handletextpad": 0.25,
+        "legend.borderaxespad": 0.4,
+        "legend.borderpad": 0.4,
+        "legend.columnspacing": 0.5
     }
     # "axes.labelsize": "large",
     plt.rcParams.update(params)

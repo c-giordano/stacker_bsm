@@ -20,7 +20,11 @@ class HistogramManager:
         for var, prop in variables.variable_objects.items():
             self.cache_folder[var] = os.path.join(storagepath, var)
             if not os.path.exists(self.cache_folder[var]):
-                os.makedirs(self.cache_folder[var])
+                try:
+                    os.makedirs(self.cache_folder[var])
+                except FileExistsError:
+                    print(f"Folder {self.cache_folder[var]} exists. Makedirs failed.")
+                
             self.base_name[var] = os.path.join(self.cache_folder[var], filename)
 
             if self.systematics is None:
