@@ -2,6 +2,7 @@ import argparse
 import json
 import src.jobSubmission.condorTools as ct
 
+
 def args_add_settingfiles(parser: argparse.ArgumentParser):
     # Add arguments here
     parser.add_argument('-vf', '--variablefile', dest="variablefile",
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 
     with open(args.processfile, 'r') as f:
         processlist = list(json.load(f)["Processes"].keys())
-    
+
     with open(args.channelfile, 'r') as f:
         channels = json.load(f)
         channellist = list(channels.keys())
