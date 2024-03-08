@@ -3,15 +3,19 @@
     "Processes": {
         "TTTT": {
             "fileglobs": ["Tree_TTTT_*_MCPrompt"],
-            "color": "red"
+            "color": "red",
+            "isSignal": 1,
+            "pretty_name": "t\\bar{t}t\\bar{t}"
         },
         "TTTJ": {
             "fileglobs": ["Tree_TTTJ_*MCPrompt"],
-            "color": "b"
+            "color": "b",
+            "pretty_name": "tttq"
         },
         "TTTW": {
             "fileglobs": ["Tree_TTTW_*MCPrompt"],
-            "color": "b"
+            "color": "g",
+            "pretty_name": "tttW"
         }
     }
 }

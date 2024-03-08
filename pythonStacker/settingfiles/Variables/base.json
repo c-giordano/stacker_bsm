@@ -1,0 +1,66 @@
+{
+    "HT" : {
+        "range": [200.0, 2000.0],
+        "nbins": 18,
+        "axis_label": "H_T",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["all"]
+    },
+    "NJets": {
+        "range": [-0.5, 10.5],
+        "nbins": 11,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "nMuons": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "branch_name": "nMuons",
+        "axis_label": "$N_{\\mu}$",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "nElectrons": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "branch_name": "nElectrons",
+        "axis_label": "$N_{e}$",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "BDTScore_TTTT": {
+        "range": [0.0, 3.0],
+        "nbins": 15,
+        "branch_name": "fourTopScore",
+        "axis_label": "TTTT Score",
+        "method_name": "tanh",
+        "channels": ["all"]
+    },
+    "BDTScore_TTX": {
+        "range": [0.0, 3.0],
+        "nbins": 15,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "tanh",
+        "channels": ["all"]
+    },
+    "BDTScore_NP": {
+        "range": [0.0, 3.0],
+        "nbins": 15,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "tanh",
+        "channels": ["all"]
+    },
+    "ptmiss": {
+        "range": [0.0, 500.0],
+        "nbins": 25,
+        "branch_name": "ptMiss",
+        "axis_label": "$P_T^{miss}$",
+        "method_name": "load",
+        "channels": ["all"]
+    }
+}

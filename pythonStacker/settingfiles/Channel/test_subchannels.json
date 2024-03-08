@@ -1,0 +1,20 @@
+{
+    "SR-2L": {
+        "subchannels": ["ee", "em", "mm"],
+        "selection": "eventClass==11"
+    },
+    "em": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==1) & (nMuons==1)"
+    },
+    "ee": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==2) & (nMuons==0)",
+        "ignore_processes": ["NonpromptMuon"]
+    },
+    "mm": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==0) & (nMuons==2)",
+        "ignore_processes": ["NonpromptElectron"]
+    }
+}

@@ -1,0 +1,48 @@
+{
+    "CR-2L-23J1B": {
+        "subchannels":  ["ee", "em", "mm"],
+        "selection": "eventClass==8"
+    },
+    "CR-2L-45J2B": {
+        "subchannels": ["ee", "em", "mm"],
+        "selection": "eventClass==10"
+    },
+    "CR-3L-Z": {
+        "subchannels": [],
+        "selection": "eventClass==6"
+    },
+    "CR-4L-Z": {
+        "subchannels": [],
+        "selection": "eventClass==7"
+    },
+    "CR-3L-2J1B": {
+        "subchannels": [],
+        "selection": "eventClass==9"
+    },
+    "ee": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==2) & (nMuons==0)",
+        "ignore_processes": ["NonpromptMuon"]
+    },
+    "em": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==1) & (nMuons==1)"
+    },
+    "mm": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==0) & (nMuons==2)",
+        "ignore_processes": ["NonpromptElectron"]
+    },
+    "++": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==0) & (nMuons==2)"  
+    },
+    "--": {
+        "isSubchannel": 1,
+        "selection": "(nElectrons==0) & (nMuons==2)"  
+    },
+    "OSSF": {
+        "isSubchannel": 1,
+        "selection": "((nElectrons >= 2) & (abs(sum(ElectronCharge)) != 2)) | ((nMuons >= 2) & (abs(sum(MuonCharge)) != 2))"
+    }
+}

@@ -1,0 +1,194 @@
+{
+    "dr_ll" : {
+        "range": [0.0, 6.0],
+        "nbins": 15,
+        "axis_label": "$\\Delta R(l_1, l_2)$",
+        "branch_name": "dR_l1l2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "dphi_ll" : {
+        "range": [0.0, 6.0],
+        "nbins": 15,
+        "axis_label": "$\\Delta\\phi(l_1, l_2)$",
+        "branch_name": "dPhi_l1l2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "deta_ll" : {
+        "range": [0.0, 6.0],
+        "nbins": 15,
+        "axis_label": "$\\Delta\\eta(l_1, l_2)$",
+        "branch_name": "dEta_l1l2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "min_dR_bb" : {
+        "range": [0.0, 6.0],
+        "nbins": 15,
+        "axis_label": "min. $\\Delta R(b,b)$",
+        "branch_name": "min_dR_bb",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "max_DF_1": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "Max. $DJ_1$",
+        "branch_name": "max_DF_1",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "max_DF_2": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "Max. $DJ_2$",
+        "branch_name": "max_DF_2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "max_DF_3": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "Max. $DJ_3$",
+        "branch_name": "max_DF_3",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "max_DF_4": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "Max. $DJ_4$",
+        "branch_name": "max_DF_4",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "DF_jet_1": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "$DJ_{j1}$",
+        "branch_name": "df_j1",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "DF_jet_2": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "$DJ_{j2}$",
+        "branch_name": "df_j2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "DF_jet_3": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "$DJ_{j3}$",
+        "branch_name": "df_j3",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "DF_jet_4": {
+        "range": [0.0, 1.0],
+        "nbins": 20,
+        "axis_label": "$DJ_{j4}$",
+        "branch_name": "df_j4",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mtop1": {
+        "range": [100.0, 250.0],
+        "nbins": 15,
+        "axis_label": "$m_{t1}$",
+        "branch_name": "mtop1",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mtop2": {
+        "range": [100.0, 250.0],
+        "nbins": 15,
+        "axis_label": "$m_{t2}$",
+        "branch_name": "mtop2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mW1": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{W1}$",
+        "branch_name": "mW1",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mW2": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{W2}$",
+        "branch_name": "mW2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mtl1": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{T}(l1)$",
+        "branch_name": "mt_l1",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mtl2": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{T}(l2)$",
+        "branch_name": "mt_l2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mt2_ll": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{T2}(l,l)$",
+        "branch_name": "mt2_ll",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mt2_bb": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{T2}(b,b)$",
+        "branch_name": "mt2_bb",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "mt2_lblb": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m_{T2}(lb,lb)$",
+        "branch_name": "mt2_lblb",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "m_l1l2": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m(l1,l2)$",
+        "branch_name": "m_l1l2",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "m_l2l3": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m(l2,l3)$",
+        "branch_name": "m_l2l3",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "m_l1l3": {
+        "range": [0.0, 150.0],
+        "nbins": 15,
+        "axis_label": "$m(l1,l3)$",
+        "branch_name": "m_l1l3",
+        "method_name": "load",
+        "channels": ["all"]
+    }
+}

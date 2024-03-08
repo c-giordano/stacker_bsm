@@ -1,0 +1,18 @@
+{
+    "TTTT_norm": {
+        "pretty_name": "FourTop norm",
+        "technical_name" : "TTTT_norm",
+        "channels": "all",
+        "processes": "TTTT",
+        "rate": 1.2,
+        "corr_proc": 0,
+        "type": "flat"
+    },
+    "scalevar": {
+        "channels": "all",
+        "processes": "all",
+        "type": "weight",
+        "aliasUp": "scaleVariations[:, 0]",
+        "aliasDown": "scaleVariations[:, 1]"
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "DC_name": "DC_SRs_2018",
+    "channelcontent": {
+        "SR-3L": {
+            "variable": "HT",
+            "prettyname": "SR3L_HT"
+        },
+        "SR-2Lee": {
+            "variable": "HT",
+            "prettyname": "SR2Lee_HT"
+        }
+    }
+}
