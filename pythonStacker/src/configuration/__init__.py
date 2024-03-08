@@ -34,16 +34,17 @@ def load_channels(channelfile) -> dict:
 
 # TODO: fix init
 class Channel:
-    def __init__(self, channelinfo, full_channelfile) -> None:
+    def __init__(self, channelinfo, full_channelfile, ignore_proc=[]) -> None:
         self._selection = channelinfo["selection"]
         self._isSubchannel = bool(channelinfo.get("isSubchannel", 0))
 
+        # build process ignore list
+        self.ign_processes = channelinfo.get("ignore_processes", [])
+        self.ign_processes.extend(ignore_proc)
+
         # subchannel structure
         subchannels = channelinfo.get("subchannels", [])
-        self.subchannels = {subchannel: Channel(full_channelfile[subchannel], full_channelfile) for subchannel in subchannels}
-
-        # build process ignore list
-        self.ign_processes = channelinfo.get("ignore_processes")
+        self.subchannels = {subchannel: Channel(full_channelfile[subchannel], full_channelfile, self.ign_processes) for subchannel in subchannels}
 
         # load other config options
 

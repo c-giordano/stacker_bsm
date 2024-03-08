@@ -32,8 +32,8 @@ class VariableReader:
         self.nvar = len(self.variables)
         self.variable_objects: dict[str, Variable] = {}
 
-        for key, value in data.items():
-            self.variable_objects[key] = Variable(key, value)
+        for key in self.variables:
+            self.variable_objects[key] = Variable(key, data[key])
         self.index = 0
 
     def __getitem__(self, key) -> Variable:

@@ -12,6 +12,8 @@ def args_add_settingfiles(parser: argparse.ArgumentParser):
                         type=str, help='JSON file with process definitions.')
     parser.add_argument('-cf', '--channelfile', dest='channelfile',
                         type=str, help='JSON file with channel definitions.')
+    parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2017", "2018"], nargs='+',
+                        help='Specific years.')
 
 
 def args_select_specifics(parser: argparse.ArgumentParser):
@@ -25,8 +27,6 @@ def args_select_specifics(parser: argparse.ArgumentParser):
                         type=str, help='Specific process.')
     parser.add_argument('-c', '--channel', dest='channel', default=None,
                         type=str, help='Specific channel.')
-    parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2017", "2018"], nargs='+',
-                        help='Specific years.')
 
 
 def arguments():

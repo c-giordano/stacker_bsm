@@ -43,7 +43,6 @@ def copy_index_html(folder):
         os.system(f"cp /user/nivanden/public_html/index.php {outputfile}")
 
 
-
 def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
     # get binning:
     binning = generate_binning(variable.range, variable.nbins)
