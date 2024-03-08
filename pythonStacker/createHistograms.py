@@ -98,6 +98,7 @@ def get_tree_from_file(filename, processname) -> uproot.TTree:
 
     return current_tree
 
+
 if __name__ == "__main__":
     # parse arguments
     args = parse_arguments()
@@ -178,7 +179,7 @@ if __name__ == "__main__":
         # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
         weights = WeightManager(current_tree, channel.selection, systematics)
 
-        for variable in variables:
+        for _, variable in variables.get_variable_objects().items():
             # load data:
             data = get_histogram_data(variable, current_tree, channel)
 
