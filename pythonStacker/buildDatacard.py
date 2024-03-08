@@ -48,9 +48,11 @@ def arguments():
     return args
 
 
-def convert_and_write_histogram(input_histogram, variable: Variable, outputname: str, rootfile: uproot.WritableDirectory):
+def convert_and_write_histogram(input_histogram, variable: Variable, outputname: str, rootfile: uproot.WritableDirectory, statunc=None):
     raw_bins = generate_binning(variable.range, variable.nbins)
-    ret_th1 = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=np.zeros(len(input_histogram)))
+    if statunc is None:
+        statunc = np.zeros(len(input_histogram))
+    ret_th1 = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
     rootfile[outputname] = ret_th1
 
 
@@ -89,6 +91,7 @@ if __name__ == "__main__":
 
     shape_systematics = load_uncertainties(args.systematicsfile, allowflat=False)
     shape_systematics["nominal"] = Uncertainty("nominal", {})
+    shape_systematics["stat_unc"] = Uncertainty("stat_unc", {})
 
     for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
         # load histograms for this specific channel and the variable with HistogramManager
@@ -106,12 +109,12 @@ if __name__ == "__main__":
             histograms.load_histograms()
 
             # write nominal
-            # TODO: add statistical uncertainty
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{process}"
-            convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile)
+            convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=histograms[var_name]["stat_unc"])
+
             # loop and write systematics
             for systname, syst in shape_systematics.items():
-                if systname == "nominal":
+                if systname == "nominal" or systname == "stat_unc":
                     continue
                 path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst}Up/{process}"
                 path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst}Down/{process}"

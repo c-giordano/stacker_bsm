@@ -6,8 +6,10 @@ import mplhep as hep
 
 from plugins.eft import eft_reweighter
 
-def  plotBranch():
+
+def plotBranch():
     return 0
+
 
 def weightTransformAll(eftVars):
     eft_weight = eft_reweighter()
@@ -15,16 +17,18 @@ def weightTransformAll(eftVars):
 
     return var
 
+
 def loadEFTVarWeights(eventclass) -> ak.Array:
     intputfile = "output/eftWeights/evClass_"+str(eventclass)+"_wgts.parquet"
     return ak.from_parquet(intputfile)
+
 
 def plotVar(varName, evClass, weightVariations, tree, nbins, range):
     plt.style.use(hep.style.CMS)
     fig, (ax, ratio) = plt.subplots(2,1, sharex="row", gridspec_kw={'height_ratios': [0.75, 0.25]})
     var = tree.arrays([varName], "eventClass=="+str(evClass))
     npvar = ak.to_numpy(var[varName])
-    i=0
+    i = 0
     base_ratio = 1
     for key, val in weightVariations.items():
         weight_as_np = ak.to_numpy(val)
@@ -52,8 +56,8 @@ if __name__ == "__main__":
     arrs = tree.arrays(["nominalWeight", "jetPt", "ht"], "eventClass==12", aliases={"ht" : "sum(jetPt, axis=1)"})
     print(arrs)
     arrs = tree.arrays(["nominalWeight", "jetPt", "eftVariationsNorm"], "eventClass==12", aliases={"eftVariationsNorm" : "eftVariations/eftVariations[:,0]"})
-    
-    #print(eft_weight.transform_weights(arrs.eftVariationsNorm)[0])
+
+    # print(eft_weight.transform_weights(arrs.eftVariationsNorm)[0])
     eftVarAtDet = loadEFTVarWeights(12) * arrs.nominalWeight
     # print(arrs.eftVariations/arrs.eftVariations[:,0])
     # print(len(arrs.eftVariations[:,0]))
