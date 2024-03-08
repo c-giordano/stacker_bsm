@@ -64,13 +64,13 @@ def parse_arguments() -> argparse.Namespace:
 
 
 def prepare_histogram(data, wgts, variable: Variable):
-    hist_content, binning, hist_unc = src.histogram_w_unc_flow(data, range=variable.range, wgts=ak.to_numpy(wgts), nbins=variable.nbins)
+    hist_content, binning, hist_unc = src.histogram_w_unc_flow(ak.to_numpy(data), range=variable.range, wgts=ak.to_numpy(wgts), nbins=variable.nbins)
     return hist_content, binning, hist_unc
 
 
 def get_histogram_data(variable: Variable, tree, channel: Channel):
     method = variable.get_method()
-    data = ak.to_numpy(method(tree, variable.branch_name, channel.selection))
+    data = method(tree, variable.branch_name, channel.selection)
     return data
 
 
@@ -83,17 +83,20 @@ def create_histogram(variable: Variable, data, weights):
     return hist_content, hist_unc
 
 
-def weight_variations(variable: Variable, tree, channel: Channel, weights, systematics: dict):
-    # load data:
-    data = get_histogram_data(variable, tree, channel)
+def get_tree_from_file(filename, processname) -> uproot.TTree:
+    current_rootfile = uproot.open(filename)
 
-    for systematic in systematics:
-        hist_content, _, hist_unc = prepare_histogram(data, weights, variable)
+    try:
+        current_tree: uproot.TTree = current_rootfile[processname]
+    except KeyError:
+        print(f"{processname} not found in the root file. Trying other keys.")
+        for key, classname in current_rootfile.classnames().items():
+            if classname != "TTree":
+                continue
+            current_tree: uproot.TTree = current_rootfile[key]
+            break
 
-        output_histograms[variable][systematic] += hist_content
-        if systematic == "nominal":
-            output_histograms[variable]["stat_unc"] += hist_unc
-
+    return current_tree
 
 if __name__ == "__main__":
     # parse arguments
@@ -139,8 +142,13 @@ if __name__ == "__main__":
     # Should be weightvariations here? Maybe also systematic variations or something? idk let's see first for weight variations
 
     # update storagepath to include channel
-    storagepath = os.path.join(storagepath, args.channel)
-    output_histograms = HistogramManager(storagepath, args.process, variables, list(systematics.keys()), year=args.years[0])
+    storagepath_main = os.path.join(storagepath, args.channel)
+    output_histograms = dict()
+    output_histograms[args.channel] = HistogramManager(storagepath_main, args.process, variables, list(systematics.keys()), year=args.years[0])
+    for subchannel_name, _ in channel.subchannels.items():
+        channel_name = args.channel + subchannel_name
+        storagepath_tmp = os.path.join(storagepath, channel_name)
+        output_histograms[subchannel_name] = HistogramManager(storagepath_tmp, args.process, variables, list(systematics.keys()), year=args.years[0])
 
     # TODO: get files based on process names -> processmanager can return this, depending on the sys unc?
     files = []
@@ -161,8 +169,7 @@ if __name__ == "__main__":
         # then loop variables
         # if args.systematic == "weight":
         # loop variables
-        current_tree: uproot.TTree = uproot.open(filename)[args.process]
-
+        current_tree: uproot.TTree = get_tree_from_file(filename, args.process)
         # generates masks for subchannels
         subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
 
@@ -181,14 +188,31 @@ if __name__ == "__main__":
                     continue
                 if name == "nominal":
                     hist_content, _, hist_unc = prepare_histogram(data, weights["nominal"], variable)
-                    output_histograms[variable.name]["nominal"] += hist_content
-                    output_histograms[variable.name]["stat_unc"] += hist_unc
+                    output_histograms[args.channel][variable.name]["nominal"] += hist_content
+                    output_histograms[args.channel][variable.name]["stat_unc"] += hist_unc
                 else:
                     keys = syst.get_weight_keys()
                     hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
                     hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
-                    output_histograms[variable.name][name]["Up"] += hist_content_up
-                    output_histograms[variable.name][name]["Down"] += hist_content_down
+                    output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
+                    output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
 
-    output_histograms.save_histograms()
+                for subchannel_name in subchannelnames:
+                    if name == "stat_unc":
+                        # don't need a dedicated run for this; should be filled before
+                        continue
+                    if name == "nominal":
+                        hist_content, _, hist_unc = prepare_histogram(data[subchannelmasks[subchannel_name]], weights["nominal"][subchannelmasks[subchannel_name]], variable)
+                        output_histograms[subchannel_name][variable.name]["nominal"] += hist_content
+                        output_histograms[subchannel_name][variable.name]["stat_unc"] += hist_unc
+                    else:
+                        keys = syst.get_weight_keys()
+                        hist_content_up, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[0]][subchannelmasks[subchannel_name]], variable)
+                        hist_content_down, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[1]][subchannelmasks[subchannel_name]], variable)
+                        output_histograms[subchannel_name][variable.name][name]["Up"] += hist_content_up
+                        output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
+
+    output_histograms[args.channel].save_histograms()
+    for subchannel_name in subchannelnames:
+        output_histograms[subchannel_name].save_histograms()
     exit(0)

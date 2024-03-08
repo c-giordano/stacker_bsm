@@ -190,10 +190,11 @@ if __name__ == "__main__":
     if not os.path.exists(outputfolder_base):
         os.makedirs(outputfolder_base)
     copy_index_html(outputfolder_base)
-
+    print(channels)
     for channel in channels:
         if args.channel is not None and channel != args.channel:
             continue
+
         storagepath_tmp = os.path.join(storagepath, channel)
         systematics = ["nominal"]
         histograms = dict()
@@ -208,5 +209,22 @@ if __name__ == "__main__":
             for year in args.years:
                 histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
                 histograms[process][year].load_histograms()
-        for variable in variables:
+        for _, variable in variables.get_variable_objects().items():
             plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
+
+        for subchannel in channels[channel].subchannels.keys():
+            storagepath_tmp = os.path.join(storagepath, channel + subchannel)
+            histograms = dict()
+
+            outputfolder = os.path.join(outputfolder_base, channel, subchannel)
+            if not os.path.exists(outputfolder):
+                os.makedirs(outputfolder)
+            copy_index_html(outputfolder)
+
+            for process, info in processinfo.items():
+                histograms[process] = dict()
+                for year in args.years:
+                    histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
+                    histograms[process][year].load_histograms()
+            for _, variable in variables.get_variable_objects().items():
+                plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)

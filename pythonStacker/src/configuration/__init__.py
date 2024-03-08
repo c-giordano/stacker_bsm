@@ -2,6 +2,7 @@ import json
 
 from src.configuration.Uncertainty import Uncertainty
 
+import awkward as ak
 
 def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=True) -> dict:
     with open(jsonfile, 'r') as f:

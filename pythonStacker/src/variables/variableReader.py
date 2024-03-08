@@ -48,6 +48,9 @@ class VariableReader:
     def get_variables(self) -> list[str]:
         return self.variables
 
+    def get_variable_objects(self):
+        return self.variable_objects
+
     def number_of_variables(self):
         return self.nvar
 
