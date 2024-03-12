@@ -12,7 +12,7 @@
         "channels": "all",
         "processes": "all",
         "type": "weight",
-        "aliasUp": "scaleVariations[:, 0]",
-        "aliasDown": "scaleVariations[:, 1]"
+        "aliasUp": "fmax(scaleVariations[:, 0], fmax(scaleVariations[:, 1], fmax(scaleVariations[:, 2], fmax(scaleVariations[:, 3], fmax(scaleVariations[:, 4], scaleVariations[:, 5])))))",
+        "aliasDown": "fmin(scaleVariations[:, 0], fmin(scaleVariations[:, 1], fmin(scaleVariations[:, 2], fmin(scaleVariations[:, 3], fmin(scaleVariations[:, 4], scaleVariations[:, 5])))))"
     }
 }

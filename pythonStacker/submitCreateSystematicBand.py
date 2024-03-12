@@ -16,12 +16,11 @@ def arguments():
 if __name__ == "__main__":
     args = arguments()
 
-    basecommand = "python3 plotHistograms.py"
+    basecommand = "python3 createSystematicBand.py"
     basecommand += f" --variablefile {args.variablefile}"
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
-    basecommand += " --no_unc"
 
     cmds = []
     for year in args.years:
@@ -36,4 +35,4 @@ if __name__ == "__main__":
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
         cmds.append([cmd])
 
-    ct.submitCommandsetsAsCondorCluster("plothistograms", cmd, scriptfolder="Scripts/condor/")
+    ct.submitCommandsetsAsCondorCluster("SystematicsBand", cmd, scriptfolder="Scripts/condor/")

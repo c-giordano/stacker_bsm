@@ -183,7 +183,7 @@ def submitCommandsAsCondorJobs(name, commands, stdout=None, stderr=None, log=Non
                            cpus=cpus,mem=mem,disk=disk,jdName=jdname, scriptfolder=scriptfolder)
         with open(os.path.join(scriptfolder, jdname), 'a') as jdScript:
             jdScript.write('queue\n\n')
-        
+
         # finally submit the job
         submitCondorJob(jdname, addArgs='-batch-name "{}"'.format(name), scriptfolder=scriptfolder)
 
