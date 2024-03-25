@@ -4,11 +4,13 @@ import json
 import glob
 import src.jobSubmission.condorTools as ct
 
+from submitHistogramCreation import args_add_settingfiles
+
 
 def arguments():
     parser = argparse.ArgumentParser(description=__doc__)
 
-
+    args_add_settingfiles(parser)
     args, args_unknown = parser.parse_known_args()
     return args
 
