@@ -21,21 +21,21 @@ if __name__ == "__main__":
     # loop processes and check which one has EFT, then submit it
     with open(args.processfile, 'r') as f:
         content = json.load(f)
-        processes = content["processes"]
-        basedir = content["basedir"]
+        processes = content["Processes"]
+        basedir = content["Basedir"]
 
     commandset = []
-    for process in processes:
+    for pname, process in processes.items():
         # if has EFT
         files = []
         for filebase in process["fileglobs"]:
             fileglob = os.path.join(basedir, filebase)
-            fileglob += f"*{args.years[0]}"
-            if args.systematic == "weight" or args.systematic is None:
-                fileglob += "*base.root"
+            # fileglob += f"*{args.years[0]}"
+            fileglob += "*base.root"
             true_files = glob.glob(fileglob)
             files.extend(true_files)
 
+        print(files)
         cmds = []
         for filename in files:
             if process.get("hasEFT", 0) == 0:

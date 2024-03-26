@@ -90,6 +90,8 @@ if __name__ == "__main__":
                     command += f" --variable {args.variable}"
                 if args.systematic is not None:
                     command += f" --systematic {args.systematic}"
+                else:
+                    command += " -s weight"
 
                 commandset_process.append(command)
 

@@ -34,5 +34,5 @@ if __name__ == "__main__":
     if len(args.years) == 4:
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
         cmds.append([cmd])
-
-    ct.submitCommandsetsAsCondorCluster("SystematicsBand", cmd, scriptfolder="Scripts/condor/")
+    
+    ct.submitCommandsetsAsCondorCluster("SystematicsBand", cmds, scriptfolder="Scripts/condor/")

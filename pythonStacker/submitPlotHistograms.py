@@ -21,7 +21,7 @@ if __name__ == "__main__":
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
-    basecommand += " --no_unc"
+    # basecommand += " --no_unc"
 
     cmds = []
     for year in args.years:
@@ -36,4 +36,4 @@ if __name__ == "__main__":
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
         cmds.append([cmd])
 
-    ct.submitCommandsetsAsCondorCluster("plothistograms", cmd, scriptfolder="Scripts/condor/")
+    ct.submitCommandsetsAsCondorCluster("plothistograms", cmds, scriptfolder="Scripts/condor/")
