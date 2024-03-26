@@ -38,6 +38,27 @@ def getEFTVariations():
     return weightInfo.combinations
 
 
+def getEFTVariationsGroomed():
+    variations = getEFTVariations()
+    ret = []
+    for eft_var in variations:
+        if len(eft_var) == 0:
+            continue
+        eft_var_name = "EFT_" + "_".join(eft_var)
+        ret.append(eft_var_name)
+    return ret
+
+
+def getEFTVariationsLinear():
+    variations = getEFTVariations()
+    ret = []
+    for eft_var in variations:
+        if len(eft_var) == 0 or len(eft_var) == 2:
+            continue
+        ret.append(eft_var[0])
+    return ret
+
+
 def buildWeightVariations() -> dict:
     eftVariations = getEFTVariations()
     print(eftVariations)
