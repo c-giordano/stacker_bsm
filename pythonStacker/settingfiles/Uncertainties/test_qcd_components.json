@@ -1,0 +1,23 @@
+{
+    "scalevar_one": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "scaleVariations[:, 0]",
+        "aliasDown": "scaleVariations[:, 1]"
+    },
+    "scalevar_two": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "scaleVariations[:, 2]",
+        "aliasDown": "scaleVariations[:, 3]"
+    },
+    "scalevar_three": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "scaleVariations[:, 4]",
+        "aliasDown": "scaleVariations[:, 5]"
+    }
+}

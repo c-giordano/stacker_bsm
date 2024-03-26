@@ -8,7 +8,7 @@ import numpy as np
 from src.histogramTools import HistogramManager
 from src.variables.variableReader import VariableReader, Variable
 from src import generate_binning
-from src.configuration import load_channels, load_uncertainties, Uncertainty
+from src.configuration import load_channels_and_subchannels, load_uncertainties, Uncertainty
 import src.histogramTools.converters as cnvrt
 from src.datacardTools import DatacardWriter
 
@@ -54,17 +54,6 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
         statunc = np.zeros(len(input_histogram))
     ret_th1 = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
     rootfile[outputname] = ret_th1
-
-
-def load_channels_and_subchannels(channelfile):
-    channels = load_channels(channelfile)
-    ret = dict()
-    for channelname, channelinfo in channels.items():
-        ret[channelname] = channelinfo
-        for subchannelname, info in channelinfo.subchannels.items():
-            ret[channelname + subchannelname] = info
-
-    return ret
 
 
 def get_pretty_channelnames(dc_settings):
@@ -116,10 +105,12 @@ if __name__ == "__main__":
             for systname, syst in shape_systematics.items():
                 if systname == "nominal" or systname == "stat_unc":
                     continue
-                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst}Up/{process}"
-                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst}Down/{process}"
-                convert_and_write_histogram(histograms[var_name][syst]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-                convert_and_write_histogram(histograms[var_name][syst]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                if not syst.is_process_relevant(process):
+                    continue
+                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{systname}Up/{process}"
+                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{systname}Down/{process}"
+                convert_and_write_histogram(histograms[var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
+                convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
     rootfile.close()
 

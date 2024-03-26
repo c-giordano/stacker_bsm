@@ -26,6 +26,8 @@ def arguments():
 
 
 def get_eftvariations_filename(storage: str, filename: str, eventclass) -> str:
+    if not os.path.exists(os.path.join(storage, "eftWeights")):
+        os.makedirs(os.path.join(storage, "eftWeights"))
     return os.path.join(storage, "eftWeights", "evClass_" + str(eventclass) + "_wgts.parquet")
 
 

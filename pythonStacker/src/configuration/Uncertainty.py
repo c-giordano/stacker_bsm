@@ -1,4 +1,3 @@
-# TODO: add support for processes flags such as "MC"/"AllMC"/...
 
 class Uncertainty:
     def __init__(self, name, dict_entry):
@@ -69,6 +68,8 @@ class Uncertainty:
     def is_process_relevant(self, process):
         if self.processes[0] == "all":
             return True
+        elif self.processes[0].lower() in ["mconly", "mcall"]:
+            return not ("nonPrompt" in process or "ChargeMisID" in process)
         return process in self.processes
 
     def get_weight_aliases(self):

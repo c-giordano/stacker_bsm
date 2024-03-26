@@ -50,7 +50,7 @@ def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath
     # load content:
     outputfilename = "total_systematic_"
     if len(years) == 1:
-        outputfilename += years[0] + "_"
+        outputfilename += years[0]
     elif len(years) < 4:
         outputfilename += "_".join(years)
     else:

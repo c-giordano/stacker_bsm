@@ -93,11 +93,18 @@ def get_tree_from_file(filename, processname) -> uproot.TTree:
         for key, classname in current_rootfile.classnames().items():
             if classname != "TTree":
                 continue
+            if "Namingscheme" in key:
+                continue
             current_tree: uproot.TTree = current_rootfile[key]
             break
 
     return current_tree
 
+
+def clean_systematics(systematics: dict[str, Uncertainty], process):
+    ret = {name: unc for name, unc in systematics.items() if unc.is_process_relevant(process)}
+    return ret
+            
 
 if __name__ == "__main__":
     # parse arguments
@@ -117,6 +124,7 @@ if __name__ == "__main__":
     else:
         systematics: dict = dict()
 
+    systematics = clean_systematics(systematics, args.process)
     if args.systematic != "shape":
         systematics["nominal"] = Uncertainty("nominal", {})
         systematics["stat_unc"] = Uncertainty("stat_unc", {})
@@ -183,6 +191,7 @@ if __name__ == "__main__":
             # load data:
             data = get_histogram_data(variable, current_tree, channel)
 
+            print(variable.name)
             for name, syst in systematics.items():
                 if name == "stat_unc":
                     # don't need a dedicated run for this; should be filled before
@@ -197,7 +206,7 @@ if __name__ == "__main__":
                     hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
                     output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
                     output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
-
+                
                 for subchannel_name in subchannelnames:
                     if name == "stat_unc":
                         # don't need a dedicated run for this; should be filled before

@@ -1,11 +1,19 @@
 {
-    "HT" : {
-        "range": [200.0, 2000.0],
-        "nbins": 18,
-        "axis_label": "H_T",
+    "HT_SRs" : {
+        "range": [200.0, 1000.0],
+        "nbins": 16,
+        "axis_label": "$H_T$",
         "branch_name": "jetPt",
         "method_name": "sum_branch",
-        "channels": ["all"]
+        "channels": ["SR-2L", "SR-3L"]
+    },
+    "HT_CRs" : {
+        "range": [0.0, 1000.0],
+        "nbins": 20,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B", "CR-3L-Z", "CR-4L-Z", "CR-3L-2J1B"]
     },
     "NJets": {
         "range": [-0.5, 10.5],
@@ -32,27 +40,27 @@
         "channels": ["all"]
     },
     "BDTScore_TTTT": {
-        "range": [0.0, 3.0],
-        "nbins": 15,
+        "range": [0.6, 3.0],
+        "nbins": 12,
         "branch_name": "fourTopScore",
         "axis_label": "TTTT Score",
-        "method_name": "tanh",
+        "method_name": "tanh_flat",
         "channels": ["all"]
     },
     "BDTScore_TTX": {
-        "range": [0.0, 3.0],
-        "nbins": 15,
+        "range": [0.6, 3.0],
+        "nbins": 12,
         "branch_name": "ttWScore",
         "axis_label": "TTX Score",
-        "method_name": "tanh",
+        "method_name": "tanh_flat",
         "channels": ["all"]
     },
     "BDTScore_NP": {
-        "range": [0.0, 3.0],
-        "nbins": 15,
+        "range": [0.6, 3.0],
+        "nbins": 12,
         "branch_name": "ttbarScore",
         "axis_label": "TT Score",
-        "method_name": "tanh",
+        "method_name": "tanh_flat",
         "channels": ["all"]
     },
     "ptmiss": {

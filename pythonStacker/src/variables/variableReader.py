@@ -11,11 +11,21 @@ class Variable:
         self.method_name = data.get("method_name", "")
         self.branch_name = data.get("branch_name", "")
         self.axis_label = data.get("axis_label", "")
+
         # Add more attributes as needed, with default values
+        self.channels = data.get("channels", ["all"])
+        if type(self.channels) is not list:
+            self.channels = [self.channels]
 
     def get_method(self):
         return get_method_from_str(self.method_name)
 
+    def is_channel_relevant(self, channel):
+        if self.channel[0] == "all":
+            return True
+        if any([channel in option for option in self.channels]):
+            return True
+        return False
 
 class VariableReader:
     def __init__(self, filename: str, variables: list):
@@ -28,6 +38,8 @@ class VariableReader:
             self.variables = list(data.keys())
         else:
             self.variables = variables
+        if type(self.variables) is not list:
+            self.variables = [self.variables]
 
         self.nvar = len(self.variables)
         self.variable_objects: dict[str, Variable] = {}

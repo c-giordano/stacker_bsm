@@ -1,0 +1,12 @@
+{
+    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/eft_test",
+    "Processes": {
+        "TTTT": {
+            "fileglobs": ["Tree_TTTT_*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "hasEFT": 1,
+            "pretty_name": "t\\bar{t}t\\bar{t}"
+        }
+    }
+}

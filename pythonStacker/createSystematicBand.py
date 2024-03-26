@@ -6,7 +6,7 @@ import awkward as ak
 import numpy as np
 
 from submitHistogramCreation import args_add_settingfiles, args_select_specifics
-from src.configuration import load_uncertainties, load_channels, Uncertainty
+from src.configuration import load_uncertainties, load_channels_and_subchannels, Uncertainty
 from src.variables.variableReader import VariableReader, Variable
 from src.histogramTools import HistogramManager
 
@@ -37,6 +37,13 @@ def parse_arguments() -> argparse.Namespace:
         exit(1)
 
     return args
+
+
+def get_systematics_per_process(systematics: dict, processes):
+    ret = dict()
+    for process in processes:
+        ret[process] = {name: unc for name, unc in systematics.items() if unc.is_process_relevant(process)}
+    return ret
 
 
 def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty, histograms_proc: dict[str, dict[str, HistogramManager]]):
@@ -106,7 +113,7 @@ def get_uncertainty_variation_flat(variable: Variable, uncertainty: Uncertainty,
             variation += (var_process * var_process)
 
     if uncertainty.correlated_process:
-        return np.power(variation, 2)
+        return np.power(variation, 2), np.power(variation, 2)
     else:
         return variation, variation
 
@@ -142,17 +149,19 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
 
 def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict, channel: str):
     ret = dict()
-    for variable in variables:
+    for _, variable in variables.get_variable_objects().items():
         ret[variable.name] = uncertaintyloop(variable, histograms_proc, uncertainties, channel)
     return ret
 
 
-def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list):
+def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list, processes):
     uncertainties = {**systematics_shape, **systematics_flat}
+
+    unc_per_process = get_systematics_per_process(systematics_shape, list(processes.keys()))
 
     outputfilename = "total_systematic_"
     if len(years) == 1:
-        outputfilename += years[0] + "_"
+        outputfilename += years[0]
     elif len(years) < 4:
         outputfilename += "_".join(years)
     else:
@@ -160,6 +169,7 @@ def channelloop(channels, variables: VariableReader, systematics_shape: dict, sy
     outputfilename += ".parquet"
 
     for channelname, info in channels.items():
+        print(channelname)
         # update storagepath to include channel
         storagepath = args.storage
         storagepath = os.path.join(storagepath, channelname)
@@ -168,7 +178,7 @@ def channelloop(channels, variables: VariableReader, systematics_shape: dict, sy
         for process, _ in processes.items():
             histograms_proc[process] = dict()
             for year in years:
-                histograms_proc[process][year] = HistogramManager(storagepath, process, variables, list(systematics_shape.keys()), year=year)
+                histograms_proc[process][year] = HistogramManager(storagepath, process, variables, list(unc_per_process[process].keys()), year=year)
                 histograms_proc[process][year].load_histograms()
 
         results = variableloop(variables, histograms_proc, uncertainties, channelname)
@@ -202,5 +212,5 @@ if __name__ == "__main__":
         basedir = processfile["Basedir"]
 
     # prepare channels:
-    channels = load_channels(args.channelfile)
-    channelloop(channels, variables, systematics_shape, systematics_flat, args.years)
+    channels = load_channels_and_subchannels(args.channelfile)
+    channelloop(channels, variables, systematics_shape, systematics_flat, args.years, processes)

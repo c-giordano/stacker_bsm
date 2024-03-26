@@ -65,7 +65,14 @@ class HistogramManager:
         return ret
 
     def load_histogram(self, var: str, sys: str = "nominal"):
-        content = ak.from_parquet(self.get_name(var, sys))
+        if os.path.exists(self.get_name(var, sys)):
+            content = ak.from_parquet(self.get_name(var, sys))
+        else:
+            content = dict()
+            print(f"Note: Variable {var} for systematic {sys} does not exist with base {self.base_name[var]}.")
+            content["Up"] = np.zeros(1)
+            content["Down"] = np.zeros(1)
+        
         # if sys == "nominal" or sys == "stat_unc":
         #     content = ak.from_parquet(self.get_name(var, sys))
         # else:

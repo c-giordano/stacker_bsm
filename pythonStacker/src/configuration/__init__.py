@@ -32,6 +32,17 @@ def load_channels(channelfile) -> dict:
     return ret
 
 
+def load_channels_and_subchannels(channelfile) -> dict:
+    channels = load_channels(channelfile)
+    ret = dict()
+    for channelname, channelinfo in channels.items():
+        ret[channelname] = channelinfo
+        for subchannelname, info in channelinfo.subchannels.items():
+            ret[channelname + subchannelname] = info
+
+    return ret
+
+
 # TODO: fix init
 class Channel:
     def __init__(self, channelinfo, full_channelfile, ignore_proc=[]) -> None:

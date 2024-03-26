@@ -1,0 +1,10 @@
+{
+    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-03-12_17-00",
+    "Processes": {
+        "TTW": {
+            "fileglobs": ["Tree_TTWJetsToLNu*MCPrompt", "Tree_ttWJetsToLNu_5f_EWK*MCPrompt"],
+            "color": "#006600",
+            "pretty_name": "t\\bar{t}W"
+        }
+    }
+}
