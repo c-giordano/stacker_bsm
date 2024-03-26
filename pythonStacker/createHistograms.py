@@ -12,7 +12,7 @@ import src
 from src.variables.variableReader import VariableReader, Variable
 from src.variables.weightManager import WeightManager
 from src.histogramTools import HistogramManager
-from submitHistogramCreation import args_add_settingfiles, args_select_specifics
+from submitHistogramCreation import args_add_settingfiles, args_select_specifics, args_add_toggles
 from src.configuration import load_uncertainties, Channel, Uncertainty
 
 """
@@ -36,6 +36,7 @@ def parse_arguments() -> argparse.Namespace:
     # add file arguments
     args_add_settingfiles(parser)
     args_select_specifics(parser)
+    args_add_toggles(parser)
 
     parser.add_argument("--storage", dest="storage", type=str,
                         default="Intermediate", help="Path at which the \
@@ -137,6 +138,21 @@ if __name__ == "__main__":
         if channel.isSubchannel:
             print("Current channel is a subchannel. Nothing to be done. Exiting...")
             exit(0)
+
+    # TODO: should this be a global variable?
+    globalEFTToggle = args.UseEFT and processinfo.get("isEFT", 0) > 0
+    if globalEFTToggle:
+        import plugins.eft as eft
+        # load names of EFT Variatioons
+        # add to weightmanager -> later on
+        # already add to systematics:
+        eft_variations = eft.getEFTVariationsGroomed()
+        for eft_var in eft_variations:
+            tmp_dict = {
+                "processes": args.process,
+                "isEFT": 1
+            }
+            systematics[eft_var] = Uncertainty(eft_var, tmp_dict)
 
     # Now also do this for systematic variations? How though?
     # Maybe add an argument for the systematic variations to produce, can define these somewhere.

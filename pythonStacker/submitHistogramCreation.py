@@ -30,6 +30,11 @@ def args_select_specifics(parser: argparse.ArgumentParser):
                         type=str, help='Specific channel.')
 
 
+def args_add_toggles(parser: argparse.ArgumentParser):
+    parser.add_argument('--EFT', '--eft', dest="UseEFT", default=False, action="store_true",
+                        type=bool, help="toggle to include EFT variations")
+
+
 def arguments():
     parser = argparse.ArgumentParser(description='Your program description')
 
@@ -37,6 +42,7 @@ def arguments():
     # Adding files, reused in createHistograms
     args_add_settingfiles(parser)
     args_select_specifics(parser)
+    args_add_toggles(parser)
     # Adding further selections:
 
     args = parser.parse_args()
@@ -90,6 +96,8 @@ if __name__ == "__main__":
                     command += f" --variable {args.variable}"
                 if args.systematic is not None:
                     command += f" --systematic {args.systematic}"
+                if args.UseEFT is True:
+                    command += " --EFT"
 
                 commandset_process.append(command)
 
