@@ -148,8 +148,9 @@ if __name__ == "__main__":
             exit(0)
 
     # TODO: should this be a global variable?
-    globalEFTToggle = args.UseEFT and processinfo.get("isEFT", 0) > 0
+    globalEFTToggle = args.UseEFT and processinfo.get("hasEFT", 0) > 0
     if globalEFTToggle:
+        print("USING EFT")
         import plugins.eft as eft
         # load names of EFT Variatioons
         # add to weightmanager -> later on
@@ -186,6 +187,7 @@ if __name__ == "__main__":
         files.extend(true_files)
 
     for filename in files:
+        print(f"opening file {filename}")
         # filebase should not include a suffix
         # generate basepath with correct folder, folder has timestamp now
         # then:
@@ -201,8 +203,9 @@ if __name__ == "__main__":
         # no structure yet to load systematics weights. Weightmanager? Or move to systematics loop?
         # Does imply more overhead in reading, can try here, see what memory effect it has, otherwise move to systematics.
         # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
+        print("Loading weights...")
         weights = WeightManager(current_tree, channel.selection, systematics)
-
+        print("Done!")
         for _, variable in variables.get_variable_objects().items():
             # load data:
             data = get_histogram_data(variable, current_tree, channel)

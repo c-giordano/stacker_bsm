@@ -32,7 +32,7 @@ def args_select_specifics(parser: argparse.ArgumentParser):
 
 def args_add_toggles(parser: argparse.ArgumentParser):
     parser.add_argument('--EFT', '--eft', dest="UseEFT", default=False, action="store_true",
-                        type=bool, help="toggle to include EFT variations")
+                        help="toggle to include EFT variations")
 
 
 def arguments():

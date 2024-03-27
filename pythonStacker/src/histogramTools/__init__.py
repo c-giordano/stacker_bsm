@@ -46,6 +46,7 @@ class HistogramManager:
         self.histograms[key] = value
 
     def get_name(self, var: str, sys: str = "nominal"):
+        print(self.base_name[var] + sys + ".parquet")
         return self.base_name[var] + sys + ".parquet"
 
     def load_histograms(self):
