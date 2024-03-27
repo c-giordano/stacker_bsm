@@ -24,7 +24,7 @@ class HistogramManager:
                     os.makedirs(self.cache_folder[var])
                 except FileExistsError:
                     print(f"Folder {self.cache_folder[var]} exists. Makedirs failed.")
-                
+
             self.base_name[var] = os.path.join(self.cache_folder[var], filename)
 
             if self.systematics is None:
@@ -46,7 +46,7 @@ class HistogramManager:
         self.histograms[key] = value
 
     def get_name(self, var: str, sys: str = "nominal"):
-        print(self.base_name[var] + sys + ".parquet")
+        # print(self.base_name[var] + sys + ".parquet")
         return self.base_name[var] + sys + ".parquet"
 
     def load_histograms(self):
@@ -73,7 +73,7 @@ class HistogramManager:
             print(f"Note: Variable {var} for systematic {sys} does not exist with base {self.base_name[var]}.")
             content["Up"] = np.zeros(1)
             content["Down"] = np.zeros(1)
-        
+
         # if sys == "nominal" or sys == "stat_unc":
         #     content = ak.from_parquet(self.get_name(var, sys))
         # else:

@@ -31,6 +31,10 @@ class eft_reweighter:
         coeffs = self.hyperPoly.get_parametrization(weights)
         return coeffs
 
+    def transform_weights_parallel(self, weights):
+        coeffs = self.hyperPoly.get_parametrization_parallel(weights)
+        return coeffs
+
 
 def getEFTVariations():
     weightInfo = WeightInfo('plugins/eft/TTTT_MS_reweight_card.pkl')

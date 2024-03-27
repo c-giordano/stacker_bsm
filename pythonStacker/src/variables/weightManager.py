@@ -14,11 +14,8 @@ class WeightManager():
         self.hasEFT = False
         aliases = self.construct_aliases(systematics)
         keys = list(aliases.keys())
-        print(aliases)
-        print(keys)
-        print(selection)
+        self.eft_initialized = False
         self.weights = tree.arrays(keys, cut=selection, aliases=aliases)
-        self.add_eftvariations()
 
     def construct_aliases(self, systematics: dict[str, Uncertainty]):
         aliases = dict()
@@ -35,16 +32,19 @@ class WeightManager():
             aliases.update(tmp)
         return aliases
 
-    def add_eftvariations(self):
+    def add_eftvariations(self, filepath):
         if not self.hasEFT:
             return
-        filepath = ""
         self.eft_variations = ak.from_parquet(filepath)
+        self.eft_initialized = True
         # TODO: extend record self.weights with this new record, or maybe not, idk
 
     def __getitem__(self, key):
         if "EFT_" in key:
-            return self.eft_variations[key]
+            if not self.eft_initialized:
+                print("EFT Variations were not initialized! Exiting...")
+                exit(1)
+            return self["nominal"] * self.eft_variations[key]
         return self.weights[key]
 
     def __setitem__(self, key, value):

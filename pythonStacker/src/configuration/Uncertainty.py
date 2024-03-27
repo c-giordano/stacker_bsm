@@ -38,7 +38,7 @@ class Uncertainty:
         else:
             self.weight_key_down = self.name + "Down"
 
-        if dict_entry.get("isEFT", 0) > 1:
+        if dict_entry.get("isEFT", 0) > 0:
             self.weight_key_up = self.name
 
     @property

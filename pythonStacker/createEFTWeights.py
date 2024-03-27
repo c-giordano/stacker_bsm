@@ -2,13 +2,14 @@
 For files with eft weights, prepare and store the weights per event class, since it takes a lot of computing time.
 """
 
-from plugins.eft import eft_reweighter
+import plugins.eft as eft
+
 import awkward as ak
 import uproot
 import argparse
 import os
 
-from createHistograms import get_tree_from_file
+import src
 
 
 def arguments():
@@ -33,26 +34,37 @@ def get_eftvariations_filename(storage: str, filename: str, eventclass) -> str:
 
 def reweight_and_write(reweighter, eventclass, tree, storage):
     arrs = tree.arrays(["eftVariationsNorm"], "eventClass==" + str(eventclass), aliases={"eftVariationsNorm": "eftVariations/eftVariations[:,0]"})
-
     # should become a record rather than a single array, using the naming scheme I devised in the init
 
-    var = ak.Array(reweighter.transform_weights(entry[1:]) for entry in arrs.eftVariationsNorm)
+    import numpy as np
+    # var = np.array([reweighter.transform_weights(entry[1:]) for entry in arrs.eftVariationsNorm])
+    var = np.transpose(np.array(reweighter.transform_weights_parallel(ak.to_numpy(arrs.eftVariationsNorm[:, 1:]))))
 
     if len(var) == 0:
         return
 
+    # print(var)
+    # print(var_par)
+    # print(np.all(np.isclose(var, var_par)))
+    # exit()
+
+    # postprocess: get names, then make dict, then make record
+    final_prerecord = dict()
+    eft_names = ["Central"] + eft.getEFTVariationsGroomed()
+    for i, name in enumerate(eft_names):
+        final_prerecord[name] = var[:, i]
     outputfile = get_eftvariations_filename(storage, "", eventclass)
-    ak.to_parquet(var, outputfile)
+    ak.to_parquet(ak.Record(final_prerecord), outputfile)
     return
 
 
 if __name__ == "__main__":
     args = arguments()
 
-    reweighter = eft_reweighter()
+    reweighter = eft.eft_reweighter()
     # tree = uproot.open(args.inputfile)
 
-    tree = get_tree_from_file(args.inputfile, "TTTT_EFT")
+    tree = src.get_tree_from_file(args.inputfile, "TTTT_EFT")
     if (int(args.eventclass) == -1):
         for i in range(15):
             reweight_and_write(reweighter, i, tree, args.storage)

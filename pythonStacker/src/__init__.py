@@ -1,4 +1,8 @@
 import numpy as np
+import uproot
+"""
+Some general tools to create histograms
+"""
 
 
 def generate_binning(range, nbins):
@@ -54,3 +58,26 @@ def histogram_w_unc_flow(data, range, wgts, nbins):
     uncertainty = np.sqrt(sq_binned_data)
 
     return binned_data, raw_bins, uncertainty
+
+
+"""
+ROOTFile management tools:
+"""
+
+
+def get_tree_from_file(filename, processname) -> uproot.TTree:
+    current_rootfile = uproot.open(filename)
+
+    try:
+        current_tree: uproot.TTree = current_rootfile[processname]
+    except KeyError:
+        print(f"{processname} not found in the file {filename}. Trying other keys.")
+        for key, classname in current_rootfile.classnames().items():
+            if classname != "TTree":
+                continue
+            if "Namingscheme" in key:
+                continue
+            current_tree: uproot.TTree = current_rootfile[key]
+            break
+
+    return current_tree

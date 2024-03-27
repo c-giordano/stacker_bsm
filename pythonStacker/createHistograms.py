@@ -14,6 +14,7 @@ from src.variables.weightManager import WeightManager
 from src.histogramTools import HistogramManager
 from submitHistogramCreation import args_add_settingfiles, args_select_specifics, args_add_toggles
 from src.configuration import load_uncertainties, Channel, Uncertainty
+from createEFTWeights import get_eftvariations_filename
 
 """
 Script that takes as input a file or set of files, applies cross sections and necessary normalizations (if still needed), and then creates a histogram.
@@ -84,28 +85,10 @@ def create_histogram(variable: Variable, data, weights):
     return hist_content, hist_unc
 
 
-def get_tree_from_file(filename, processname) -> uproot.TTree:
-    current_rootfile = uproot.open(filename)
-
-    try:
-        current_tree: uproot.TTree = current_rootfile[processname]
-    except KeyError:
-        print(f"{processname} not found in the file {filename}. Trying other keys.")
-        for key, classname in current_rootfile.classnames().items():
-            if classname != "TTree":
-                continue
-            if "Namingscheme" in key:
-                continue
-            current_tree: uproot.TTree = current_rootfile[key]
-            break
-
-    return current_tree
-
-
 def clean_systematics(systematics: dict[str, Uncertainty], process):
     ret = {name: unc for name, unc in systematics.items() if unc.is_process_relevant(process)}
     return ret
-            
+
 
 if __name__ == "__main__":
     # parse arguments
@@ -156,6 +139,7 @@ if __name__ == "__main__":
         # add to weightmanager -> later on
         # already add to systematics:
         eft_variations = eft.getEFTVariationsGroomed()
+        # print(eft_variations)
         for eft_var in eft_variations:
             tmp_dict = {
                 "processes": args.process,
@@ -196,7 +180,7 @@ if __name__ == "__main__":
         # then loop variables
         # if args.systematic == "weight":
         # loop variables
-        current_tree: uproot.TTree = get_tree_from_file(filename, args.process)
+        current_tree: uproot.TTree = src.get_tree_from_file(filename, args.process)
         # generates masks for subchannels
         subchannelmasks, subchannelnames = channel.produce_masks(current_tree)
 
@@ -205,12 +189,14 @@ if __name__ == "__main__":
         # weights = ak.to_numpy(current_tree.arrays(["weights"], cut=channel.selection, aliases={"weights": "nominalWeight"}).weights)
         print("Loading weights...")
         weights = WeightManager(current_tree, channel.selection, systematics)
+        if globalEFTToggle:
+            eventclass = channel.selection.split("==")[-1]
+            weights.add_eftvariations(get_eftvariations_filename(args.storage, filename, eventclass))
         print("Done!")
         for _, variable in variables.get_variable_objects().items():
             # load data:
             data = get_histogram_data(variable, current_tree, channel)
 
-            print(variable.name)
             for name, syst in systematics.items():
                 if name == "stat_unc":
                     # don't need a dedicated run for this; should be filled before
@@ -225,7 +211,7 @@ if __name__ == "__main__":
                     hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
                     output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
                     output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
-                
+
                 for subchannel_name in subchannelnames:
                     if name == "stat_unc":
                         # don't need a dedicated run for this; should be filled before

@@ -75,11 +75,11 @@ class HyperPoly:
         self.N   = len( param_points )
         print(len(param_points))
         # Coordinates
-        self.param_points = param_points 
+        self.param_points = np.array(param_points)
         # Number of variables
         self.nvar = len( param_points[0] ) 
         # Reference point
-        self.ref_point = ref_point if ref_point is not None else tuple([0 for var in range(self.nvar)])
+        self.ref_point = np.array(ref_point) if ref_point is not None else np.array(tuple([0 for var in range(self.nvar)]))
         # Check reference point
         if len(self.ref_point)!=self.nvar:
             logger.error('Reference point has length %i but should have length %i', len(self.ref_point), self.nvar )
@@ -118,15 +118,31 @@ class HyperPoly:
     def get_parametrization( self, weights ): 
         ''' Obtain the parametrization for given weights
         '''
-        if len(weights)!=self.N:
+        # print("original")
+        if len(weights) != self.N:
             raise ValueError( "Need %i weights that correspond to the same number of param_points. Got %i." % (self.N, len(weights)) )
         b = np.array( [ self.wEXT_expectation( weights, self.combination[d] ) for d in range(self.ndof) ] )
+        return np.dot(self.Ainv, b)
+
+    def get_parametrization_parallel( self, weights):
+        ''' Obtain the parametrization for given weights
+        '''
+        # print("parallel")
+        if len(weights[0]) != self.N:
+            raise ValueError( "Need %i weights that correspond to the same number of param_points. Got %i." % (self.N, len(weights)) )
+        b = np.array( [ self.wEXT_expectation_parallel( weights, self.combination[d] ) for d in range(self.ndof) ] )
         return np.dot(self.Ainv, b)
 
     def wEXT_expectation(self, weights, combination ):
         ''' Compute <wEXT ijk...> = 1/Nmeas Sum_meas( wEXT_meas*i_meas*j_meas*k_meas... )
         '''
-        return sum( [ weights[n]*np.prod( [ (self.param_points[n][elem]-self.ref_point[elem]) for elem in combination ] ) for n in range(self.N) ] ) / float(self.N)
+        return sum( [ weights[n] * np.prod( [ (self.param_points[n][elem]-self.ref_point[elem]) for elem in combination ] ) for n in range(self.N) ] ) / float(self.N)
+
+    def wEXT_expectation_parallel(self, weights, combination ):
+        ''' Compute <wEXT ijk...> = 1/Nmeas Sum_meas( wEXT_meas*i_meas*j_meas*k_meas... )
+        '''
+        return np.sum(np.array([weights[:, n] * np.prod([(self.param_points[n][elem]-self.ref_point[elem]) for elem in combination]) for n in range(self.N)] ), axis=0) / float(self.N)
+
 
     def expectation(self, combination ):
         ''' Compute <wEXT ijk...> = 1/Nmeas Sum_meas( i_meas*j_meas*k_meas... )

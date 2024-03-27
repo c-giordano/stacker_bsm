@@ -82,6 +82,12 @@ def modify_yrange(total_content, axis, ratio=False):
     axis.set_ylim((cont_min, cont_max))
 
 
+def modify_yrange_shape(total_content, axis, maxscale=1.8):
+    cont_max = maxscale * np.max(total_content)
+    cont_min = 0.8 * np.min(total_content)
+    axis.set_ylim((cont_min, cont_max))
+
+
 def get_lumi(years):
     total_lumi = 0.
     lumi = {
@@ -97,6 +103,25 @@ def get_lumi(years):
     if total_lumi >= 100.:
         total_lumi = round(total_lumi)
     return total_lumi
+
+
+def generate_outputfolder(years, outputfolder, suffix=""):
+    # outputfolder with year:
+    outputsubfolder = ""
+    if len(years) == 1:
+        outputsubfolder += "_" + years[0]
+    elif len(years) < 4:
+        outputsubfolder += "_" + "_".join(years)
+    else:
+        outputsubfolder += "_Run2"
+
+    outputsubfolder += suffix
+
+    outputfolder_base = os.path.join(outputfolder, outputsubfolder)
+    if not os.path.exists(outputfolder_base):
+        os.makedirs(outputfolder_base)
+    copy_index_html(outputfolder_base)
+    return outputfolder_base
 
 
 def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, years: list, ratio=True, no_uncertainty=False, shapes=False):  # , samplelist: str, plotdir: str, storagepath: str):
@@ -177,18 +202,8 @@ if __name__ == "__main__":
     storagepath = args.storage
 
     # outputfolder with year:
-    outputsubfolder = ""
-    if len(args.years) == 1:
-        outputsubfolder += "_" + args.years[0]
-    elif len(args.years) < 4:
-        outputsubfolder += "_" + "_".join(args.years)
-    else:
-        outputsubfolder += "_Run2"
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder)
 
-    outputfolder_base = os.path.join(args.outputfolder, outputsubfolder)
-    if not os.path.exists(outputfolder_base):
-        os.makedirs(outputfolder_base)
-    copy_index_html(outputfolder_base)
     print(channels)
     for channel in channels:
         if args.channel is not None and channel != args.channel:
