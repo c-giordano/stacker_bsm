@@ -12,9 +12,9 @@ import src
 from src.variables.variableReader import VariableReader, Variable
 from src.variables.weightManager import WeightManager
 from src.histogramTools import HistogramManager
-from submitHistogramCreation import args_add_settingfiles, args_select_specifics, args_add_toggles
 from src.configuration import load_uncertainties, Channel, Uncertainty
 from createEFTWeights import get_eftvariations_filename
+import src.arguments as arguments
 
 """
 Script that takes as input a file or set of files, applies cross sections and necessary normalizations (if still needed), and then creates a histogram.
@@ -35,13 +35,10 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Process command line arguments.')
 
     # add file arguments
-    args_add_settingfiles(parser)
-    args_select_specifics(parser)
-    args_add_toggles(parser)
-
-    parser.add_argument("--storage", dest="storage", type=str,
-                        default="Intermediate", help="Path at which the \
-                        histograms are stored")
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_toggles(parser)
+    arguments.add_tmp_storage(parser)
 
     # Parse arguments
     args = parser.parse_args()

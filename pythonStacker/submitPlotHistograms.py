@@ -1,20 +1,20 @@
 import argparse
 import src.jobSubmission.condorTools as ct
 
-from submitHistogramCreation import args_add_settingfiles, args_select_specifics
+import src.arguments as arguments
 
 
-def arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(description='Script to submit plotting of histograms')
-    args_add_settingfiles(parser)
-    args_select_specifics(parser)
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
 
     args = parser.parse_args()
     return args
 
 
 if __name__ == "__main__":
-    args = arguments()
+    args = parse_arguments()
 
     basecommand = "python3 plotHistograms.py"
     basecommand += f" --variablefile {args.variablefile}"

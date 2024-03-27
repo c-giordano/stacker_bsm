@@ -12,8 +12,7 @@ from src.configuration import load_channels_and_subchannels, load_uncertainties,
 import src.histogramTools.converters as cnvrt
 from src.datacardTools import DatacardWriter
 
-from submitHistogramCreation import args_add_settingfiles  # , args_select_specifics
-
+import src.arguments as arguments
 """
 Script to generate a bunch of datacards.
 If the inputhistograms don't exist, it will create these.
@@ -21,10 +20,12 @@ Need a writer class I guess, needs to
 """
 
 
-def arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(description='Process some integers.')
 
-    args_add_settingfiles(parser)
+    arguments.add_settingfiles(parser)
+    arguments.add_tmp_storage(parser)
+    arguments.add_toggles(parser)
     # args_select_specifics(parser)
 
     parser.add_argument("-dcf", "--datacardfile", dest="datacardfile",
@@ -32,9 +33,6 @@ def arguments():
     parser.add_argument("-op", "--outputpath", dest="outputpath",
                         type=str, help="Path to outputfolder for DC.",
                         default="output/datacards/")
-    parser.add_argument("--storage", dest="storage", type=str,
-                        default="Intermediate", help="Path at which the \
-                        histograms are stored")
 
     # TODO: figure out how to add in EFT stuff.
     # Current idea: use a flag to switch between the types of DCs we write. BSM does require additional config saying which things to combine.
@@ -62,7 +60,7 @@ def get_pretty_channelnames(dc_settings):
 
 
 if __name__ == "__main__":
-    args = arguments()
+    args = parse_arguments()
 
     # TODO: for systematics, add a year filter or something, so that we don't introduce 10 different config files.
     with open(args.datacardfile, 'r') as f:

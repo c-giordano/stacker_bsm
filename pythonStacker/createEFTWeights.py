@@ -5,14 +5,13 @@ For files with eft weights, prepare and store the weights per event class, since
 import plugins.eft as eft
 
 import awkward as ak
-import uproot
 import argparse
 import os
 
 import src
 
 
-def arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(description=__doc__)
 
     parser.add_argument("-f", "--file", dest="inputfile", action="store", required=True,
@@ -43,11 +42,6 @@ def reweight_and_write(reweighter, eventclass, tree, storage):
     if len(var) == 0:
         return
 
-    # print(var)
-    # print(var_par)
-    # print(np.all(np.isclose(var, var_par)))
-    # exit()
-
     # postprocess: get names, then make dict, then make record
     final_prerecord = dict()
     eft_names = ["Central"] + eft.getEFTVariationsGroomed()
@@ -59,7 +53,7 @@ def reweight_and_write(reweighter, eventclass, tree, storage):
 
 
 if __name__ == "__main__":
-    args = arguments()
+    args = parse_arguments()
 
     reweighter = eft.eft_reweighter()
     # tree = uproot.open(args.inputfile)

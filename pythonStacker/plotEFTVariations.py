@@ -8,19 +8,27 @@ from pythonStacker.src.plotTools.figureCreator import create_ratioplot
 
 from src import histogram_w_unc_flow, histogram_w_flow
 
-px = 1 / plt.rcParams['figure.dpi']
+import argparse
+import os
+
+import src.arguments as arguments
+from pythonStacker.createEFTWeights import get_eftvariations_filename
 
 
-def loadEFTWeights(inputfile, eventclass):
-    from pythonStacker.createEFTWeights import get_eftvariations_filename
-    filepath = get_eftvariations_filename(inputfile, eventclass)
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process command line arguments.')
+
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_tmp_storage(parser)
+    arguments.add_plot_output(parser)
+    args = parser.parse_args()
+    return args
+
+
+def loadEFTWeights(inputfile: str, eventclass, storage: str):
+    filepath = get_eftvariations_filename(storage, inputfile, eventclass)
     return ak.from_parquet(filepath)
-
-
-def buildTree(path: str, treesuffix=":test") -> uproot.TTree:
-    tree: uproot.TTree = uproot.open(path + treesuffix)  # type: ignore
-    # does this work as a with
-    return tree
 
 
 def plotEFTVariations(variableValues, varName, nominalWeights, eftWeights, weightVariations, nbins, range, unit="GeV", scaleVar=None):

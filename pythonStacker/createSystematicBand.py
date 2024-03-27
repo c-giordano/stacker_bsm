@@ -5,7 +5,7 @@ import json
 import awkward as ak
 import numpy as np
 
-from submitHistogramCreation import args_add_settingfiles, args_select_specifics
+import src.arguments as arguments
 from src.configuration import load_uncertainties, load_channels_and_subchannels, Uncertainty
 from src.variables.variableReader import VariableReader, Variable
 from src.histogramTools import HistogramManager
@@ -22,12 +22,9 @@ def parse_arguments() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description='Process command line arguments.')
 
     # add file arguments
-    args_add_settingfiles(parser)
-    args_select_specifics(parser)
-
-    parser.add_argument("--storage", dest="storage", type=str,
-                        default="Intermediate", help="Path at which the \
-                        histograms are stored")
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_tmp_storage(parser)
 
     # Parse arguments
     args = parser.parse_args()
@@ -61,8 +58,8 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
 
         for year, hists in hists_per_year.items():
             # get the up and down variation:
-            up_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"])
-            down_diff = ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"])
+            up_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"]))
+            down_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"]))
 
             # keep only variations that are truly showing
             true_up_diff = np.where(up_diff > down_diff, up_diff, down_diff)

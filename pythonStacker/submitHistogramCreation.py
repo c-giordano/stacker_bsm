@@ -2,47 +2,17 @@ import argparse
 import json
 import src.jobSubmission.condorTools as ct
 
-
-def args_add_settingfiles(parser: argparse.ArgumentParser):
-    # Add arguments here
-    parser.add_argument('-vf', '--variablefile', dest="variablefile",
-                        type=str, help='JSON file with variables.')
-    parser.add_argument('-sf', '--systematicsfile', dest="systematicsfile",
-                        type=str, help='JSON file with systematics.')
-    parser.add_argument('-pf', '--processfile', dest='processfile',
-                        type=str, help='JSON file with process definitions.')
-    parser.add_argument('-cf', '--channelfile', dest='channelfile',
-                        type=str, help='JSON file with channel definitions.')
-    parser.add_argument('-y', '--years', dest='years', default=["2016PreVFP", "2016PostVFP", "2017", "2018"], nargs='+',
-                        help='Specific years.')
+import src.arguments as arguments
 
 
-def args_select_specifics(parser: argparse.ArgumentParser):
-    # Add arguments here
-    parser.add_argument('-v', '--variable', dest="variable", default=None,
-                        type=str, help='Specific variable.')
-    # Syst can be "weight", "shape", None, or a specific name
-    parser.add_argument('-s', '--systematic', dest="systematic", default=None,
-                        type=str, help='Specific systematic.')
-    parser.add_argument('-p', '--process', dest='process', default=None,
-                        type=str, help='Specific process.')
-    parser.add_argument('-c', '--channel', dest='channel', default=None,
-                        type=str, help='Specific channel.')
-
-
-def args_add_toggles(parser: argparse.ArgumentParser):
-    parser.add_argument('--EFT', '--eft', dest="UseEFT", default=False, action="store_true",
-                        help="toggle to include EFT variations")
-
-
-def arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(description='Your program description')
 
     # Add arguments
     # Adding files, reused in createHistograms
-    args_add_settingfiles(parser)
-    args_select_specifics(parser)
-    args_add_toggles(parser)
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_toggles(parser)
     # Adding further selections:
 
     args = parser.parse_args()
@@ -56,7 +26,7 @@ def get_keys(file):
 
 
 if __name__ == "__main__":
-    args = arguments()
+    args = parse_arguments()
 
     basecommand = "python3 createHistograms.py"
     basecommand += f" --variablefile {args.variablefile}"

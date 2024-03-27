@@ -4,19 +4,19 @@ import json
 import glob
 import src.jobSubmission.condorTools as ct
 
-from submitHistogramCreation import args_add_settingfiles
+import src.arguments as arguments
 
 
-def arguments():
+def parse_arguments():
     parser = argparse.ArgumentParser(description=__doc__)
 
-    args_add_settingfiles(parser)
+    arguments.add_settingfiles(parser)
     args, args_unknown = parser.parse_known_args()
     return args
 
 
 if __name__ == "__main__":
-    args = arguments()
+    args = parse_arguments()
 
     # loop processes and check which one has EFT, then submit it
     with open(args.processfile, 'r') as f:

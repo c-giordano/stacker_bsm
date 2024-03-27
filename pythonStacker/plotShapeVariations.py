@@ -15,27 +15,17 @@ from plotHistograms import modify_yrange_shape, generate_outputfolder, copy_inde
 
 import plugins.eft as eft
 
-from submitHistogramCreation import args_add_settingfiles, args_select_specifics
+import src.arguments as arguments
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process command line arguments.')
-    # TODO
-    args_add_settingfiles(parser)
-    args_select_specifics(parser)
+    
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_tmp_storage(parser)
+    arguments.add_plot_output(parser)
 
-    default_output = "/user/nivanden/public_html/Interpretations/Plots/"
-    if os.getenv("CMSSW_VERSION") is None:
-        default_output = "output/"
-    parser.add_argument("-o", "--output", dest="outputfolder", action="store", required=False,
-                        default=default_output, help="outputfolder to use for plots")
-    parser.add_argument("--storage", dest="storage", type=str,
-                    default="Intermediate", help="Path at which the \
-                    histograms are stored")
-    # add general specifiers
-    # add toggles
-    # need specifics for: process, maybe channel? Idk see what nominal plotting does
-    # also for year, combined does not make sense here
     args = parser.parse_args()
     return args
 
