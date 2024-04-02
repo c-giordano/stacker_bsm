@@ -69,7 +69,7 @@ def create_multi_ratioplot(lumi=None, wip=True, n_subplots=1):
     """
     plt.style.use(hep.style.CMS)
     mod_style()
-    fig, axs = plt.subplots(n_subplots + 1, 1, sharex="row", gridspec_kw={'height_ratios': [0.75] + [0.25] * n_subplots}, figsize=(800 * px, 941 * px + 191 * px * (n_subplots - 1)))  # 29
+    fig, axs = plt.subplots(n_subplots + 1, 1, sharex="all", gridspec_kw={'height_ratios': [0.75] + [0.25] * n_subplots}, figsize=(800 * px, 941 * px + 191 * px * (n_subplots - 1)))  # 29
     fig.subplots_adjust(left=0.14, right=0.96, top=1. - (0.06 / (0.75 + (n_subplots * 0.25))), bottom=0.12 / (0.75 + (n_subplots * 0.25)), hspace=0.02 * (0.75 + (n_subplots * 0.25)))
     fig.align_ylabels(axs)
 

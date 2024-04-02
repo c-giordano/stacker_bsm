@@ -2,7 +2,7 @@
     "DC_name": "DC_SRs_2018",
     "channelcontent": {
         "SR-2L": {
-            "variable": "HT",
+            "variable": "HT_SRs",
             "prettyname": "SR2L_HT"
         }
     }

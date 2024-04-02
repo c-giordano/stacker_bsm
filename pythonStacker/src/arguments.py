@@ -1,6 +1,7 @@
 import argparse
 import os
 
+
 def add_settingfiles(parser: argparse.ArgumentParser):
     # Add arguments here
     parser.add_argument('-vf', '--variablefile', dest="variablefile",
@@ -31,6 +32,11 @@ def select_specifics(parser: argparse.ArgumentParser):
 def add_toggles(parser: argparse.ArgumentParser):
     parser.add_argument('--EFT', '--eft', dest="UseEFT", default=False, action="store_true",
                         help="toggle to include EFT variations")
+
+
+def add_EFT_choice(parser: argparse.ArgumentParser):
+    parser.add_argument('--EFTop', dest="eft_operator", default="cQQ1",
+                        help="string to choose which WC to consider.")
 
 
 def add_tmp_storage(parser: argparse.ArgumentParser):

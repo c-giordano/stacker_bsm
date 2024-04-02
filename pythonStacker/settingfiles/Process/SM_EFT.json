@@ -1,8 +1,8 @@
 {
-    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/eft_test",
+    "Basedir": "/home/njovdnbo/Documents/Stacker_v2/pythonStacker/testfiles",
     "Processes": {
         "TTTT": {
-            "fileglobs": ["Tree_TTTT_*_MCPrompt"],
+            "fileglobs": ["Tree_TTTT_EFT_*_MCPrompt"],
             "color": "#EF3340",
             "isSignal": 1,
             "hasEFT": 1,

@@ -45,13 +45,13 @@ class DatacardWriter():
         # same for channel -> not super lightweight but ok
         # need to refix this
         for channelname, channel in zip(self.channel_names, self.channels):
-            for process in self.processes:
-                if channel.is_process_excluded(process):
+            for processname, number in self.processes:
+                if channel.is_process_excluded(processname):
                     continue
 
                 channelline += "{:>15s}\t".format(channelname)
-                processline += "{:>15s}\t".format(process)
-                processnumber += "{:>15d}\t".format(0)
+                processline += "{:>15s}\t".format(processname)
+                processnumber += "{:>15d}\t".format(number)
                 rate += "{:>15d}\t".format(-1)
 
         self.outputstring += "{:>25s}\t".format("bin") + channelline + "\n"
@@ -71,7 +71,7 @@ class DatacardWriter():
         for channel in self.channels:
             if not systematic.is_channel_relevant(channel):
                 continue
-            for process in self.processes:
+            for process, number in self.processes:
                 if systematic.is_process_relevant(process):
                     systematic_line += "\t{:>15.2f}".format(systematic.rate)
                     relevant = True
