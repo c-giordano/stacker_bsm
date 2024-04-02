@@ -147,7 +147,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
 
             # load nominal and stat unc? stat unc from EFT sample itself, then nominal is the variation, so:
             content_to_load = ["nominal", "stat_unc", lin_name, quad_name]
-            histograms_eft = HistogramManager(storagepath, "TTTT", variables, content_to_load, args.years[0])
+            histograms_eft = HistogramManager(storagepath, "TTTT_EFT", variables, content_to_load, args.years[0])
             histograms_eft.load_histograms()
 
             content_sm_lin_quad_nominal = sm_histograms[channelname][var_name]["nominal"] + histograms_eft[var_name][lin_name]["Up"] + histograms_eft[var_name][quad_name]["Up"]
