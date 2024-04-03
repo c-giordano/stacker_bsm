@@ -147,6 +147,8 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
 def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict, channel: str):
     ret = dict()
     for _, variable in variables.get_variable_objects().items():
+        if not variable.is_channel_relevant(channel):
+            continue
         ret[variable.name] = uncertaintyloop(variable, histograms_proc, uncertainties, channel)
     return ret
 

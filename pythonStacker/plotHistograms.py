@@ -217,6 +217,8 @@ if __name__ == "__main__":
                 histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
                 histograms[process][year].load_histograms()
         for _, variable in variables.get_variable_objects().items():
+            if not variable.is_channel_relevant(channel):
+                continue
             plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
 
         for subchannel in channels[channel].subchannels.keys():
@@ -234,4 +236,6 @@ if __name__ == "__main__":
                     histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
                     histograms[process][year].load_histograms()
             for _, variable in variables.get_variable_objects().items():
+                if not variable.is_channel_relevant(channel + subchannel):
+                    continue
                 plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)

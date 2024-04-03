@@ -191,6 +191,8 @@ if __name__ == "__main__":
             weights.add_eftvariations(get_eftvariations_filename(args.storage, filename, eventclass))
         print("Done!")
         for _, variable in variables.get_variable_objects().items():
+            if not variable.is_channel_relevant(args.channel):
+                continue
             # load data:
             data = get_histogram_data(variable, current_tree, channel)
 

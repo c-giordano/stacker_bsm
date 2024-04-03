@@ -23,9 +23,10 @@ class Variable:
     def is_channel_relevant(self, channel):
         if self.channel[0] == "all":
             return True
-        if any([channel in option for option in self.channels]):
+        if any([channel in option for option in self.channels]) or any([option in channel for option in self.channels]):
             return True
         return False
+
 
 class VariableReader:
     def __init__(self, filename: str, variables: list):
