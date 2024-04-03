@@ -79,7 +79,7 @@ class DatacardWriter():
                     systematic_line += "\t{:>15s}".format("-")
 
         if relevant:
-            self.outputstring += "{:<18s} ".format(systematic.name)
+            self.outputstring += "{:<18s} ".format(systematic.technical_name)
             if systematic.isFlat:
                 self.outputstring += "{:>6s}".format("lnN")
             else:

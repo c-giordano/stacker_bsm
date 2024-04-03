@@ -5,6 +5,7 @@ class Uncertainty:
 
         # extract dictionary and add defaults for every property
         self.pretty_name = dict_entry.get("pretty_name", name)
+        self.technical_name = dict_entry.get("technical_name", name)
 
         self.channels = dict_entry.get("channels", ["all"])
         if type(self.channels) is not list:

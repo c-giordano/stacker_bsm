@@ -93,8 +93,8 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                     continue
                 if not syst.is_process_relevant(process):
                     continue
-                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{systname}Up/{process}"
-                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{systname}Down/{process}"
+                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/{process}"
+                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/{process}"
                 convert_and_write_histogram(histograms[var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
                 convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
