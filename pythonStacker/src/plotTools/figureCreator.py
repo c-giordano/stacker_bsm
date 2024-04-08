@@ -28,8 +28,8 @@ def mod_style():
 def create_singleplot(lumi=None, wip=True):
     plt.style.use(hep.style.CMS)
     mod_style()
-    fig, nominal = plt.subplots(1, 1, figsize=(800 * px, 800 * px))  # 29
-    fig.subplots_adjust(left=0.14, right=0.96, top=0.94, bottom=0.12, hspace=0.02)
+    fig, nominal = plt.subplots(1, 1, figsize=(820 * px, 800 * px))  # 29
+    fig.subplots_adjust(left=0.161, right=0.96, top=0.94, bottom=0.12, hspace=0.02)
 
     label = "WIP" if wip else ""
     if lumi:
@@ -48,8 +48,8 @@ def create_ratioplot(lumi=None, wip=True):
     plt.style.use(hep.style.CMS)
     mod_style()
     # fig, (nominal, ratio) = plt.subplots(2, 1, sharex="all", gridspec_kw={'height_ratios': [0.75, 0.25]}, figsize=(800 * px, 941 * px))  # 29
-    fig, (nominal, ratio) = plt.subplots(2, 1, sharex="all", gridspec_kw={'height_ratios': [1., 0.25]}, figsize=(800 * px, 918 * px))  # 29
-    fig.subplots_adjust(left=0.14, right=0.96, top=0.94, bottom=0.12, hspace=0.045)
+    fig, (nominal, ratio) = plt.subplots(2, 1, sharex="all", gridspec_kw={'height_ratios': [1., 0.25]}, figsize=(820 * px, 918 * px))  # 29
+    fig.subplots_adjust(left=0.161, right=0.96, top=0.94, bottom=0.12, hspace=0.045)
     fig.align_ylabels([nominal, ratio])
 
     if lumi:
@@ -69,8 +69,8 @@ def create_multi_ratioplot(lumi=None, wip=True, n_subplots=1):
     """
     plt.style.use(hep.style.CMS)
     mod_style()
-    fig, axs = plt.subplots(n_subplots + 1, 1, sharex="all", gridspec_kw={'height_ratios': [0.75] + [0.25] * n_subplots}, figsize=(800 * px, 941 * px + 191 * px * (n_subplots - 1)))  # 29
-    fig.subplots_adjust(left=0.14, right=0.96, top=1. - (0.06 / (0.75 + (n_subplots * 0.25))), bottom=0.12 / (0.75 + (n_subplots * 0.25)), hspace=0.02 * (0.75 + (n_subplots * 0.25)))
+    fig, axs = plt.subplots(n_subplots + 1, 1, sharex="all", gridspec_kw={'height_ratios': [0.75] + [0.25] * n_subplots}, figsize=(820 * px, 941 * px + 191 * px * (n_subplots - 1)))  # 29
+    fig.subplots_adjust(left=0.161, right=0.96, top=1. - (0.06 / (0.75 + (n_subplots * 0.25))), bottom=0.12 / (0.75 + (n_subplots * 0.25)), hspace=0.02 * (0.75 + (n_subplots * 0.25)))
     fig.align_ylabels(axs)
 
     nominal = axs[0]
