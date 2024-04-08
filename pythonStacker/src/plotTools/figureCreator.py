@@ -78,9 +78,9 @@ def create_multi_ratioplot(lumi=None, wip=True, n_subplots=1):
 
     label = "WIP" if wip else ""
     if lumi:
-        hep.cms.label(ax=nominal, label=label, lumi=lumi, data=True, loc=1)
+        hep.cms.label(ax=nominal, label=label, lumi=lumi, data=True, loc=2)
     else:
-        hep.cms.label(ax=nominal, label=label, loc=1)
+        hep.cms.label(ax=nominal, label=label, loc=2)
 
     return fig, (nominal, ratios)
 

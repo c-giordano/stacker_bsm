@@ -153,7 +153,7 @@ def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str,
     return ret
 
 
-def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list, processes):
+def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list, processes, storagepath: str):
     uncertainties = {**systematics_shape, **systematics_flat}
 
     unc_per_process = get_systematics_per_process(systematics_shape, list(processes.keys()))
@@ -170,21 +170,20 @@ def channelloop(channels, variables: VariableReader, systematics_shape: dict, sy
     for channelname, info in channels.items():
         print(channelname)
         # update storagepath to include channel
-        storagepath = args.storage
-        storagepath = os.path.join(storagepath, channelname)
+        storagepath_channel = os.path.join(storagepath, channelname)
 
         histograms_proc: dict[str, dict[str, HistogramManager]] = dict()
         for process, _ in processes.items():
             histograms_proc[process] = dict()
             for year in years:
-                histograms_proc[process][year] = HistogramManager(storagepath, process, variables, list(unc_per_process[process].keys()), year=year)
+                histograms_proc[process][year] = HistogramManager(storagepath_channel, process, variables, list(unc_per_process[process].keys()), year=year)
                 histograms_proc[process][year].load_histograms()
 
         results = variableloop(variables, histograms_proc, uncertainties, channelname)
 
         # store results for each variable:
         for variable in variables.get_variables():
-            tmp_path = os.path.join(storagepath, variable, outputfilename)
+            tmp_path = os.path.join(storagepath_channel, variable, outputfilename)
             ak.to_parquet(ak.Record(results[variable]), tmp_path)
 
 
@@ -209,7 +208,9 @@ if __name__ == "__main__":
         processfile = json.load(f)
         processes = processfile["Processes"]
         basedir = processfile["Basedir"]
+        subbasedir = basedir.split("/")[-1]
 
+    storagepath = os.path.join(args.storage, subbasedir)
     # prepare channels:
     channels = load_channels_and_subchannels(args.channelfile)
-    channelloop(channels, variables, systematics_shape, systematics_flat, args.years, processes)
+    channelloop(channels, variables, systematics_shape, systematics_flat, args.years, processes, storagepath)

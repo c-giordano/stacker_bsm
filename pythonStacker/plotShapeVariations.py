@@ -30,7 +30,7 @@ def parse_arguments():
     return args
 
 
-def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict):
+def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
     fig, (ax_main, (ax_ratio_one, ax_ratio_two)) = fg.create_multi_ratioplot(n_subplots=2)
     binning = generate_binning(variable.range, variable.nbins)
     # first plot nominal, then start adding variations
@@ -75,6 +75,7 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
     ax_main.set_ylabel("SM + EFT / SM")
     modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
     ax_main.legend(ncol=2)
+    ax_main.text(0.049, 0.74, plotlabel, transform=ax_main.transAxes)
 
     ax_ratio_one.set_xlim(variable.range)
     ax_ratio_two.set_xlim(variable.range)
@@ -89,7 +90,7 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
     plt.close(fig)
 
 
-def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict):
+def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
     fig, ax_main = fg.create_singleplot()
 
     binning = generate_binning(variable.range, variable.nbins)
@@ -129,6 +130,7 @@ def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: di
     modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
     ax_main.legend(ncol=2)
     ax_main.set_xlabel(variable.axis_label)
+    ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
     # fix output name
     fig.savefig(os.path.join(plotdir, f"{variable.name}.png"))
@@ -143,11 +145,13 @@ if __name__ == "__main__":
     # load process specifics
     # need a set of processes
     with open(args.processfile, 'r') as f:
-        processinfo = json.load(f)["Processes"][args.process]
+        processfile = json.load(f)
+        processinfo = processfile["Processes"][args.process]
+        subbasedir = processfile["Basedir"].split("/")[-1]
 
     variables = VariableReader(args.variablefile, args.variable)
     channels = load_channels(args.channelfile)
-    storagepath = args.storage
+    storagepath = os.path.join(args.storage, subbasedir)
 
     outputfolder_base = generate_outputfolder(args.years, args.outputfolder, suffix="_EFT_Variations")
 
@@ -175,8 +179,8 @@ if __name__ == "__main__":
         histograms.load_histograms()
 
         for _, variable in variables.get_variable_objects().items():
-            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo)
-            main_plot_EFT(variable, outputfolder, histograms, processinfo)
+            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
+            main_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
 
         for subchannel in channels[channel].subchannels.keys():
             storagepath_tmp = os.path.join(storagepath, channel + subchannel)
@@ -192,5 +196,5 @@ if __name__ == "__main__":
             histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics, args.years[0])
             histograms.load_histograms()
             for _, variable in variables.get_variable_objects().items():
-                lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo)
-                main_plot_EFT(variable, outputfolder, histograms, processinfo)
+                lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)
+                main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)

@@ -182,7 +182,9 @@ if __name__ == "__main__":
 
     # need a set of processes
     with open(args.processfile, 'r') as f:
-        processinfo = json.load(f)["Processes"]
+        processfile = json.load(f)
+        processinfo = processfile["Processes"]
+        subbasedir = processfile["Basedir"].split("/")[-1]
 
     # need a set of variables to plot
     variables = VariableReader(args.variablefile, args.variable)
@@ -192,7 +194,7 @@ if __name__ == "__main__":
     channels = load_channels(args.channelfile)
 
     # set up histogrammanager per process
-    storagepath = args.storage
+    storagepath = os.path.join(args.storage, subbasedir)
 
     # outputfolder with year:
     outputfolder_base = generate_outputfolder(args.years, args.outputfolder)

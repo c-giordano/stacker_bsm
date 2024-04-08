@@ -116,6 +116,8 @@ if __name__ == "__main__":
         processfile = json.load(f)
         processinfo = processfile["Processes"][args.process]
         basedir = processfile["Basedir"]
+        subbasedir = basedir.split("/")[-1]
+        storagepath = os.path.join(storagepath, subbasedir)
 
     # prepare channels:
     with open(args.channelfile, 'r') as f:
