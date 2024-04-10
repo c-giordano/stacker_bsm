@@ -3,7 +3,7 @@ import json
 import src.jobSubmission.condorTools as ct
 
 import src.arguments as arguments
-
+from src.configuration import load_uncertainties
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Your program description')
@@ -41,6 +41,16 @@ if __name__ == "__main__":
         channels = json.load(f)
         channellist = list(channels.keys())
 
+    # need to load shape uncertainties
+    systematics = []
+    if args.systematic:
+        systematics = [args.systematic]
+    else:
+        systematics = ["weight"]
+        # load shape uncertainties
+        shape_systs = list(load_uncertainties(args.systematicsfile, typefilter="shape").keys())
+        systematics.extend(shape_systs)
+
     commandset = []
     for year in args.years:
         for process in processlist:
@@ -64,10 +74,12 @@ if __name__ == "__main__":
 
                 if args.variable is not None:
                     command += f" --variable {args.variable}"
-                if args.systematic is not None:
-                    command += f" --systematic {args.systematic}"
-                else:
-                    command += " -s weight"
+
+                for syst in systematics:
+                    if syst is None:
+                        break
+                    command += f" --systematic {syst}"
+
                 if args.UseEFT is True:
                     command += " --EFT"
 

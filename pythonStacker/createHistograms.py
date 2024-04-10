@@ -207,7 +207,7 @@ if __name__ == "__main__":
             exit(0)
 
     # TODO: should this be a global variable?
-    globalEFTToggle = args.UseEFT and processinfo.get("hasEFT", 0) > 0
+    globalEFTToggle = args.UseEFT and processinfo.get("hasEFT", 0) > 0 and base_run
     if globalEFTToggle:
         print("USING EFT")
         import plugins.eft as eft
