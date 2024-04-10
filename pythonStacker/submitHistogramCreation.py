@@ -57,7 +57,8 @@ if __name__ == "__main__":
             if args.process is not None and process != args.process:
                 continue
 
-            commandset_process = []
+            append_dict = {syst: [] for syst in systematics}
+            # commandset_process = []
 
             for channel in channellist:
                 if args.channel is not None and channel != args.channel:
@@ -75,17 +76,20 @@ if __name__ == "__main__":
                 if args.variable is not None:
                     command += f" --variable {args.variable}"
 
-                for syst in systematics:
-                    if syst is None:
-                        break
-                    command += f" --systematic {syst}"
-
                 if args.UseEFT is True:
                     command += " --EFT"
 
-                commandset_process.append(command)
+                for syst in systematics:
+                    if syst is None:
+                        append_dict[syst].append(command)
+                        break
+                    commandtmp = command + f" --systematic {syst}"
+                    append_dict[syst].append(commandtmp)
 
-            commandset.append(commandset_process)
+                # commandset_process.append(command)
+            for syst in systematics:
+                commandset.extend(append_dict[syst])
+            # commandset.append(commandset_process)
 
     ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset, scriptfolder="Scripts/condor/")
     # submit commandset
