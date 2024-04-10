@@ -1,5 +1,7 @@
 import numpy as np
 import uproot
+import os
+import glob
 """
 Some general tools to create histograms
 """
@@ -65,13 +67,28 @@ ROOTFile management tools:
 """
 
 
-def get_tree_from_file(filename, processname) -> uproot.TTree:
+def get_file_from_globs(basedir: str, fileglobs: list[str], year: str, suffix: str = "base") -> list:
+    files = []
+    for filebase in fileglobs:
+        fileglob = os.path.join(basedir, filebase)
+        fileglob += f"*{year}"
+        # if args.systematic == "weight" or args.systematic is None:
+        fileglob += f"*{suffix}.root"
+        print(fileglob)
+        true_files = glob.glob(fileglob)
+        files.extend(true_files)
+    return files
+
+
+def get_tree_from_file(filename, processname, fatalfail=False) -> uproot.TTree:
     current_rootfile = uproot.open(filename)
 
     try:
         current_tree: uproot.TTree = current_rootfile[processname]
     except KeyError:
         print(f"{processname} not found in the file {filename}. Trying other keys.")
+        if fatalfail:
+            exit(1)
         for key, classname in current_rootfile.classnames().items():
             if classname != "TTree":
                 continue

@@ -10,7 +10,7 @@ def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=Tru
         syst_type = val.get("type", "flat")
         if typefilter and syst_type != typefilter:
             continue
-        if namefilter and val["name"] != namefilter:
+        if namefilter and val.get("name", key)!= namefilter:
             continue
         if not allowflat and syst_type == "flat":
             continue
@@ -61,6 +61,12 @@ class Channel:
 
     def is_process_excluded(self, process: str):
         return process in self.ign_processes
+
+    def get_subchannels(self):
+        ret = []
+        for name, info in self.subchannels.items():
+            ret.append(name)
+        return ret
 
     def produce_masks(self, tree):
         # use produce aliases to produce boolean masks for the subchannels
