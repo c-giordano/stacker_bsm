@@ -1,5 +1,7 @@
 import json
 from src.configuration.Uncertainty import Uncertainty
+import PDFVariation
+import ScaleVariation
 
 
 def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=True) -> dict:
@@ -14,6 +16,18 @@ def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=Tru
             continue
         if not allowflat and syst_type == "flat":
             continue
+
+        if key.lower() == "pdfUncertainty":
+            pdfs = PDFVariation.generate_pdfvariations(val)
+            for pdf in pdfs:
+                ret[pdf.pretty_name] = pdf
+            continue
+        if key.lower() == "ScaleVar":
+            scalevars = ScaleVariation.generate_scalevariations(val)
+            for scalevar in scalevars:
+                ret[scalevar.pretty_name] = scalevar
+            continue
+
         ret[key] = Uncertainty(key, val)
 
     return ret
@@ -42,7 +56,7 @@ def load_channels_and_subchannels(channelfile) -> dict:
     return ret
 
 
-# TODO: fix init
+# TODO: fix init ?
 class Channel:
     def __init__(self, channelinfo, full_channelfile, ignore_proc=[]) -> None:
         self._selection = channelinfo["selection"]

@@ -1,10 +1,11 @@
 {
-    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-03-12_17-00",
+    "Basedir": "/home/njovdnbo/Documents/Stacker_v2/pythonStacker/testfiles",
     "Processes": {
-        "TTW": {
-            "fileglobs": ["Tree_TTWJetsToLNu*MCPrompt", "Tree_ttWJetsToLNu_5f_EWK*MCPrompt"],
-            "color": "#006600",
-            "pretty_name": "t\\bar{t}W"
+        "TTTT": {
+            "fileglobs": ["Tree_TTTT_*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "t\\bar{t}t\\bar{t}"
         }
     }
 }

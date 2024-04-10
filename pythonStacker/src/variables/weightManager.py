@@ -27,8 +27,8 @@ class WeightManager():
                 continue
             key_unc = unc.get_weight_keys()
             alias_unc = unc.get_weight_aliases()
-
-            tmp = {key_cur: al_cur for key_cur, al_cur in zip(key_unc, alias_unc) if key_cur != "nominal"}
+            # TODO: check if this works in testing
+            tmp = {key_cur: al_cur for key_cur, al_cur in zip(key_unc, alias_unc) if key_cur != "nominal" and key_cur is not None}
             aliases.update(tmp)
         return aliases
 

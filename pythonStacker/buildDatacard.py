@@ -36,9 +36,6 @@ def parse_arguments():
                         type=str, help="Path to outputfolder for DC.",
                         default="output/datacards/")
 
-    # TODO: figure out how to add in EFT stuff.
-    # Current idea: use a flag to switch between the types of DCs we write. BSM does require additional config saying which things to combine.
-
     args = parser.parse_args()
 
     if len(sys.argv) == 1:

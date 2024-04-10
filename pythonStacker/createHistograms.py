@@ -136,9 +136,11 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
                     else:
                         keys = syst.get_weight_keys()
                         hist_content_up, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[0]][subchannelmasks[subchannel_name]], variable)
-                        hist_content_down, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[1]][subchannelmasks[subchannel_name]], variable)
                         output_histograms[subchannel_name][variable.name][name]["Up"] += hist_content_up
-                        output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
+                        if keys[1] is not None:
+                            # TODO: check if this works
+                            hist_content_down, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[1]][subchannelmasks[subchannel_name]], variable)
+                            output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
 
 
 def create_histogram_shapevar(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle):
