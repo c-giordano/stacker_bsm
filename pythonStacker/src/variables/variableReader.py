@@ -21,7 +21,7 @@ class Variable:
         return get_method_from_str(self.method_name)
 
     def is_channel_relevant(self, channel):
-        if self.channel[0] == "all":
+        if self.channels[0] == "all":
             return True
         if any([channel in option for option in self.channels]) or any([option in channel for option in self.channels]):
             return True

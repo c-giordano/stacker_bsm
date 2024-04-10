@@ -1,9 +1,9 @@
 {
     "DC_name": "DC_SRs_2018",
     "channelcontent": {
-        "SR-2L": {
+        "SR-2Lpuresig": {
             "variable": "HT_SRs",
-            "prettyname": "SR2L_HT"
+            "prettyname": "HT_SRs"
         }
     }
 }

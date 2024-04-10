@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
                 # commandset_process.append(command)
             for syst in systematics:
-                commandset.extend(append_dict[syst])
+                commandset.append(append_dict[syst])
             # commandset.append(commandset_process)
 
     ct.submitCommandsetsAsCondorCluster("CreateHistograms", commandset, scriptfolder="Scripts/condor/")

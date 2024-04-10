@@ -1,7 +1,7 @@
 {
     "ttw_norm": {
         "pretty_name": "ttW norm",
-        "technical_name" : "ttW_norm",
+        "technical_name": "ttW_norm",
         "channels": "all",
         "processes": "TTW",
         "rate": 1.2,
@@ -97,7 +97,7 @@
         "rate": 1.2,
         "corr_proc": 1,
         "type": "flat"
-    },
+    },  
     "XgammaNorm": {
         "pretty_name": "XgammaNorm ",
         "technical_name": "XgammaNorm",
@@ -138,6 +138,8 @@
         "aliasDown": "scaleVariations[:, 5]"
     },
     "pileup": {
+        "pretty_name": "PU",
+        "technical_name": "PU",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -145,6 +147,8 @@
         "aliasDown": "nominalWeight * expDown[:, 0]"
     },
     "prefire": {
+        "pretty_name": "L1Prefire",
+        "technical_name": "L1Prefire",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -187,6 +191,8 @@
         "aliasDown": "nominalWeight * expDown[:, 6]"
     },
     "btag_hf": {
+        "pretty_name": "BTagSFHf",
+        "technical_name": "BTagSFHf",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -194,6 +200,8 @@
         "aliasDown": "nominalWeight * expDown[:, 7]"
     },
     "btag_hf_stats1": {
+        "pretty_name": "BTagSFHfs1",
+        "technical_name": "BTagSFHfs1",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -201,6 +209,8 @@
         "aliasDown": "nominalWeight * expDown[:, 9]"
     },
     "btag_hf_stats2": {
+        "pretty_name": "BTagSFHfs2",
+        "technical_name": "BTagSFHfs2",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -208,6 +218,8 @@
         "aliasDown": "nominalWeight * expDown[:, 10]"
     },
     "btag_lf": {
+        "pretty_name": "BTagSFLf",
+        "technical_name": "BTagSFLf",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -215,6 +227,8 @@
         "aliasDown": "nominalWeight * expDown[:, 8]"
     },
     "btag_lf_stats1": {
+        "pretty_name": "BTagSFLfs1",
+        "technical_name": "BTagSFLfs1",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -222,6 +236,8 @@
         "aliasDown": "nominalWeight * expDown[:, 11]"
     },
     "btag_lf_stats2": {
+        "pretty_name": "BTagSFLfs2",
+        "technical_name": "BTagSFLfs2",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -229,6 +245,8 @@
         "aliasDown": "nominalWeight * expDown[:, 12]"
     },
     "btag_cferr1": {
+        "pretty_name": "BTagSFCfe1",
+        "technical_name": "BTagSFCfe1",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -236,10 +254,39 @@
         "aliasDown": "nominalWeight * expDown[:, 13]"
     },
     "btag_cferr2": {
+        "pretty_name": "BTagSFCfe2",
+        "technical_name": "BTagSFCfe2",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
         "aliasUp": "nominalWeight * expUp[:, 14]",
         "aliasDown": "nominalWeight * expDown[:, 14]"
+    },
+    "JEC": {
+        "pretty_name": "JEC",
+        "technical_name": "JEC",
+        "processes": "MCOnly",
+        "type": "shape",
+        "fileglob": "JEC"
+    },
+    "JER_2p5": {
+        "fileglob": "JER",
+        "processes": "MCOnly",
+        "type": "shape"
+    },
+    "JER_1p93": {
+        "fileglob": "JER",
+        "processes": "MCOnly",
+        "type": "shape"
+    },
+    "HEMIssue": {
+        "fileglob": "HEMIssue",
+        "processes": "MCOnly",
+        "type": "shape"
+    },
+    "MET": {
+        "fileglob": "MET",
+        "processes": "MCOnly",
+        "type": "shape"
     }
 }

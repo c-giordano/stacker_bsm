@@ -1,5 +1,5 @@
 {
-    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-03-12_17-00",
+    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-04-04_14-42",
     "Processes": {
         "TTT": {
             "fileglobs": ["Tree_TTTW_*MCPrompt", "Tree_TTTJ_*MCPrompt"],

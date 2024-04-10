@@ -1,7 +1,7 @@
 {
-    "Basedir": "/home/njovdnbo/Documents/Stacker_v2/pythonStacker/testfiles",
+    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-04-04_14-42",
     "Processes": {
-        "TTTT": {
+        "TTTT_EFT": {
             "fileglobs": ["Tree_TTTT_EFT_*_MCPrompt"],
             "color": "#EF3340",
             "isSignal": 1,

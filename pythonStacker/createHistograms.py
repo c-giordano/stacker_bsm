@@ -180,6 +180,7 @@ if __name__ == "__main__":
 
     systematics = clean_systematics(systematics, args.process)
     base_run = args.systematic == "weight" or args.systematic is None
+
     if args.systematic in systematics:
         base_run = base_run and systematics[args.systematic].type != "shape"
 
@@ -188,6 +189,10 @@ if __name__ == "__main__":
         systematics["stat_unc"] = Uncertainty("stat_unc", {})
 
     print(systematics.keys())
+    if len(systematics) == 0:
+        print(f"Nothing to do for process {args.process}, syst {args.systematic}, channel {args.channel}.")
+        exit(1)
+
     # load process list:
     with open(args.processfile, 'r') as f:
         processfile = json.load(f)
@@ -242,6 +247,10 @@ if __name__ == "__main__":
         filesuffix = systematics[args.systematic].fileglob
     files = src.get_file_from_globs(basedir, processinfo["fileglobs"], args.years[0], filesuffix)
 
+    if len(files) == 0:
+        # make sure nothing is written in files without content to avoid unnecessary saves
+        print("No files found for globs. Make sure this is expected!")
+        exit(1)
     # print(files)
     # this will not work for requiring a specifc systematic! Need to check.
     if base_run:
