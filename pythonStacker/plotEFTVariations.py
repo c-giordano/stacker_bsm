@@ -1,18 +1,21 @@
-import awkward as ak
-import uproot
-import matplotlib.pyplot as plt
-import numpy as np
-
-from plugins.eft import buildWeightVariations
-from pythonStacker.src.plotTools.figureCreator import create_ratioplot
-
-from src import histogram_w_unc_flow, histogram_w_flow
-
 import argparse
+import json
+import awkward as ak
+import numpy as np
+import matplotlib.pyplot as plt
 import os
 
+from src.variables.variableReader import VariableReader, Variable
+from src.configuration import load_channels
+from src.histogramTools import HistogramManager
+
+import src.plotTools.figureCreator as fg
+from src import generate_binning
+from plotHistograms import modify_yrange_shape, generate_outputfolder, copy_index_html
+
+import plugins.eft as eft
+
 import src.arguments as arguments
-from pythonStacker.createEFTWeights import get_eftvariations_filename
 
 
 def parse_arguments():
@@ -22,117 +25,176 @@ def parse_arguments():
     arguments.select_specifics(parser)
     arguments.add_tmp_storage(parser)
     arguments.add_plot_output(parser)
+
     args = parser.parse_args()
     return args
 
 
-def loadEFTWeights(inputfile: str, eventclass, storage: str):
-    filepath = get_eftvariations_filename(storage, inputfile, eventclass)
-    return ak.from_parquet(filepath)
+def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
+    fig, (ax_main, (ax_ratio_one, ax_ratio_two)) = fg.create_multi_ratioplot(n_subplots=2)
+    binning = generate_binning(variable.range, variable.nbins)
+    # first plot nominal, then start adding variations
+    nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
+    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
+
+    # pretty_name = generate_process_name("SM", info)
+    nominal_weights = np.ones(len(nominal_content))
+    ax_main.hist(binning[:-1], binning, weights=nominal_weights, histtype="step", color="k", label="SM")
+
+    eft_variations = eft.getEFTVariationsLinear()
+    minim = 1.
+    maxim = 1.
+    for eft_var in eft_variations:
+        wc_factor = 1
+        if "ctHRe" in eft_var:
+            wc_factor = 20
+        if "ctHIm" in eft_var:
+            wc_factor = 20
+        lin_name = "EFT_" + eft_var
+        quad_name = lin_name + "_" + eft_var
+
+        current_variation = nominal_content
+        current_variation = current_variation + wc_factor * np.array(ak.to_numpy(histograms[variable.name][lin_name]["Up"]))
+        current_variation = current_variation + wc_factor * wc_factor * np.array(ak.to_numpy(histograms[variable.name][quad_name]["Up"]))
+
+        current_variation = np.nan_to_num(current_variation / nominal_content, nan=1.)
+
+        minim = min(minim, np.min(current_variation))
+        maxim = max(maxim, np.max(current_variation))
+        pretty_eft_name = eft_var + f" = {wc_factor}"
+        ax_main.hist(binning[:-1], binning, weights=current_variation, histtype="step", label=pretty_eft_name)
+
+        lin_ratio = np.nan_to_num(wc_factor * np.array(ak.to_numpy(histograms[variable.name][lin_name]["Up"])) / nominal_content, nan=0.)
+        quad_ratio = np.nan_to_num(wc_factor * wc_factor * np.array(ak.to_numpy(histograms[variable.name][quad_name]["Up"])) / nominal_content, nan=0.)
+        ax_ratio_one.hist(binning[:-1], binning, weights=lin_ratio, histtype="step")
+        ax_ratio_two.hist(binning[:-1], binning, weights=quad_ratio, histtype="step")
+
+    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
+
+    ax_main.set_xlim(variable.range)
+    ax_main.set_ylabel("SM + EFT / SM")
+    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    ax_main.legend(ncol=2)
+    ax_main.text(0.049, 0.74, plotlabel, transform=ax_main.transAxes)
+
+    ax_ratio_one.set_xlim(variable.range)
+    ax_ratio_two.set_xlim(variable.range)
+
+    ax_ratio_one.set_ylabel("Lin / SM")
+    ax_ratio_two.set_ylabel("Quad / SM")
+    ax_ratio_two.set_xlabel(variable.axis_label)
+
+    # fix output name
+    fig.savefig(os.path.join(plotdir, f"{variable.name}_ratios.png"))
+    fig.savefig(os.path.join(plotdir, f"{variable.name}_ratios.pdf"))
+    plt.close(fig)
 
 
-def plotEFTVariations(variableValues, varName, nominalWeights, eftWeights, weightVariations, nbins, range, unit="GeV", scaleVar=None):
-    npvar = ak.to_numpy(variableValues)
-    nominalWgts = ak.to_numpy(nominalWeights)
+def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
+    fig, ax_main = fg.create_singleplot()
 
-    # tmp for under and overflow
-    raw_bins = np.linspace(range[0], range[1], nbins + 1)
-    use_bins = [np.array([-np.inf]), raw_bins, np.array([np.inf])]
-    use_bins = np.concatenate(use_bins)
+    binning = generate_binning(variable.range, variable.nbins)
+    # first plot nominal, then start adding variations
+    nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
+    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
+    # pretty_name = generate_process_name("SM", info)
+    nominal_weights = np.ones(len(nominal_content))
+    ax_main.hist(binning[:-1], binning, weights=nominal_weights, histtype="step", color="k", label="SM")
 
-    base_ratio, binning, unc = histogram_w_unc_flow(npvar, range, nominalWgts, nbins)
-    # print("base:", base_ratio)
-    # print("unc:", unc)
-    # ax.bar(x=binning[:-1], height=upScaleVar - downScaleVar, bottom=downScaleVar, width=np.diff(binning), align='edge', linewidth=0, color='b', alpha=0.25, zorder=-1)
+    eft_variations = eft.getEFTVariationsLinear()
+    minim = 1.
+    maxim = 1.
+    for eft_var in eft_variations:
+        wc_factor = 1
+        if "ctHRe" in eft_var:
+            wc_factor = 20
+        if "ctHIm" in eft_var:
+            wc_factor = 20
+        lin_name = "EFT_" + eft_var
+        quad_name = lin_name + "_" + eft_var
 
-    fig, (ax, ratio) = create_ratioplot()
-    ax.hist(binning[:-1], binning, weights=base_ratio, histtype="step", label="SM")
-    ax.bar(x=binning[:-1], height=2 * unc, bottom=base_ratio - unc, width=np.diff(binning), align='edge', linewidth=0, color='b', alpha=0.25, zorder=-1)
+        current_variation = nominal_content
+        current_variation = current_variation + wc_factor * np.array(ak.to_numpy(histograms[variable.name][lin_name]["Up"]))
+        current_variation = current_variation + wc_factor * wc_factor * np.array(ak.to_numpy(histograms[variable.name][quad_name]["Up"]))
 
-    # ax.fill_between(binning, base_ratio - unc, base_ratio + unc, step="post", color="k", alpha=0.15)
-    ratio.hist(binning[:-1], binning, weights=base_ratio / base_ratio, histtype="step")
+        current_variation = np.nan_to_num(current_variation / nominal_content, nan=1.)
 
-    cached_ratios = []
-    cache_max = 0.
-    for i, (key, val) in enumerate(weightVariations.items()):
-        weightVar = nominalWeights
-        for ind in val:
-            weightVar = weightVar + eftWeights[:, ind]
-        weight_as_np = ak.to_numpy(weightVar)
+        minim = min(minim, np.min(current_variation))
+        maxim = max(maxim, np.max(current_variation))
+        pretty_eft_name = eft_var + f" = {wc_factor}"
+        ax_main.hist(binning[:-1], binning, weights=current_variation, histtype="step", label=pretty_eft_name)
 
-        vals, binning = histogram_w_flow(npvar, range, weight_as_np, nbins)
+    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
+    ax_main.set_xlim(variable.range)
+    ax_main.set_ylabel("SM + EFT / SM")
+    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    ax_main.legend(ncol=2)
+    ax_main.set_xlabel(variable.axis_label)
+    ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
-        if (np.max(vals) > cache_max):
-            cache_max = np.max(vals)
-        ax.hist(binning[:-1], binning, weights=vals, histtype="step", label=key + "=1")
-        cached_ratios.append(vals / base_ratio)
-        ratio.hist(binning[:-1], binning, weights=cached_ratios[i], histtype="step")
-
-    ax.legend(ncol=2)
-
-    ax.set_xlim(range)
-    ax.set_ylim((0., 1.5 * cache_max))
-    ax.set_xticklabels([])
-
-    ratio.set_xlim(range)
-    ratio.set_ylim(0.5, np.max(cached_ratios) + 0.5)
-
-    if (unit != "unit" and unit):
-        ratio.set_xlabel(r"${}$ [{}]".format(varName, unit))
-    else:
-        ratio.set_xlabel(varName)
-    ax.set_ylabel("Events / {} {}".format(binning[1] - binning[0], unit))
-    ratio.set_ylabel("EFT/SM", loc='center')
-
-    fig.savefig("output/plots/" + varName + ".pdf")
-    fig.savefig("output/plots/" + varName + ".png")
+    # fix output name
+    fig.savefig(os.path.join(plotdir, f"{variable.name}.png"))
+    fig.savefig(os.path.join(plotdir, f"{variable.name}.pdf"))
+    plt.close(fig)
 
 
 if __name__ == "__main__":
-    import argparse
+    args = parse_arguments()
+    np.seterr(divide='ignore', invalid='ignore')
 
-    parser = argparse.ArgumentParser(description=__doc__)
+    # load process specifics
+    # need a set of processes
+    with open(args.processfile, 'r') as f:
+        processfile = json.load(f)
+        processinfo = processfile["Processes"][args.process]
+        subbasedir = processfile["Basedir"].split("/")[-1]
 
-    parser.add_argument("-f", "--file", dest="inputfile", action="store", required=True,
-                        help="Inputfile to use for plotting")
-    parser.add_argument("-e", "--eventclass", dest="eventclass", action="store", default=12,
-                        help="eventclass to plot.")
+    variables = VariableReader(args.variablefile, args.variable)
+    channels = load_channels(args.channelfile)
+    storagepath = os.path.join(args.storage, subbasedir)
 
-    opts, opts_unknown = parser.parse_known_args()
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, suffix="_EFT_Variations")
 
-    tree = buildTree(opts.inputfile)
+    # first plot nominal, then start adding variations
+    # load variables, want to do this for all processes
 
-    nominalWeights = tree.arrays(["nominalWeight", "scaleVariations"], f"eventClass=={opts.eventclass}")
-    eftWeights = nominalWeights.nominalWeight * loadEFTWeights(opts.inputfile, opts.eventclass)
-    weightVariations = buildWeightVariations()
+    # also load channels
 
-    # print(len(nominalWeights.scaleVariations[:,0]))
-    # print(np.max(nominalWeights.scaleVariations[:,0]))
-    # plt.scatter(np.linspace(0., 1., len(nominalWeights.scaleVariationsAbs[:,0])), nominalWeights.scaleVariationsAbs[:,1])
-    # plt.show()
+    # contrary to plotHistograms: load uncertainties if no args.UseEFT
+    # do need a selection somewhere defined for the uncertainties needed/desired
+    for channel in channels:
+        if args.channel is not None and channel != args.channel:
+            continue
 
-    # calculate ht:
-    jetPts = tree.arrays(["jetPt"], f"eventClass=={opts.eventclass}")
-    ht = ak.sum(jetPts.jetPt, axis=1)
-    plotEFTVariations(ht, "H_T", nominalWeights.nominalWeight, eftWeights, weightVariations, 23, (250, 1400))
+        storagepath_tmp = os.path.join(storagepath, channel)
+        systematics = ["nominal", "stat_unc"]
 
-    ptLeps = tree.arrays(["electronPt"], f"eventClass=={opts.eventclass}")
-    sortedLeptons = ak.sort(ptLeps.electronPt, axis=1, ascending=False)
-    plotEFTVariations(sortedLeptons[:, 0], "p_T-lep1", nominalWeights.nominalWeight, eftWeights, weightVariations, 19, (20, 400))
-    plotEFTVariations(sortedLeptons[:, 1], "p_T-lep2", nominalWeights.nominalWeight, eftWeights, weightVariations, 9, (20, 200))
+        systematics.extend(eft.getEFTVariationsGroomed())
+        outputfolder = os.path.join(outputfolder_base, channel)
+        if not os.path.exists(outputfolder):
+            os.makedirs(outputfolder)
+        copy_index_html(outputfolder)
 
-    ftBDT = tree.arrays(["fourTopScore"], f"eventClass=={opts.eventclass}")
-    plotEFTVariations(ftBDT.fourTopScore, "BDTscoreTTTT", nominalWeights.nominalWeight, eftWeights, weightVariations, 20, (0, 1))
+        histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics, args.years[0])
+        histograms.load_histograms()
 
-    stepOne = ftBDT.fourTopScore + 1.
-    transf_BDT = np.arctanh(stepOne * 0.5)
-    plotEFTVariations(transf_BDT, "transfBDTscoreTTTT", nominalWeights.nominalWeight, eftWeights, weightVariations, 20, (0.5, 3))
+        for _, variable in variables.get_variable_objects().items():
+            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
+            main_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
 
-    ptmiss = tree.arrays(["ptMiss"], f"eventClass=={opts.eventclass}")
-    plotEFTVariations(ptmiss.ptMiss, "PT_miss", nominalWeights.nominalWeight, eftWeights, weightVariations, 20, (0, 500))
+        for subchannel in channels[channel].subchannels.keys():
+            storagepath_tmp = os.path.join(storagepath, channel + subchannel)
 
-    # Need all single entries in "eftVariations", then need the indices of single entries and squared for the cXXX = 1
-    # first denote variations, dict: {"ctt":[ind1, ind2]}, those indices are used, so total weight var is nom + eftWeights[:,ind1] + eftWeights[:,ind2]
+            outputfolder = os.path.join(outputfolder_base, channel, subchannel)
+            if not os.path.exists(outputfolder):
+                os.makedirs(outputfolder)
+            # if not os.path.exists(outputfolder):
+            #     os.makedirs(outputfolder)
+            # copy_index_html(outputfolder)
 
-    # also need part of eft reweighter that gives us naming
-    # run parallel for ev class -> define as input parameter? -> argparse!
+            # for process, info in processinfo.items():
+            histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics, args.years[0])
+            histograms.load_histograms()
+            for _, variable in variables.get_variable_objects().items():
+                lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)
+                main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)

@@ -1,0 +1,121 @@
+import argparse
+import json
+import awkward as ak
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+
+from src.variables.variableReader import VariableReader, Variable
+from src.configuration import load_channels
+from src.histogramTools import HistogramManager
+
+import src.plotTools.figureCreator as fg
+from src import generate_binning
+from plotHistograms import modify_yrange_shape, generate_outputfolder, copy_index_html
+from src.configuration import load_uncertainties
+import src.arguments as arguments
+
+
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Process command line arguments.')
+
+    arguments.add_settingfiles(parser)
+    arguments.select_specifics(parser)
+    arguments.add_tmp_storage(parser)
+    arguments.add_plot_output(parser)
+
+    args = parser.parse_args()
+    return args
+
+
+def batch_systematic_keys(systematics, batchsize=6):
+    keys = list(systematics.keys())
+    batched = []
+    i = 0
+    while i * batchsize < len(keys):
+        batch = []
+        if (i + 1) * batchsize > len(keys):
+            batch.extend(keys[i * batchsize:])
+        else:
+            batch.extend(keys[i * batchsize:(i + 1) * batchsize])
+        i += 1
+        batched.append(batch)
+    return batched
+
+
+def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plotlabel: str, systematics: list):
+    fig, ax_main = fg.create_singleplot()
+
+    binning = generate_binning(variable.range, variable.nbins)
+    nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
+    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
+    nominal_weights = np.ones(len(nominal_content))
+    ax_main.hist(binning[:-1], binning, weights=nominal_weights, histtype="step", color="k", label="SM")
+
+    minim = 1.
+    maxim = 1.
+    for syst in systematics:
+        # TODO: actually load the variation
+        upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1.)
+        downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1.)
+
+        minim = min(minim, min(np.min(downvar), np.min(upvar)))
+        maxim = max(maxim, max(np.max(downvar), np.max(upvar)))
+        # plot
+        ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=syst)
+        ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", label=syst)
+
+    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
+    ax_main.set_xlim(variable.range)
+    ax_main.set_ylabel("Unc / nom.")
+    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    ax_main.legend(ncol=2)
+    ax_main.set_xlabel(variable.axis_label)
+    ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
+
+    # fix output name
+    fig.savefig(os.path.join(plotdir, f"{variable.name}_{setnb}.png"))
+    fig.savefig(os.path.join(plotdir, f"{variable.name}_{setnb}.pdf"))
+    plt.close(fig)
+
+
+if __name__ == "__main__":
+    args = parse_arguments()
+    np.seterr(divide='ignore', invalid='ignore')
+
+    # load process specifics
+    # need a set of processes
+    with open(args.processfile, 'r') as f:
+        processfile = json.load(f)
+        processinfo = processfile["Processes"][args.process]
+        subbasedir = processfile["Basedir"].split("/")[-1]
+
+    variables = VariableReader(args.variablefile, args.variable)
+    channels = load_channels(args.channelfile)
+    storagepath = os.path.join(args.storage, subbasedir)
+
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, suffix="_EFT_Variations")
+
+    # load systematics
+    systematics = load_uncertainties(args.systematicsfile, allowflat=False)
+    # batched systematics
+    batched_systematics = batch_systematic_keys(systematics)
+
+    systematics_list = list(systematics.keys()) + ["nominal", "stat_unc"]
+    for channel in channels:
+        if args.channel is not None and channel != args.channel:
+            continue
+
+        storagepath_tmp = os.path.join(storagepath, channel)
+
+        outputfolder = os.path.join(outputfolder_base, channel)
+        if not os.path.exists(outputfolder):
+            os.makedirs(outputfolder)
+        copy_index_html(outputfolder)
+
+        histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics_list, args.years[0])
+        histograms.load_histograms()
+
+        for _, variable in variables.get_variable_objects().items():
+            for i, syst_set in enumerate(batched_systematics):
+                plot_systematicsset(variable, outputfolder, histograms, i, channel, syst_set)
