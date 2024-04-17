@@ -25,27 +25,30 @@ if __name__ == "__main__":
         basedir = content["Basedir"]
 
     commandset = []
-    for pname, process in processes.items():
-        # if has EFT
-        files = []
-        for filebase in process["fileglobs"]:
-            fileglob = os.path.join(basedir, filebase)
-            # fileglob += f"*{args.years[0]}"
-            fileglob += "*base.root"
-            true_files = glob.glob(fileglob)
-            files.extend(true_files)
+    for year in args.years:
+        for pname, process in processes.items():
+            # if has EFT
+            files = []
+            for filebase in process["fileglobs"]:
+                fileglob = os.path.join(basedir, filebase)
+                # fileglob += f"*{args.years[0]}"
+                fileglob += f"*{year}*base.root"
+                #print(fileglob)
+                true_files = glob.glob(fileglob)
+                files.extend(true_files)
 
-        print(files)
-        cmds = []
-        for filename in files:
-            if process.get("hasEFT", 0) == 0:
-                continue
-            for eventclass in range(14):
-                cmd = "python3 createEFTWeights.py"
-                cmd += f" -f {filename}"
-                cmd += f" -e {eventclass}"
-                cmds.append(cmd)
-
-        commandset.append(cmds)
+            print(files)
+            cmds = []
+            for filename in files:
+                if process.get("hasEFT", 0) == 0:
+                    continue
+                for eventclass in range(14):
+                    cmd = "python3 createEFTWeights.py"
+                    cmd += f" -f {filename}"
+                    cmd += f" -e {eventclass}"
+                    cmds.append(cmd)
+            if len(cmds) == 0:
+                cmds.append("echo 'nothing to do'")
+            commandset.append(cmds)
 
     ct.submitCommandsetsAsCondorCluster("CreateEFTWeights", commandset, scriptfolder="Scripts/condor/")

@@ -1,4 +1,4 @@
-from Uncertainty import Uncertainty
+from src.configuration.Uncertainty import Uncertainty
 
 
 def generate_scalevariations(dict_entry):
@@ -14,9 +14,11 @@ class ScaleVariation(Uncertainty):
         self._correlated_process = True
         self.correlated_years = True
 
+        self.name = f"ScaleVar_{instance}"
         self.pretty_name = f"ScaleVar_{instance}"
         self.technical_name = f"ScaleVar_{instance}"
-        self.weight_key_up = f"scaleVariations[:, {instance}]"
+        self.weight_key_up = f"ScaleVar_{instance}"
+        self.weight_alias_up = f"scaleVariations[:, {instance}]"
 
         # TODO: implement interpretation of this None
         self.weight_key_down = None

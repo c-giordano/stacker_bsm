@@ -1,6 +1,7 @@
 import argparse
-import src.jobSubmission.condorTools as ct
+import json
 
+import src.jobSubmission.condorTools as ct
 import src.arguments as arguments
 
 
@@ -22,17 +23,40 @@ if __name__ == "__main__":
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
 
+    with open(args.channelfile, 'r') as f:
+        channels = json.load(f)
+        channellist = list(channels.keys())
+
     cmds = []
     for year in args.years:
-        cmd = basecommand + f" -y {year}"
-        cmds.append([cmd])
+        for channel in channels:
+            if args.channel is not None and channel != args.channel:
+                continue
+            if channels[channel].get("isSubchannel", 0) > 0:
+                continue
+            cmd = basecommand + f" -y {year}"
+            cmd += f" -c {channel}"
+            cmds.append([cmd])
 
     if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP"
-        cmds.append([cmd])
+        for channel in channels:
+            if args.channel is not None and channel != args.channel:
+                continue
+            if channels[channel].get("isSubchannel", 0) > 0:
+                continue
+            cmd_tmp = cmd + f" -c {channel}"
+            cmds.append([cmd_tmp])
 
     if len(args.years) == 4:
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
-        cmds.append([cmd])
+        for channel in channels:
+            if args.channel is not None and channel != args.channel:
+                continue
+            if channels[channel].get("isSubchannel", 0) > 0:
+                continue
+            cmd_tmp = cmd + f" -c {channel}"
+            cmds.append([cmd_tmp])
+        # cmds.append([cmd])
     
     ct.submitCommandsetsAsCondorCluster("SystematicsBand", cmds, scriptfolder="Scripts/condor/")

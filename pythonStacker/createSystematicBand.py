@@ -59,7 +59,10 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
         for year, hists in hists_per_year.items():
             # get the up and down variation:
             up_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"]))
-            down_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"]))
+            if uncertainty.weight_key_down is None:
+                down_diff = np.zeros(len(up_diff))
+            else:
+                down_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Down"] - hists[variable.name]["nominal"]))
 
             # keep only variations that are truly showing
             true_up_diff = np.where(up_diff > down_diff, up_diff, down_diff)
@@ -153,7 +156,7 @@ def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str,
     return ret
 
 
-def channelloop(channels, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list, processes, storagepath: str):
+def channelloop(channels: list, variables: VariableReader, systematics_shape: dict, systematics_flat: dict, years: list, processes, storagepath: str, args):
     uncertainties = {**systematics_shape, **systematics_flat}
 
     unc_per_process = get_systematics_per_process(systematics_shape, list(processes.keys()))
@@ -167,7 +170,9 @@ def channelloop(channels, variables: VariableReader, systematics_shape: dict, sy
         outputfilename += "all"
     outputfilename += ".parquet"
 
-    for channelname, info in channels.items():
+    for channelname in channels:
+        if args.channel is not None and args.channel not in channelname:
+            continue
         print(channelname)
         # update storagepath to include channel
         storagepath_channel = os.path.join(storagepath, channelname)
@@ -176,13 +181,15 @@ def channelloop(channels, variables: VariableReader, systematics_shape: dict, sy
         for process, _ in processes.items():
             histograms_proc[process] = dict()
             for year in years:
-                histograms_proc[process][year] = HistogramManager(storagepath_channel, process, variables, list(unc_per_process[process].keys()), year=year)
+                histograms_proc[process][year] = HistogramManager(storagepath_channel, process, variables, list(unc_per_process[process].keys()), year=year, channel=channelname)
                 histograms_proc[process][year].load_histograms()
 
         results = variableloop(variables, histograms_proc, uncertainties, channelname)
 
         # store results for each variable:
-        for variable in variables.get_variables():
+        for variable, var_object in variables.get_variable_objects().items():
+            if not var_object.is_channel_relevant(channelname):
+                continue
             tmp_path = os.path.join(storagepath_channel, variable, outputfilename)
             ak.to_parquet(ak.Record(results[variable]), tmp_path)
 
@@ -199,7 +206,6 @@ if __name__ == "__main__":
     # should contain all. Define "nominal" and "stat".
     systematics_shape["nominal"] = Uncertainty("nominal", {})
     systematics_shape["stat_unc"] = Uncertainty("stat_unc", {})
-
     # initialize variable class:
     variables = VariableReader(args.variablefile, args.variable)
 
@@ -213,4 +219,5 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
     # prepare channels:
     channels = load_channels_and_subchannels(args.channelfile)
-    channelloop(channels, variables, systematics_shape, systematics_flat, args.years, processes, storagepath)
+    channelloop(channels, variables, systematics_shape, systematics_flat, args.years, processes, storagepath, args)
+    print("Finished!")

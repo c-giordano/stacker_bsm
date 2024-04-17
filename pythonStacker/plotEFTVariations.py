@@ -153,7 +153,7 @@ if __name__ == "__main__":
     channels = load_channels(args.channelfile)
     storagepath = os.path.join(args.storage, subbasedir)
 
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, suffix="_EFT_Variations")
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="_EFT_Variations")
 
     # first plot nominal, then start adding variations
     # load variables, want to do this for all processes

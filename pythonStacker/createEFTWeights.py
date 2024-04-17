@@ -26,12 +26,13 @@ def parse_arguments():
 
 
 def get_eftvariations_filename(storage: str, filename: str, eventclass) -> str:
+    basefilename = filename.split("/")[-1].split(".")[0].split("_localSub")[0]
     if not os.path.exists(os.path.join(storage, "eftWeights")):
         os.makedirs(os.path.join(storage, "eftWeights"))
-    return os.path.join(storage, "eftWeights", "evClass_" + str(eventclass) + "_wgts.parquet")
+    return os.path.join(storage, "eftWeights", f"{basefilename}_evClass_{eventclass}_wgts.parquet")
 
 
-def reweight_and_write(reweighter, eventclass, tree, storage):
+def reweight_and_write(reweighter, eventclass, tree, storage, filename):
     arrs = tree.arrays(["eftVariationsNorm"], "eventClass==" + str(eventclass), aliases={"eftVariationsNorm": "eftVariations/eftVariations[:,0]"})
     # should become a record rather than a single array, using the naming scheme I devised in the init
 
@@ -47,7 +48,7 @@ def reweight_and_write(reweighter, eventclass, tree, storage):
     eft_names = ["Central"] + eft.getEFTVariationsGroomed()
     for i, name in enumerate(eft_names):
         final_prerecord[name] = var[:, i]
-    outputfile = get_eftvariations_filename(storage, "", eventclass)
+    outputfile = get_eftvariations_filename(storage, filename, eventclass)
     ak.to_parquet(ak.Record(final_prerecord), outputfile)
     return
 
@@ -61,7 +62,9 @@ if __name__ == "__main__":
     tree = src.get_tree_from_file(args.inputfile, "TTTT_EFT")
     if (int(args.eventclass) == -1):
         for i in range(15):
-            reweight_and_write(reweighter, i, tree, args.storage)
+            reweight_and_write(reweighter, i, tree, args.storage, args.inputfile)
     else:
         print(f"running weights for class {args.eventclass}")
-        reweight_and_write(reweighter, int(args.eventclass), tree, args.storage)
+        reweight_and_write(reweighter, int(args.eventclass), tree, args.storage, args.inputfile)
+
+    print("Success!")

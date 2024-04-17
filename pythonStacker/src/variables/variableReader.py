@@ -29,7 +29,7 @@ class Variable:
 
 
 class VariableReader:
-    def __init__(self, filename: str, variables: list):
+    def __init__(self, filename: str, variables: list, channel=""):
         self.filename = filename
         # load file:
         with open(self.filename, 'r') as file:
@@ -45,8 +45,14 @@ class VariableReader:
         self.nvar = len(self.variables)
         self.variable_objects: dict[str, Variable] = {}
 
+        variables_subset = []
         for key in self.variables:
-            self.variable_objects[key] = Variable(key, data[key])
+            new_variable = Variable(key, data[key])
+            if not new_variable.is_channel_relevant(channel):
+                continue
+            self.variable_objects[key] = new_variable
+            variables_subset.append(key)
+        self.variables = variables_subset
         self.index = 0
 
     def __getitem__(self, key) -> Variable:

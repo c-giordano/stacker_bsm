@@ -65,15 +65,20 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
     Code to create nominal datacard content (ie the really SM processes).
     For SM stuff, this is the only thing that should be used.
     """
+    all_asimovdata = dict()
     for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
         # load histograms for this specific channel and the variable with HistogramManager
         histograms = dict()
 
+        # asimov set
         # setup variable reader for the single variable
         var_name = channel_DC_setting["variable"]
         variables = VariableReader(args.variablefile, [var_name])
         storagepath = os.path.join(args.storage, channelname)
         # setup systematics for current channel
+
+        asimov_data = np.zeros(variables.get_properties(var_name).nbins)
+
         for process in processes:
             if channels[channelname].is_process_excluded(process):
                 continue
@@ -81,6 +86,7 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
             histograms.load_histograms()
 
             # write nominal
+            asimov_data += np.array(ak.to_numpy(histograms[var_name]["nominal"]))
             path_to_histogram = f"{channel_DC_setting['prettyname']}/{process}"
             convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=histograms[var_name]["stat_unc"])
 
@@ -93,7 +99,16 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                 path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/{process}"
                 path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/{process}"
                 convert_and_write_histogram(histograms[var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-                convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                if syst.weight_key_down is None:
+                    convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                else:
+                    convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+
+        # write data_obs:
+        all_asimovdata[channel_DC_setting['prettyname']] = asimov_data
+        # asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
+        # convert_and_write_histogram(asimov_data, variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_data))
+    return all_asimovdata
 
 
 def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings: dict, eft_variations: list, shape_systematics: dict, args: argparse.Namespace):
@@ -106,6 +121,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
     # first add sm to the list and load those histograms -> normal histogrammanager
     # load SM stuff:
     sm_histograms: dict[str, HistogramManager] = dict()
+    all_asimovdata = dict()
     for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
         storagepath = os.path.join(args.storage, channelname)
 
@@ -115,6 +131,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
 
         sm_histograms[channelname] = HistogramManager(storagepath, "TTTT", variables, list(shape_systematics.keys()), args.years[0])
         sm_histograms[channelname].load_histograms()
+        all_asimovdata[channel_DC_setting['prettyname']] = sm_histograms[channelname][var_name]["nominal"]
 
         path_to_histogram = f"{channel_DC_setting['prettyname']}/sm"
         convert_and_write_histogram(sm_histograms[channelname][var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=sm_histograms[channelname][var_name]["stat_unc"])
@@ -124,10 +141,14 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 continue
             if not syst.is_process_relevant("TTTT"):
                 continue
-            path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{systname}Up/sm"
-            path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{systname}Down/sm"
+            path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/sm"
+            path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/sm"
             convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-            convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+            # convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+            if syst.weight_key_down is None:
+                convert_and_write_histogram(sm_histograms[channelname][var_name]["nominal"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+            else:
+                convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
     # next lin and quad terms per eft variation
     for eft_var in eft_variations:
@@ -159,29 +180,36 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
 
             # loop and write systematics
             for systname, syst in shape_systematics.items():
+                print(f"running systematic {systname}")
                 if systname == "nominal" or systname == "stat_unc":
                     continue
                 if not syst.is_process_relevant("TTTT"):
                     continue
-
-                rel_syst_up = sm_histograms[channelname][var_name][systname]["Up"] / sm_histograms[channelname][var_name]["nominal"]
-                rel_syst_down = sm_histograms[channelname][var_name][systname]["Down"] / sm_histograms[channelname][var_name]["nominal"]
-
+                rel_syst_up = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Up"] / sm_histograms[channelname][var_name]["nominal"])
                 content_sm_lin_quad_syst_up = rel_syst_up * content_sm_lin_quad_nominal
-                content_sm_lin_quad_syst_down = rel_syst_down * content_sm_lin_quad_nominal
-                path_to_sm_lin_quad_syst_up = f"{channel_DC_setting['prettyname']}/{systname}Down/sm_lin_quad_{eft_var}"
-                path_to_sm_lin_quad_syst_down = f"{channel_DC_setting['prettyname']}/{systname}Down/sm_lin_quad_{eft_var}"
+                content_quad_syst_up = rel_syst_up * content_quad_nominal
+
+                if syst.weight_key_down is None:
+                    # rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / sm_histograms[channelname][var_name]["nominal"])
+                    content_sm_lin_quad_syst_down = content_sm_lin_quad_nominal
+                    content_quad_syst_down = content_quad_nominal
+                else:
+                    rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Down"] / sm_histograms[channelname][var_name]["nominal"])
+                    content_sm_lin_quad_syst_down = rel_syst_down * content_sm_lin_quad_nominal
+                    content_quad_syst_down = rel_syst_down * content_quad_nominal
+
+                path_to_sm_lin_quad_syst_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/sm_lin_quad_{eft_var}"
+                path_to_sm_lin_quad_syst_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/sm_lin_quad_{eft_var}"
+                print(path_to_sm_lin_quad_syst_up)
                 convert_and_write_histogram(content_sm_lin_quad_syst_up, variables.get_properties(var_name), path_to_sm_lin_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_sm_lin_quad_syst_down, variables.get_properties(var_name), path_to_sm_lin_quad_syst_down, rootfile)
 
-                content_quad_syst_up = rel_syst_up * content_quad_nominal
-                content_quad_syst_down = rel_syst_down * content_quad_nominal
-                path_to_quad_syst_up = f"{channel_DC_setting['prettyname']}/{systname}Down/quad_{eft_var}"
-                path_to_quad_syst_down = f"{channel_DC_setting['prettyname']}/{systname}Down/quad_{eft_var}"
+                path_to_quad_syst_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/quad_{eft_var}"
+                path_to_quad_syst_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/quad_{eft_var}"
                 convert_and_write_histogram(content_quad_syst_up, variables.get_properties(var_name), path_to_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_quad_syst_down, variables.get_properties(var_name), path_to_quad_syst_down, rootfile)
 
-    return ret
+    return ret, all_asimovdata
 
 
 if __name__ == "__main__":
@@ -196,7 +224,11 @@ if __name__ == "__main__":
 
     # Load all processes:
     with open(args.processfile, 'r') as f:
-        processes = list(json.load(f)["Processes"].keys())
+        processfile = json.load(f)
+        processes = list(processfile["Processes"].keys())
+        basedir = processfile["Basedir"]
+        subbasedir = basedir.split("/")[-1]
+        args.storage = os.path.join(args.storage, subbasedir)
 
     path_to_rootfile = os.path.join(args.outputpath, f"{datacard_settings['DC_name']}.root")
     rootfile = uproot.recreate(path_to_rootfile)
@@ -206,43 +238,20 @@ if __name__ == "__main__":
     shape_systematics["stat_unc"] = Uncertainty("stat_unc", {})
 
     if args.UseEFT:
-        eft_part = eft_datacard_creation(rootfile, datacard_settings, ["cQQ1"], shape_systematics, args)
+        eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, ["cQQ1"], shape_systematics, args)
         processes = [process for process in processes if process != "TTTT"]
-        processes_write = [[process, i] for i, process in enumerate(processes)]
+        processes_write = [[process, i + 1] for i, process in enumerate(processes)]
 
-    nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
+    asimov_bkg = nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
 
     if args.UseEFT:
         processes_write.extend(eft_part)
-    # for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
-    #     # load histograms for this specific channel and the variable with HistogramManager
-    #     histograms = dict()
-    #
-    #     # setup variable reader for the single variable
-    #     var_name = channel_DC_setting["variable"]
-    #     variables = VariableReader(args.variablefile, [var_name])
-    #     storagepath = os.path.join(args.storage, channelname)
-    #     # setup systematics for current channel
-    #     for process in processes.keys():
-    #         if channels[channelname].is_process_excluded(process):
-    #             continue
-    #         histograms = HistogramManager(storagepath, process, variables, list(shape_systematics.keys()), args.years[0])
-    #         histograms.load_histograms()
-    #
-    #         # write nominal
-    #         path_to_histogram = f"{channel_DC_setting['prettyname']}/{process}"
-    #         convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=histograms[var_name]["stat_unc"])
-    #
-    #         # loop and write systematics
-    #         for systname, syst in shape_systematics.items():
-    #             if systname == "nominal" or systname == "stat_unc":
-    #                 continue
-    #             if not syst.is_process_relevant(process):
-    #                 continue
-    #             path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{systname}Up/{process}"
-    #             path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{systname}Down/{process}"
-    #             convert_and_write_histogram(histograms[var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-    #             convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+        for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
+            asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
+            var_name = channel_DC_setting["variable"]
+            variables = VariableReader(args.variablefile, [var_name])
+            asimov_data = asimov_bkg[channel_DC_setting['prettyname']] + asimov_signal[channel_DC_setting['prettyname']]
+            convert_and_write_histogram(asimov_data, variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_data))
 
     rootfile.close()
 

@@ -1,4 +1,6 @@
-# import numpy as np
+import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
 # import awkward as ak
 import argparse
 import sys
@@ -121,9 +123,10 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
                 else:
                     keys = syst.get_weight_keys()
                     hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
-                    hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
                     output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
-                    output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
+                    if keys[1] is not None:
+                        hist_content_down, _, _ = prepare_histogram(data, weights[keys[1]], variable)
+                        output_histograms[args.channel][variable.name][name]["Down"] += hist_content_down
 
                 for subchannel_name in subchannelnames:
                     if name == "stat_unc":
@@ -170,7 +173,7 @@ if __name__ == "__main__":
     storagepath = args.storage
 
     # initialize variable class:
-    variables = VariableReader(args.variablefile, args.variable)
+    variables = VariableReader(args.variablefile, args.variable, channel=args.channel)
 
     # prob do same with systematics
     if args.systematic == "weight" or args.systematic == "shape":
@@ -238,7 +241,7 @@ if __name__ == "__main__":
     storagepath_main = os.path.join(storagepath, args.channel)
     output_histograms = dict()
     output_histograms[args.channel] = HistogramManager(storagepath_main, args.process, variables, list(systematics.keys()), year=args.years[0])
-    for subchannel_name, _ in channel.subchannels.items():
+    for subchannel_name in channel.get_subchannels():
         channel_name = args.channel + subchannel_name
         storagepath_tmp = os.path.join(storagepath, channel_name)
         output_histograms[subchannel_name] = HistogramManager(storagepath_tmp, args.process, variables, list(systematics.keys()), year=args.years[0])

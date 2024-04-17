@@ -90,6 +90,7 @@ def makeJobDescription(name, exe, argstring=None, stdout=None, stderr=None, log=
         f.write(f"output = /user/{os.environ['USER']}/condor/output/{stdout}\n")
         f.write(f"error = /user/{os.environ['USER']}/condor/error/{stderr}\n")
         f.write(f"log = /user/{os.environ['USER']}/condor/logs/{log}\n\n")
+        f.write("should_transfer_files = NO\n\n")
         # f.write('request_cpus = {}\n'.format(cpus)) # Don't specify if not necessary
         # f.write('request_memory = {}\n'.format(mem)) # Don't specify if not necessary
         # f.write('request_disk = {}\n\n'.format(disk)) # Don't specify if not necessary

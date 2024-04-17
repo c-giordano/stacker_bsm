@@ -6,10 +6,10 @@ from src.variables.variableReader import VariableReader
 
 
 class HistogramManager:
-    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: list, year="2018"):
+    def __init__(self, storagepath: str, process: str, variables: VariableReader, systematics: list, year="2018", channel=""):
         self.store: str = storagepath
         self.process: str = process
-        self.variables: list = variables.get_variables()
+        self.variables: list = []  # variables.get_variables()
 
         self.systematics = systematics
 
@@ -18,6 +18,9 @@ class HistogramManager:
         self.base_name = dict()
         self.histograms = dict()
         for var, prop in variables.variable_objects.items():
+            if not prop.is_channel_relevant(channel):
+                continue
+            self.variables.append(var)
             self.cache_folder[var] = os.path.join(storagepath, var)
             if not os.path.exists(self.cache_folder[var]):
                 try:
@@ -60,7 +63,16 @@ class HistogramManager:
 
     def load_histograms_for_variable(self, var):
         ret = dict()
+        pdfs = None
+
         for sys in self.systematics:
+            if "PDF" in sys and pdfs is None:
+                pdfs = self.load_histogram(var, "PDF")
+                ret[sys] = pdfs[sys]
+                continue
+            elif "PDF" in sys:
+                ret[sys] = pdfs[sys]
+                continue
             ret[sys] = self.load_histogram(var, sys)
 
         return ret
@@ -92,8 +104,14 @@ class HistogramManager:
             self.save_histograms_for_variable(content[var], var)
 
     def save_histograms_for_variable(self, content_variations, var):
+        pdf_uncertainties = dict()
         for sys in self.systematics:
+            if "PDF_" in sys:
+                pdf_uncertainties[sys] = ak.Record(content_variations[sys])
+                continue
             self.save_histogram(content_variations[sys], var, sys)
+        if len(pdf_uncertainties) != 0:
+            self.save_histogram(pdf_uncertainties, var, "PDF")
 
     def save_histogram(self, content, var: str, sys: str = "nominal"):
         if sys == "nominal" or sys == "stat_unc":

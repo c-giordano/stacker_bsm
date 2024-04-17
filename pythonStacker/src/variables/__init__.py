@@ -41,12 +41,32 @@ def sum_branch(tree: uproot.TTree, branchname: str, selection: str):
     return ak.to_numpy(ak.sum(variable, axis=1))
 
 
+def count_btag(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+    variable = tree.arrays(["variable"], cut=selection, aliases={"variable": branchname}).variable
+    return ak.to_numpy(ak.sum(variable >= wp, axis=1))
+
+
+def count_btag_loose(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+    return count_btag(tree, branchname, selection, 1)
+
+
+def count_btag_med(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+    return count_btag(tree, branchname, selection, 2)
+
+
+def count_btag_tight(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+    return count_btag(tree, branchname, selection, 3)
+
+
 def get_method_from_str(method: str):
     tmp = {
         "load": load_variable,
         "default": load_variable,
         "tanh_nonflat": bdt_tanh_transfrom_nonflat,
         "tanh_flat": bdt_tanh_transfrom_flat,
-        "sum_branch": sum_branch
+        "sum_branch": sum_branch,
+        "btag_tight": count_btag_tight,
+        "btag_med": count_btag_med,
+        "btag_loose": count_btag_loose
     }
     return tmp[method]

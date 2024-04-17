@@ -1,7 +1,7 @@
 import json
 from src.configuration.Uncertainty import Uncertainty
-import PDFVariation
-import ScaleVariation
+import src.configuration.PDFVariation as PDFVariation
+import src.configuration.ScaleVariation as ScaleVariation
 
 
 def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=True) -> dict:
@@ -17,12 +17,12 @@ def load_uncertainties(jsonfile, typefilter=None, namefilter=None, allowflat=Tru
         if not allowflat and syst_type == "flat":
             continue
 
-        if key.lower() == "pdfUncertainty":
+        if key.lower() == "pdfuncertainty":
             pdfs = PDFVariation.generate_pdfvariations(val)
             for pdf in pdfs:
                 ret[pdf.pretty_name] = pdf
             continue
-        if key.lower() == "ScaleVar":
+        if key.lower() == "scalevar":
             scalevars = ScaleVariation.generate_scalevariations(val)
             for scalevar in scalevars:
                 ret[scalevar.pretty_name] = scalevar
@@ -45,13 +45,13 @@ def load_channels(channelfile) -> dict:
     return ret
 
 
-def load_channels_and_subchannels(channelfile) -> dict:
+def load_channels_and_subchannels(channelfile) -> list:
     channels = load_channels(channelfile)
-    ret = dict()
+    ret = []
     for channelname, channelinfo in channels.items():
-        ret[channelname] = channelinfo
-        for subchannelname, info in channelinfo.subchannels.items():
-            ret[channelname + subchannelname] = info
+        ret.append(channelname)
+        for subchannelname in channelinfo.get_subchannels():
+            ret.append(channelname + subchannelname)
 
     return ret
 
@@ -67,18 +67,20 @@ class Channel:
         self.ign_processes.extend(ignore_proc)
 
         # subchannel structure
-        subchannels = channelinfo.get("subchannels", [])
-        self.subchannels = {subchannel: Channel(full_channelfile[subchannel], full_channelfile, self.ign_processes) for subchannel in subchannels}
+        subchannels: list[str] = channelinfo.get("subchannels", [])
+        self.subchannels: dict[str, Channel] = {subchannel: Channel(full_channelfile[subchannel], full_channelfile, self.ign_processes) for subchannel in subchannels}
 
         # load other config options
 
     def is_process_excluded(self, process: str):
         return process in self.ign_processes
 
-    def get_subchannels(self):
+    def get_subchannels(self) -> list[str]:
         ret = []
-        for name, info in self.subchannels.items():
+        for name, subchannel in self.subchannels.items():
             ret.append(name)
+            for subname in subchannel.get_subchannels():
+                ret.append(name + "_" + subname)
         return ret
 
     def produce_masks(self, tree):
@@ -90,8 +92,10 @@ class Channel:
     def produce_aliases(self) -> tuple[dict, list]:
         # for the chosen channel, load the info
         aliases: dict = {}
-        for name, info in self.subchannels.items():
-            aliases[name] = info.selection
+        for name, subchannel in self.subchannels.items():
+            aliases[name] = subchannel.selection
+            for subname in subchannel.get_subchannels():
+                aliases[name + "_" + subname] = f"({subchannel.selection}) & ({subchannel.subchannels[subname].selection})"
 
         alias_names = list(aliases.keys())
         return aliases, alias_names

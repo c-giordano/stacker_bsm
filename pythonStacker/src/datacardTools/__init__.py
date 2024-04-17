@@ -49,15 +49,15 @@ class DatacardWriter():
                 if channel.is_process_excluded(processname):
                     continue
 
-                channelline += "{:>15s}\t".format(channelname)
-                processline += "{:>15s}\t".format(processname)
-                processnumber += "{:>15d}\t".format(number)
-                rate += "{:>15d}\t".format(-1)
+                channelline += "{:>20s}\t".format(channelname)
+                processline += "{:>20s}\t".format(processname)
+                processnumber += "{:>20d}\t".format(number)
+                rate += "{:>20d}\t".format(-1)
 
-        self.outputstring += "{:>25s}\t".format("bin") + channelline + "\n"
-        self.outputstring += "{:>25s}\t".format("process") + processline + "\n"
-        self.outputstring += "{:>25s}\t".format("process") + processnumber + "\n"
-        self.outputstring += "{:>25s}\t".format("rate") + rate + "\n"
+        self.outputstring += "{:>30s}\t".format("bin") + channelline + "\n"
+        self.outputstring += "{:>30s}\t".format("process") + processline + "\n"
+        self.outputstring += "{:>30s}\t".format("process") + processnumber + "\n"
+        self.outputstring += "{:>30s}\t".format("rate") + rate + "\n"
         self.commentline()
 
     def add_MCstats(self):
@@ -73,13 +73,13 @@ class DatacardWriter():
                 continue
             for process, number in self.processes:
                 if systematic.is_process_relevant(process):
-                    systematic_line += "\t{:>15.2f}".format(systematic.rate)
+                    systematic_line += "\t{:>20.2f}".format(systematic.rate)
                     relevant = True
                 else:
-                    systematic_line += "\t{:>15s}".format("-")
+                    systematic_line += "\t{:>20s}".format("-")
 
         if relevant:
-            self.outputstring += "{:<18s} ".format(systematic.technical_name)
+            self.outputstring += "{:<23s} ".format(systematic.technical_name)
             if systematic.isFlat:
                 self.outputstring += "{:>6s}".format("lnN")
             else:

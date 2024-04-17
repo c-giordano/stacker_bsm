@@ -75,9 +75,9 @@ def modify_yrange(total_content, axis, ratio=False):
     axis.set_ylim((cont_min, cont_max))
 
 
-def modify_yrange_shape(total_content, axis, maxscale=1.8):
+def modify_yrange_shape(total_content, axis, minscale=0.8, maxscale=1.8):
     cont_max = maxscale * np.max(total_content)
-    cont_min = 0.8 * np.min(total_content)
+    cont_min = minscale * np.min(total_content)
     axis.set_ylim((cont_min, cont_max))
 
 
@@ -98,22 +98,23 @@ def get_lumi(years):
     return total_lumi
 
 
-def generate_outputfolder(years, outputfolder, suffix=""):
+def generate_outputfolder(years, outputfolder, subdir, suffix=""):
     # outputfolder with year:
     outputsubfolder = ""
     if len(years) == 1:
-        outputsubfolder += "_" + years[0]
+        outputsubfolder += years[0]
     elif len(years) < 4:
-        outputsubfolder += "_" + "_".join(years)
+        outputsubfolder += "_".join(years)
     else:
-        outputsubfolder += "_Run2"
+        outputsubfolder += "Run2"
 
     outputsubfolder += suffix
 
-    outputfolder_base = os.path.join(outputfolder, outputsubfolder)
+    outputfolder_base = os.path.join(outputfolder, subdir, outputsubfolder)
     if not os.path.exists(outputfolder_base):
         os.makedirs(outputfolder_base)
     copy_index_html(outputfolder_base)
+    copy_index_html(os.path.join(outputfolder, subdir))
     return outputfolder_base
 
 
@@ -172,6 +173,7 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
     ax_main.legend(ncols=2)
 
     # fix output name
+    print(f"Created figure {os.path.join(plotdir, f'{variable.name}.png')}.")
     fig.savefig(os.path.join(plotdir, f"{variable.name}.png"))
     fig.savefig(os.path.join(plotdir, f"{variable.name}.pdf"))
     plt.close(fig)
@@ -179,6 +181,7 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
 
 if __name__ == "__main__":
     args = parse_arguments()
+    np.seterr(divide='ignore', invalid='ignore')
 
     # need a set of processes
     with open(args.processfile, 'r') as f:
@@ -197,7 +200,7 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
 
     # outputfolder with year:
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder)
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir)
 
     print(channels)
     for channel in channels:
@@ -216,14 +219,14 @@ if __name__ == "__main__":
         for process, info in processinfo.items():
             histograms[process] = dict()
             for year in args.years:
-                histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
+                histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year, channel=channel)
                 histograms[process][year].load_histograms()
         for _, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
             plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
 
-        for subchannel in channels[channel].subchannels.keys():
+        for subchannel in channels[channel].get_subchannels():
             storagepath_tmp = os.path.join(storagepath, channel + subchannel)
             histograms = dict()
 
@@ -235,9 +238,10 @@ if __name__ == "__main__":
             for process, info in processinfo.items():
                 histograms[process] = dict()
                 for year in args.years:
-                    histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year)
+                    histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year, channel=channel)
                     histograms[process][year].load_histograms()
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(channel + subchannel):
                     continue
                 plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
+    print("Finished!")

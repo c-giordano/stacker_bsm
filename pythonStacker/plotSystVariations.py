@@ -54,26 +54,34 @@ def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plo
 
     minim = 1.
     maxim = 1.
-    for syst in systematics:
+    colors = ["r", "g", "b", "y", "c", "m"]
+    for i, syst in enumerate(systematics):
         # TODO: actually load the variation
-        upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1.)
-        downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1.)
+        upvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Up"])) / nominal_content, nan=1., posinf=1., neginf=1.)
+        downvar = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name][syst]["Down"])) / nominal_content, nan=1., posinf=1., neginf=1.)
 
         minim = min(minim, min(np.min(downvar), np.min(upvar)))
         maxim = max(maxim, max(np.max(downvar), np.max(upvar)))
+
         # plot
-        ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=syst)
-        ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", label=syst)
+        ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=f"{syst} Up", color=colors[i])
+        ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", label=f"{syst} Down", color=colors[i], linestyle="dashed")
 
     ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("Unc / nom.")
-    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    # modify_yrange_shape((minim, maxim), ax_main, minscale=0.95, maxscale=1.4)
+    diff_minmax = maxim - minim
+    ax_main.set_ylim((minim - 0.02 * diff_minmax, maxim + 0.6 * diff_minmax))
+    # print((minim, maxim))
+    # print((minim - 0.02 * diff_minmax, maxim + 0.4 * diff_minmax))
+
     ax_main.legend(ncol=2)
     ax_main.set_xlabel(variable.axis_label)
     ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
     # fix output name
+    print(f"Created figure {os.path.join(plotdir, f'{variable.name}_{setnb}.png')}")
     fig.savefig(os.path.join(plotdir, f"{variable.name}_{setnb}.png"))
     fig.savefig(os.path.join(plotdir, f"{variable.name}_{setnb}.pdf"))
     plt.close(fig)
@@ -94,7 +102,7 @@ if __name__ == "__main__":
     channels = load_channels(args.channelfile)
     storagepath = os.path.join(args.storage, subbasedir)
 
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, suffix="_EFT_Variations")
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="_Syst_Variations")
 
     # load systematics
     systematics = load_uncertainties(args.systematicsfile, allowflat=False)
@@ -108,7 +116,7 @@ if __name__ == "__main__":
 
         storagepath_tmp = os.path.join(storagepath, channel)
 
-        outputfolder = os.path.join(outputfolder_base, channel)
+        outputfolder = os.path.join(outputfolder_base, channel, args.process)
         if not os.path.exists(outputfolder):
             os.makedirs(outputfolder)
         copy_index_html(outputfolder)
@@ -117,5 +125,8 @@ if __name__ == "__main__":
         histograms.load_histograms()
 
         for _, variable in variables.get_variable_objects().items():
+            if not variable.is_channel_relevant(channel):
+                continue
             for i, syst_set in enumerate(batched_systematics):
                 plot_systematicsset(variable, outputfolder, histograms, i, channel, syst_set)
+    print("Finished!")

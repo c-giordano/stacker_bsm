@@ -15,6 +15,7 @@ class WeightManager():
         aliases = self.construct_aliases(systematics)
         keys = list(aliases.keys())
         self.eft_initialized = False
+        print(aliases)
         self.weights = tree.arrays(keys, cut=selection, aliases=aliases)
 
     def construct_aliases(self, systematics: dict[str, Uncertainty]):
