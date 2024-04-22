@@ -1,4 +1,5 @@
 import json
+import os
 from src.variables import get_method_from_str
 
 
@@ -33,8 +34,14 @@ class VariableReader:
         self.filename = filename
         # load file:
         with open(self.filename, 'r') as file:
-            data = json.load(file)
+            data: dict = json.load(file)
 
+        extra_files = data.get("load_variables", [])
+        for extra_file in extra_files:
+            with open(os.path.join("settingfiles/Variables", extra_file), 'r') as file:
+                extra_data = json.load(file)
+            data.update(extra_data)
+        print(data)
         if variables is None or variables == "all":
             self.variables = list(data.keys())
         else:
@@ -47,6 +54,8 @@ class VariableReader:
 
         variables_subset = []
         for key in self.variables:
+            if key == "load_variables":
+                continue
             new_variable = Variable(key, data[key])
             if not new_variable.is_channel_relevant(channel):
                 continue

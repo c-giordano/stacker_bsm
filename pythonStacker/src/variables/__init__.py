@@ -46,15 +46,15 @@ def count_btag(tree: uproot.TTree, branchname: str, selection: str, wp: int):
     return ak.to_numpy(ak.sum(variable >= wp, axis=1))
 
 
-def count_btag_loose(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+def count_btag_loose(tree: uproot.TTree, branchname: str, selection: str):
     return count_btag(tree, branchname, selection, 1)
 
 
-def count_btag_med(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+def count_btag_med(tree: uproot.TTree, branchname: str, selection: str):
     return count_btag(tree, branchname, selection, 2)
 
 
-def count_btag_tight(tree: uproot.TTree, branchname: str, selection: str, wp: int):
+def count_btag_tight(tree: uproot.TTree, branchname: str, selection: str):
     return count_btag(tree, branchname, selection, 3)
 
 
