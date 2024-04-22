@@ -1,11 +1,19 @@
 {
-    "HT_SRs" : {
-        "range": [200.0, 1000.0],
-        "nbins": 16,
+    "HT_SR2L" : {
+        "range": [250.0, 1400.0],
+        "nbins": 23,
         "axis_label": "$H_T$",
         "branch_name": "jetPt",
         "method_name": "sum_branch",
-        "channels": ["SR-2L", "SR-3L"]
+        "channels": ["SR-2L"]
+    },
+    "HT_SRML" : {
+        "range": [200.0, 1200.0],
+        "nbins": 20,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-3L", "SR-4L"]
     },
     "HT_CRs" : {
         "range": [0.0, 1000.0],
@@ -15,13 +23,29 @@
         "method_name": "sum_branch",
         "channels": ["CR-2L-23J1B", "CR-2L-45J2B", "CR-3L-Z", "CR-4L-Z", "CR-3L-2J1B"]
     },
-    "NJets": {
-        "range": [-0.5, 10.5],
+    "NJets_CR": {
+        "range": [1.5, 10.5],
+        "nbins": 9,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B", "CR-3L-Z", "CR-4L-Z", "CR-3L-2J1B"]
+    },
+    "NJets_SR2L": {
+        "range": [3.5, 12.5],
+        "nbins": 9,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["SR-2L"]
+    },
+    "NJets_SRML": {
+        "range": [1.5, 12.5],
         "nbins": 11,
         "axis_label": "$N_{jets}$",
         "branch_name": "nJets",
         "method_name": "load",
-        "channels": ["all"]
+        "channels": ["SR-3L", "SR-4L"]
     },
     "nMuons": {
         "range": [-0.5, 4.5],
@@ -39,7 +63,7 @@
         "method_name": "load",
         "channels": ["all"]
     },
-    "BDTScore_TTTT": {
+    "BDTScore_TTTT_incl": {
         "range": [0.6, 3.0],
         "nbins": 12,
         "branch_name": "fourTopScore",
@@ -47,7 +71,7 @@
         "method_name": "tanh_flat",
         "channels": ["all"]
     },
-    "BDTScore_TTX": {
+    "BDTScore_TTX_incl": {
         "range": [0.6, 3.0],
         "nbins": 12,
         "branch_name": "ttWScore",
@@ -55,7 +79,7 @@
         "method_name": "tanh_flat",
         "channels": ["all"]
     },
-    "BDTScore_NP": {
+    "BDTScore_NP_incl": {
         "range": [0.6, 3.0],
         "nbins": 12,
         "branch_name": "ttbarScore",
@@ -63,11 +87,43 @@
         "method_name": "tanh_flat",
         "channels": ["all"]
     },
+    "BDTScore_TTTT_pure": {
+        "range": [0.75, 3.0],
+        "nbins": 9,
+        "branch_name": "fourTopScore",
+        "axis_label": "TTTT Score",
+        "method_name": "tanh_flat",
+        "channels": ["all"]
+    },
+    "BDTScore_TTX_pure": {
+        "range": [0.75, 3.0],
+        "nbins": 9,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "tanh_flat",
+        "channels": ["all"]
+    },
+    "BDTScore_NP_pure": {
+        "range": [0.75, 3.0],
+        "nbins": 9,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "tanh_flat",
+        "channels": ["all"]
+    },
     "ptmiss": {
-        "range": [0.0, 500.0],
-        "nbins": 25,
+        "range": [0.0, 400.0],
+        "nbins": 20,
         "branch_name": "ptMiss",
         "axis_label": "$P_T^{miss}$",
+        "method_name": "load",
+        "channels": ["all"]
+    },
+    "Yield_SR2L": {
+        "range": [0, 1],
+        "nbins": 1,
+        "axis_label": "Yield",
+        "branch_name": "nJets",
         "method_name": "load",
         "channels": ["all"]
     }

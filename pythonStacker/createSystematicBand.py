@@ -58,6 +58,7 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
 
         for year, hists in hists_per_year.items():
             # get the up and down variation:
+
             up_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"]))
             if uncertainty.weight_key_down is None:
                 down_diff = np.zeros(len(up_diff))

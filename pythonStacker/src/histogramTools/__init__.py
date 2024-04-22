@@ -67,14 +67,14 @@ class HistogramManager:
 
         for sys in self.systematics:
             if "PDF" in sys and pdfs is None:
-                pdfs = self.load_histogram(var, "PDF")
-                ret[sys] = pdfs[sys]
+                if os.path.exists(self.get_name(var, "PDF")):
+                    pdfs = self.load_histogram(var, "PDF")
+                    ret[sys] = pdfs[sys]
                 continue
             elif "PDF" in sys:
                 ret[sys] = pdfs[sys]
                 continue
             ret[sys] = self.load_histogram(var, sys)
-
         return ret
 
     def load_histogram(self, var: str, sys: str = "nominal"):

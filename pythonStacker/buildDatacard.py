@@ -1,9 +1,11 @@
+import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
 import argparse
 import sys
 import os
 import json
 import uproot
-import numpy as np
 import awkward as ak
 
 from src.histogramTools import HistogramManager
@@ -157,6 +159,7 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
         lin_name = "EFT_" + eft_var
         quad_name = "EFT_" + eft_var + "_" + eft_var
         for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
+            # print(channelname)
             storagepath = os.path.join(args.storage, channelname)
             # write nominal part
 
@@ -167,7 +170,8 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
             content_to_load = ["nominal", "stat_unc", lin_name, quad_name]
             histograms_eft = HistogramManager(storagepath, "TTTT_EFT", variables, content_to_load, args.years[0])
             histograms_eft.load_histograms()
-
+            # print(channelname)
+            # print(var_name)
             content_sm_lin_quad_nominal = sm_histograms[channelname][var_name]["nominal"] + histograms_eft[var_name][lin_name]["Up"] + histograms_eft[var_name][quad_name]["Up"]
             statunc_sm_lin_quad_nominal = np.nan_to_num(ak.to_numpy(content_sm_lin_quad_nominal * histograms_eft[var_name]["stat_unc"] / histograms_eft[var_name]["nominal"]))
             path_to_sm_lin_quad = f"{channel_DC_setting['prettyname']}/sm_lin_quad_{eft_var}"
@@ -177,30 +181,41 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
             statunc_quad_nominal = np.nan_to_num(ak.to_numpy(content_quad_nominal * histograms_eft[var_name]["stat_unc"] / histograms_eft[var_name]["nominal"]))
             path_to_quad = f"{channel_DC_setting['prettyname']}/quad_{eft_var}"
             convert_and_write_histogram(content_quad_nominal, variables.get_properties(var_name), path_to_quad, rootfile, statunc=statunc_quad_nominal)
-
+            # print(content_sm_lin_quad_nominal)
             # loop and write systematics
             for systname, syst in shape_systematics.items():
-                print(f"running systematic {systname}")
+                # print(f"running systematic {systname}")
                 if systname == "nominal" or systname == "stat_unc":
                     continue
                 if not syst.is_process_relevant("TTTT"):
                     continue
-                rel_syst_up = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Up"] / sm_histograms[channelname][var_name]["nominal"])
+                rel_syst_up = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Up"] / sm_histograms[channelname][var_name]["nominal"], nan=1.)
+                # print("checking relsystup")
+                # print(rel_syst_up)
+                rel_syst_up = np.where(np.abs(rel_syst_up) > 1e10, 1., rel_syst_up)
+                # print(rel_syst_up)
+
                 content_sm_lin_quad_syst_up = rel_syst_up * content_sm_lin_quad_nominal
                 content_quad_syst_up = rel_syst_up * content_quad_nominal
+
 
                 if syst.weight_key_down is None:
                     # rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / sm_histograms[channelname][var_name]["nominal"])
                     content_sm_lin_quad_syst_down = content_sm_lin_quad_nominal
                     content_quad_syst_down = content_quad_nominal
                 else:
-                    rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Down"] / sm_histograms[channelname][var_name]["nominal"])
+                    rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Down"] / sm_histograms[channelname][var_name]["nominal"], nan=1.)
+                    # print("checking relsystdown")
+                    # print(rel_syst_down)
+                    rel_syst_down = np.where(np.abs(rel_syst_down) > 1e10, 1., rel_syst_down)
+
+                    # print(rel_syst_down)
                     content_sm_lin_quad_syst_down = rel_syst_down * content_sm_lin_quad_nominal
                     content_quad_syst_down = rel_syst_down * content_quad_nominal
 
                 path_to_sm_lin_quad_syst_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/sm_lin_quad_{eft_var}"
                 path_to_sm_lin_quad_syst_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/sm_lin_quad_{eft_var}"
-                print(path_to_sm_lin_quad_syst_up)
+                # print(path_to_sm_lin_quad_syst_up)
                 convert_and_write_histogram(content_sm_lin_quad_syst_up, variables.get_properties(var_name), path_to_sm_lin_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_sm_lin_quad_syst_down, variables.get_properties(var_name), path_to_sm_lin_quad_syst_down, rootfile)
 
@@ -213,6 +228,8 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
 
 
 if __name__ == "__main__":
+    np.seterr(divide='ignore', invalid='ignore')
+
     args = parse_arguments()
 
     # TODO: for systematics, add a year filter or something, so that we don't introduce 10 different config files.
@@ -238,7 +255,7 @@ if __name__ == "__main__":
     shape_systematics["stat_unc"] = Uncertainty("stat_unc", {})
 
     if args.UseEFT:
-        eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, ["cQQ1"], shape_systematics, args)
+        eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, [args.eft_operator], shape_systematics, args)
         processes = [process for process in processes if process != "TTTT"]
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
 
@@ -260,8 +277,8 @@ if __name__ == "__main__":
     dc_writer = DatacardWriter(path_to_txtfile)
     dc_writer.initialize_datacard(len(datacard_settings["channelcontent"]), f"{datacard_settings['DC_name']}.root")
 
-    relevant_channels = [channel for name, channel in channels.items() if name in list(datacard_settings["channelcontent"].keys())]
-    dc_writer.add_channels(get_pretty_channelnames(datacard_settings), relevant_channels)
+    relevant_channels = {datacard_settings["channelcontent"][name]["prettyname"]: channel for name, channel  in channels.items() if name in list(datacard_settings["channelcontent"].keys())}
+    dc_writer.add_channels(relevant_channels)
     dc_writer.add_processes(processes_write)
 
     systematics = load_uncertainties(args.systematicsfile)

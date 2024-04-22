@@ -45,13 +45,13 @@ def load_channels(channelfile) -> dict:
     return ret
 
 
-def load_channels_and_subchannels(channelfile) -> list:
+def load_channels_and_subchannels(channelfile) -> dict:
     channels = load_channels(channelfile)
-    ret = []
+    ret = dict(channels)
     for channelname, channelinfo in channels.items():
-        ret.append(channelname)
-        for subchannelname in channelinfo.get_subchannels():
-            ret.append(channelname + subchannelname)
+        subchannels = channelinfo.get_subchannels_dict()
+        for subchannelname, subchannelinfo in subchannels.items():
+            ret[channelname + subchannelname] = subchannelinfo
 
     return ret
 
@@ -59,6 +59,7 @@ def load_channels_and_subchannels(channelfile) -> list:
 # TODO: fix init ?
 class Channel:
     def __init__(self, channelinfo, full_channelfile, ignore_proc=[]) -> None:
+        self.channelinfo = channelinfo
         self._selection = channelinfo["selection"]
         self._isSubchannel = bool(channelinfo.get("isSubchannel", 0))
 
@@ -81,6 +82,13 @@ class Channel:
             ret.append(name)
             for subname in subchannel.get_subchannels():
                 ret.append(name + "_" + subname)
+        return ret
+    
+    def get_subchannels_dict(self) -> dict:
+        ret = dict(self.subchannels)
+        for name, subchannel in self.subchannels.items():
+            for subname in subchannel.get_subchannels():
+                ret[name + "_" + subname] = subchannel.subchannels[subname]
         return ret
 
     def produce_masks(self, tree):

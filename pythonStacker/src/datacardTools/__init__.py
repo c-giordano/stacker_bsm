@@ -19,9 +19,9 @@ class DatacardWriter():
         self.outputstring += f"shapes * * {rootfile} $CHANNEL/$PROCESS $CHANNEL/$SYSTEMATIC/$PROCESS\n"
         self.commentline()
 
-    def add_channels(self, pretty_names_channels, channels):
+    def add_channels(self, channels: dict):
         self.channels = channels
-        self.channel_names = pretty_names_channels
+        self.channel_names = list(channels.keys())
         self.outputstring += "{:>25s}".format("bin")
         for channel in self.channel_names:
             self.outputstring += f"\t{channel:>15s}"
@@ -44,7 +44,7 @@ class DatacardWriter():
         # process should be an object itself containing a lot of information
         # same for channel -> not super lightweight but ok
         # need to refix this
-        for channelname, channel in zip(self.channel_names, self.channels):
+        for channelname, channel in self.channels.items():
             for processname, number in self.processes:
                 if channel.is_process_excluded(processname):
                     continue
@@ -68,10 +68,12 @@ class DatacardWriter():
         # similar to add process stuff
         systematic_line = ""
         relevant = False
-        for channel in self.channels:
+        for _, channel in self.channels.items():
             if not systematic.is_channel_relevant(channel):
                 continue
             for process, number in self.processes:
+                if channel.is_process_excluded(process):
+                    continue
                 if systematic.is_process_relevant(process):
                     systematic_line += "\t{:>20.2f}".format(systematic.rate)
                     relevant = True

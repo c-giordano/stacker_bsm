@@ -1,0 +1,37 @@
+{
+    "DC_name": "DC_2018",
+    "channelcontent": {
+        "CR-3L-Z": {
+            "variable": "NJets_CR",
+            "prettyname": "CR3LZ"
+        },
+        "SR-2Lpuresig": {
+            "variable": "BDTScore_TTTT_pure",
+            "prettyname": "SR2L_ttttClass"
+        },
+        "SR-2LpureTTW": {
+            "variable": "BDTScore_TTX_pure",
+            "prettyname": "SR2L_ttwClass"
+        },
+        "SR-2LpureNP": {
+            "variable": "BDTScore_NP_pure",
+            "prettyname": "SR2L_NPClass"
+        },
+        "CR-2L-23J1B": {
+            "variable": "BDTScore_TTX_incl",
+            "prettyname": "CR2LNP"
+        },
+        "CR-2L-45J2B": {
+            "variable": "BDTScore_TTX_incl",
+            "prettyname": "CR2LTTW"
+        },
+        "CR-4L-Z": {
+            "variable": "NJets_CR",
+            "prettyname": "CR4LZ"
+        },
+        "CR-3L-2J1B": {
+            "variable": "BDTScore_TTX_incl",
+            "prettyname": "CR3LNP"
+        }
+    }
+}

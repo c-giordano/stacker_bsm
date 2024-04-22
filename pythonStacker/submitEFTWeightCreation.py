@@ -26,6 +26,8 @@ if __name__ == "__main__":
 
     commandset = []
     for year in args.years:
+        if year == "2016":
+            continue
         for pname, process in processes.items():
             # if has EFT
             files = []

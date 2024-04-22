@@ -62,18 +62,18 @@
         "corr_proc": 1,
         "type": "flat"
     },
-    "nonPromptMuNorm2018": {
-        "pretty_name": "nonPromptMuNorm2018",
-        "technical_name": "nonPromptMuNorm2018",
+    "nonPromptMuNorm2016": {
+        "pretty_name": "nonPromptMuNorm2016",
+        "technical_name": "nonPromptMuNorm2016",
         "channels": "all",
         "processes": "nonPromptMuon",
         "rate": 1.2,
         "corr_proc": 1,
         "type": "flat"
     },
-    "nonPromptElNorm2018": {
-        "pretty_name": "nonPromptElNorm2018",
-        "technical_name": "nonPromptElNorm2018",
+    "nonPromptElNorm2016": {
+        "pretty_name": "nonPromptElNorm2016",
+        "technical_name": "nonPromptElNorm2016",
         "channels": "all",
         "processes": "nonPromptElectron",
         "rate": 1.2,
@@ -148,6 +148,8 @@
         "aliasDown": "nominalWeight * expDown[:, 1]"
     },
     "MuonIDStat": {
+        "pretty_name": "MuonIDStat_2016",
+        "technical_name": "MuonIDStat_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -162,6 +164,8 @@
         "aliasDown": "nominalWeight * expDown[:, 3]"
     },
     "ElectronIDStat": {
+        "pretty_name": "ElectronIDStat_2016",
+        "technical_name": "ElectronIDStat_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -185,8 +189,8 @@
         "aliasDown": "nominalWeight * expDown[:, 7]"
     },
     "btag_hf_stats1": {
-        "pretty_name": "BTagSFHfs1",
-        "technical_name": "BTagSFHfs1",
+        "pretty_name": "BTagSFHfs1_2016",
+        "technical_name": "BTagSFHfs1_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -194,8 +198,8 @@
         "aliasDown": "nominalWeight * expDown[:, 9]"
     },
     "btag_hf_stats2": {
-        "pretty_name": "BTagSFHfs2",
-        "technical_name": "BTagSFHfs2",
+        "pretty_name": "BTagSFHfs2_2016",
+        "technical_name": "BTagSFHfs2_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -212,8 +216,8 @@
         "aliasDown": "nominalWeight * expDown[:, 8]"
     },
     "btag_lf_stats1": {
-        "pretty_name": "BTagSFLfs1",
-        "technical_name": "BTagSFLfs1",
+        "pretty_name": "BTagSFLfs1_2016",
+        "technical_name": "BTagSFLfs1_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -221,8 +225,8 @@
         "aliasDown": "nominalWeight * expDown[:, 11]"
     },
     "btag_lf_stats2": {
-        "pretty_name": "BTagSFLfs2",
-        "technical_name": "BTagSFLfs2",
+        "pretty_name": "BTagSFLfs2_2016",
+        "technical_name": "BTagSFLfs2_2016",
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight",
@@ -261,11 +265,6 @@
     },
     "JER_1p93": {
         "fileglob": "JER",
-        "processes": "MCOnly",
-        "type": "shape"
-    },
-    "HEMIssue": {
-        "fileglob": "HEMIssue",
         "processes": "MCOnly",
         "type": "shape"
     },

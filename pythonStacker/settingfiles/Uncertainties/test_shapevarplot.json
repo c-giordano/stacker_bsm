@@ -1,0 +1,69 @@
+{
+    "pileup": {
+        "pretty_name": "PU",
+        "technical_name": "PU",
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 0]",
+        "aliasDown": "nominalWeight * expDown[:, 0]"
+    },
+    "prefire": {
+        "pretty_name": "L1Prefire",
+        "technical_name": "L1Prefire",
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 5]", 
+        "aliasDown": "nominalWeight * expDown[:, 5]"
+    },
+    "MuonIDSyst": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 1]",
+        "aliasDown": "nominalWeight * expDown[:, 1]"
+    },
+    "MuonIDStat": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 2]",
+        "aliasDown": "nominalWeight * expDown[:, 2]"
+    },
+    "ElectronIDSyst": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 3]",
+        "aliasDown": "nominalWeight * expDown[:, 3]"
+    },
+    "ElectronIDStat": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 4]",
+        "aliasDown": "nominalWeight * expDown[:, 4]"
+    },
+    "ElectronReco": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * expUp[:, 6]",
+        "aliasDown": "nominalWeight * expDown[:, 6]"
+    },
+    "ISR": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * isrfsrVariations[:, 0]",
+        "aliasDown": "nominalWeight * isrfsrVariations[:, 1]"
+    },
+    "FSR": {
+        "channels": "all",
+        "processes": "MCOnly",
+        "type": "weight",
+        "aliasUp": "nominalWeight * isrfsrVariations[:, 2]",
+        "aliasDown": "nominalWeight * isrfsrVariations[:, 3]"
+    }
+}

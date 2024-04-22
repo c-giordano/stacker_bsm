@@ -1,5 +1,5 @@
 {
-    "Basedir": "/user/nivanden/ewkino/_FourTopAnalysis/Output/2024-04-04_14-42",
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-16_17-20",
     "Processes": {
         "TTT": {
             "fileglobs": ["Tree_TTTW_*MCPrompt", "Tree_TTTJ_*MCPrompt"],
@@ -53,7 +53,7 @@
             "pretty_name": "t\\bar{t}W"
         },
         "TTTT": {
-            "fileglobs": ["Tree_TTTT_*_MCPrompt"],
+            "fileglobs": ["Tree_TTTT_TuneCP5*_MCPrompt"],
             "color": "#EF3340",
             "isSignal": 1,
             "pretty_name": "t\\bar{t}t\\bar{t}"
