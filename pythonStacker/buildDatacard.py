@@ -12,6 +12,7 @@ from src.histogramTools import HistogramManager
 from src.variables.variableReader import VariableReader, Variable
 from src import generate_binning
 from src.configuration import load_channels_and_subchannels, load_uncertainties, Uncertainty
+from src.configuration.ScaleVariation import make_envelope
 import src.histogramTools.converters as cnvrt
 from src.datacardTools import DatacardWriter
 
@@ -98,13 +99,18 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                     continue
                 if not syst.is_process_relevant(process):
                     continue
+                upvar = histograms[var_name][systname]["Up"]
+                if syst.weight_key_down is None:
+                    downvar = histograms[var_name]["nominal"]
+                else:
+                    downvar = histograms[var_name][systname]["Down"]
+                if systname == "ScaleVarEnvelope":
+                    upvar, downvar = make_envelope(histograms[var_name])
+
                 path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/{process}"
                 path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/{process}"
-                convert_and_write_histogram(histograms[var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-                if syst.weight_key_down is None:
-                    convert_and_write_histogram(histograms[var_name]["nominal"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
-                else:
-                    convert_and_write_histogram(histograms[var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
+                convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
         # write data_obs:
         all_asimovdata[channel_DC_setting['prettyname']] = asimov_data
@@ -257,6 +263,8 @@ if __name__ == "__main__":
     if args.UseEFT:
         eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, [args.eft_operator], shape_systematics, args)
         processes = [process for process in processes if process != "TTTT"]
+        processes_write = [[process, i + 1] for i, process in enumerate(processes)]
+    else:
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
 
     asimov_bkg = nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
