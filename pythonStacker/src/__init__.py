@@ -2,6 +2,11 @@ import numpy as np
 import uproot
 import os
 import glob
+
+from src.histogramTools import HistogramManager
+import plugins.eft as eft
+
+
 """
 Some general tools to create histograms
 """
@@ -98,3 +103,25 @@ def get_tree_from_file(filename, processname, fatalfail=False) -> uproot.TTree:
             break
 
     return current_tree
+
+
+"""
+Tools to call histograms
+"""
+
+
+def load_prepared_histograms(processinfo, channel, variables, systematics, storagepath, args):
+    histograms = dict()
+    for process, info in processinfo.items():
+        histograms[process] = dict()
+        if args.UseEFT:
+            histograms["TTTT_EFT"] = dict()
+        for year in args.years:
+            histograms[process][year] = HistogramManager(storagepath, process, variables, systematics, year, channel=channel)
+            histograms[process][year].load_histograms()
+            if args.UseEFT:
+                systematics_tmp = list(systematics)
+                systematics_tmp.extend(eft.getEFTVariationsGroomed())
+                histograms["TTTT_EFT"][year] = HistogramManager(storagepath, "TTTT_EFT", variables, systematics_tmp, year, channel=channel)
+                histograms["TTTT_EFT"][year].load_histograms()
+    return histograms
