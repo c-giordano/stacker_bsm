@@ -1,0 +1,42 @@
+{
+    "HT_CR3L" : {
+        "range": [200.0, 1000.0],
+        "nbins": 16,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["CR-3L-2J1B"]
+    },
+    "NJets_CR3Lothers": {
+        "range": [1.5, 6.5],
+        "nbins": 5,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["CR-3L-2J1B"]
+    },
+    "N_LooseBjets_CR3Lothers": {
+        "range": [0.5, 4.5],
+        "nbins": 4,
+        "axis_label": "$N_{b}$ (Loose)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_loose",
+        "channels": ["CR-3L-2J1B"]
+    },
+    "N_MedBjets_CR3Lothers": {
+        "range": [-0.5, 3.5],
+        "nbins": 4,
+        "axis_label": "$N_{b}$ (Med)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_med",
+        "channels": ["CR-3L-2J1B"]
+    },
+    "N_TightBjets_CR3Lothers": {
+        "range": [-0.5, 2.5],
+        "nbins": 3,
+        "axis_label": "$N_{b} (Tight)$",
+        "branch_name": "bTagWP",
+        "method_name": "btag_tight",
+        "channels": ["CR-3L-2J1B"]
+    }
+}

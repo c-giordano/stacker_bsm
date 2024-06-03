@@ -1,7 +1,7 @@
 {
     "HT_SR2L" : {
-        "range": [250.0, 1400.0],
-        "nbins": 23,
+        "range": [200.0, 1400.0],
+        "nbins": 12,
         "axis_label": "$H_T$",
         "branch_name": "jetPt",
         "method_name": "sum_branch",
@@ -11,7 +11,7 @@
         "range": [250.0, 1400.0],
         "nbins": 23,
         "axis_label": "$H_T$",
-        "branch_name": "jetPt",
+        "branch_name": "electronPt",
         "method_name": "sum_branch",
         "channels": ["SR-2L"]
     },
@@ -45,6 +45,38 @@
         "axis_label": "$N_{b} (Tight)$",
         "branch_name": "bTagWP",
         "method_name": "btag_tight",
+        "channels": ["SR-2L"]
+    },
+    "BDTScore_TTTT_2L_ll": {
+        "range": [0.5, 3.0],
+        "nbins": 4,
+        "branch_name": "fourTopScore",
+        "axis_label": "TTTT Score",
+        "method_name": "tanh_flat",
+        "channels": ["SR-2L"]
+    },
+    "BDTScore_TTTT_2L": {
+        "range": [0.75, 3.0],
+        "nbins": 9,
+        "branch_name": "fourTopScore",
+        "axis_label": "TTTT Score",
+        "method_name": "tanh_flat",
+        "channels": ["SR-2L"]
+    },
+    "BDTScore_TTX_2L": {
+        "range": [0.4, 1.0],
+        "nbins": 5,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "load",
+        "channels": ["SR-2L"]
+    },
+    "BDTScore_NP_2L": {
+        "range": [0.4, 1.0],
+        "nbins": 3,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "load",
         "channels": ["SR-2L"]
     }
 }

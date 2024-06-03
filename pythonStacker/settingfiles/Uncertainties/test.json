@@ -1,13 +1,14 @@
 {
-    "ScaleVarEnvelope": {
-        "channels": "all",
-        "processes": ["TTTT"],
-        "type": "envelope"
-    },
     "ScaleVar": {
         "channels": "all",
-        "processes": ["TTW"],
+        "processes": "MCOnly",
         "type": "weight",
+        "corr_proc": 0
+    },
+    "ScaleVarEnvelope": {
+        "channels": "all",
+        "processes":  ["TTTT", "TTH", "TTW"],
+        "type": "envelope",
         "corr_proc": 0
     }
 }

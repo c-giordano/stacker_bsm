@@ -1,0 +1,50 @@
+{
+    "HT_CR2L" : {
+        "range": [200.0, 1000.0],
+        "nbins": 16,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    },
+    "NJets_CR2L": {
+        "range": [1.5, 6.5],
+        "nbins": 5,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    },
+    "N_LooseBjets_CR2L": {
+        "range": [0.5, 4.5],
+        "nbins": 4,
+        "axis_label": "$N_{b}$ (Loose)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_loose",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    },
+    "N_MedBjets_CR2L": {
+        "range": [-0.5, 3.5],
+        "nbins": 4,
+        "axis_label": "$N_{b}$ (Med)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_med",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    },
+    "N_TightBjets_CR2L": {
+        "range": [-0.5, 2.5],
+        "nbins": 3,
+        "axis_label": "$N_{b} (Tight)$",
+        "branch_name": "bTagWP",
+        "method_name": "btag_tight",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    },
+    "BDTScore_ttbar_CR2L": {
+        "range": [0.0, 1.0],
+        "nbins": 5,
+        "branch_name": "ttbarScore",
+        "axis_label": "TT Score",
+        "method_name": "load",
+        "channels": ["CR-2L-23J1B", "CR-2L-45J2B"]
+    }
+}

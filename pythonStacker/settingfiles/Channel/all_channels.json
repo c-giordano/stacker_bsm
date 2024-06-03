@@ -4,11 +4,11 @@
         "selection": "eventClass==11"
     },
     "SR-3L": {
-        "subchannels": ["puresig", "pureTTW", "pureNP"],
+        "subchannels": ["ee", "em", "mm", "puresig", "pureTTW", "pureNP"],
         "selection": "eventClass==12"
     },
     "SR-4L": {
-        "subchannels": ["puresig", "pureTTW", "pureNP"],
+        "subchannels": ["puresig_4L", "pureTTW_4L"],
         "selection": "eventClass==13"
     },
     "CR-2L-23J1B": {
@@ -56,6 +56,14 @@
     "pureTTW": {
         "isSubchannel": 1,
         "selection": "(ttWScore > fourTopScore) & (ttWScore > ttbarScore)"
+    },
+    "puresig_4L": {
+        "isSubchannel": 1,
+        "selection": "(fourTopScore > ttWScore)"
+    },
+    "pureTTW_4L": {
+        "isSubchannel": 1,
+        "selection": "(ttWScore > fourTopScore)"
     },
     "pureNP": {
         "isSubchannel": 1,

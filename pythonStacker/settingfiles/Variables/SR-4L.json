@@ -1,0 +1,66 @@
+{
+    "HT_SR4L" : {
+        "range": [0.0, 1000.0],
+        "nbins": 10,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-4L"]
+    },
+    "LT_SR4L" : {
+        "range": [0.0, 1000.0],
+        "nbins": 23,
+        "axis_label": "$H_T$",
+        "branch_name": "electronPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-4L"]
+    },
+    "NJets_SR4L": {
+        "range": [-0.5, 5.5],
+        "nbins": 6,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["SR-4L"]
+    },
+    "N_LooseBjets_SR4L": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "axis_label": "$N_{b}$ (Loose)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_loose",
+        "channels": ["SR-4L"]
+    },
+    "N_MedBjets_SR4L": {
+        "range": [-0.5, 5.5],
+        "nbins": 6,
+        "axis_label": "$N_{b}$ (Med)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_med",
+        "channels": ["SR-4L"]
+    },
+    "N_TightBjets_SR4L": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "axis_label": "$N_{b} (Tight)$",
+        "branch_name": "bTagWP",
+        "method_name": "btag_tight",
+        "channels": ["SR-4L"]
+    },
+    "BDTScore_TTTT_4L": {
+        "range": [0.3, 1.0],
+        "nbins": 2,
+        "branch_name": "fourTopScore",
+        "axis_label": "TTTT Score",
+        "method_name": "load",
+        "channels": ["SR-4L"]
+    },
+    "BDTScore_TTX_4L": {
+        "range": [0.4, 1.0],
+        "nbins": 2,
+        "branch_name": "ttWScore",
+        "axis_label": "TTX Score",
+        "method_name": "load",
+        "channels": ["SR-4L"]
+    }
+}

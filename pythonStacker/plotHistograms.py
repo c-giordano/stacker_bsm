@@ -1,5 +1,7 @@
-import argparse
 import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
+import argparse
 import awkward as ak
 import matplotlib.pyplot as plt
 import json
@@ -11,6 +13,8 @@ from src.histogramTools import HistogramManager
 import src.plotTools.figureCreator as fg
 from src import generate_binning
 import src.arguments as arguments
+
+import plugins.eft as eft
 
 
 def parse_arguments():
@@ -24,6 +28,7 @@ def parse_arguments():
     arguments.select_specifics(parser)
     arguments.add_tmp_storage(parser)
     arguments.add_plot_output(parser)
+    arguments.add_toggles(parser)
     args = parser.parse_args()
     return args
 
@@ -118,7 +123,30 @@ def generate_outputfolder(years, outputfolder, subdir, suffix=""):
     return outputfolder_base
 
 
-def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, years: list, ratio=True, no_uncertainty=False, shapes=False):  # , samplelist: str, plotdir: str, storagepath: str):
+def plot_EFTLine(ax, variable, histograms, years, operator="ctt", norm=False):
+    lin_name = "EFT_" + operator
+    quad_name = lin_name + "_" + operator
+
+    binning = generate_binning(variable.range, variable.nbins)
+
+    nominal_content = np.zeros(variable.nbins)
+    for year in years:
+        nominal_content += np.array(ak.to_numpy(histograms[year][variable.name]["nominal"]))
+
+    for wc_factor in [1., 2.]:
+        current_variation = nominal_content # nominal_content
+        for year in years:
+            current_variation = current_variation + wc_factor * np.array(ak.to_numpy(histograms[year][variable.name][lin_name]["Up"]))
+            current_variation = current_variation + wc_factor * wc_factor * np.array(ak.to_numpy(histograms[year][variable.name][quad_name]["Up"]))
+
+        pretty_eft_name = operator + f" = {wc_factor}"
+        if norm:
+            current_variation = np.nan_to_num(current_variation / nominal_content, nan=1.)
+        ax.hist(binning[:-1], binning, weights=current_variation, histtype="step", 
+                label=pretty_eft_name, linewidth=2.)
+
+
+def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histograms: dict, storagepath: str, years: list, drawEFT: bool, ratio=True, no_uncertainty=False, shapes=False, plotlabel=""):  # , samplelist: str, plotdir: str, storagepath: str):
     if ratio:
         fig, (ax_main, ax_ratio) = fg.create_ratioplot(lumi=get_lumi(years))
     else:
@@ -156,12 +184,20 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
     if not shapes and not no_uncertainty:
         plot_systematics_band(ax_main, sum_of_content, variable, storagepath, years)
 
-    if ratio:
+    if drawEFT:
+        plot_EFTLine(ax_main, variable, histograms["TTTT_EFT"], years)
+
+    if ratio and drawEFT:
+        plot_EFTLine(ax_ratio, variable, histograms["TTTT_EFT"], years, norm=True)
+        ax_ratio.set_ylabel("EFT/SM")
+        ax_ratio.set_xlim(variable.range)
+        ax_ratio.set_xlabel(variable.axis_label)
+
+    elif ratio:
         ratio_content = np.nan_to_num(np.divide(signal, bkg))
         ax_ratio.hist(binning[:-1], binning, weights=ratio_content, histtype="step", color="k")
 
         ax_ratio.set_xlim(variable.range)
-        ax_ratio.set_xlim([0, 500])
         ax_ratio.set_xlabel(variable.axis_label)
         ax_ratio.set_ylabel("Signal / bkg")
     else:
@@ -171,6 +207,7 @@ def plot_variable_base(variable: Variable, plotdir: str, processes: dict, histog
     ax_main.set_ylabel("Events")
     modify_yrange(sum_of_content, ax_main)
     ax_main.legend(ncols=2)
+    ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
     # fix output name
     print(f"Created figure {os.path.join(plotdir, f'{variable.name}.png')}.")
@@ -202,13 +239,13 @@ if __name__ == "__main__":
     # outputfolder with year:
     outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir)
 
-    print(channels)
     for channel in channels:
         if args.channel is not None and channel != args.channel:
             continue
 
         storagepath_tmp = os.path.join(storagepath, channel)
         systematics = ["nominal"]
+
         histograms = dict()
 
         outputfolder = os.path.join(outputfolder_base, channel)
@@ -218,13 +255,21 @@ if __name__ == "__main__":
 
         for process, info in processinfo.items():
             histograms[process] = dict()
+            if args.UseEFT:
+                histograms["TTTT_EFT"] = dict()
             for year in args.years:
                 histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year, channel=channel)
                 histograms[process][year].load_histograms()
-        for _, variable in variables.get_variable_objects().items():
+                if args.UseEFT:
+                    systematics_tmp = list(systematics)
+                    systematics_tmp.extend(eft.getEFTVariationsGroomed())
+                    histograms["TTTT_EFT"][year] = HistogramManager(storagepath_tmp, "TTTT_EFT", variables, systematics_tmp, year, channel=channel)
+                    histograms["TTTT_EFT"][year].load_histograms()
+
+        for _, variable in variables.get_variable_objects().items():        
             if not variable.is_channel_relevant(channel):
                 continue
-            plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
+            plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel)
 
         for subchannel in channels[channel].get_subchannels():
             storagepath_tmp = os.path.join(storagepath, channel + subchannel)
@@ -237,11 +282,18 @@ if __name__ == "__main__":
 
             for process, info in processinfo.items():
                 histograms[process] = dict()
+                if args.UseEFT:
+                    histograms["TTTT_EFT"] = dict()
                 for year in args.years:
                     histograms[process][year] = HistogramManager(storagepath_tmp, process, variables, systematics, year, channel=channel)
                     histograms[process][year].load_histograms()
+                    if args.UseEFT:    
+                        systematics_tmp = list(systematics)
+                        systematics_tmp.extend(eft.getEFTVariationsGroomed())
+                        histograms["TTTT_EFT"][year] = HistogramManager(storagepath_tmp, "TTTT_EFT", variables, systematics_tmp, year, channel=channel)
+                        histograms["TTTT_EFT"][year].load_histograms()
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(channel + subchannel):
                     continue
-                plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, no_uncertainty=args.no_unc)
+                plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel+"_"+subchannel)
     print("Finished!")

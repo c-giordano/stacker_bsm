@@ -1,0 +1,37 @@
+{
+    "WZNjets_2": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "otherVariations[:, 4]",
+        "aliasDown": "otherVariations[:, 5]"
+    },
+    "WZNjets_3": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "otherVariations[:, 6]",
+        "aliasDown": "otherVariations[:, 7]"
+    },
+    "WZNjets_4": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "otherVariations[:, 8]",
+        "aliasDown": "otherVariations[:, 9]"
+    },
+    "WZNjets_5": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "otherVariations[:, 10]",
+        "aliasDown": "otherVariations[:, 11]"
+    },
+    "WZNjets_6": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "otherVariations[:, 12]",
+        "aliasDown": "otherVariations[:, 13]"
+    }
+}

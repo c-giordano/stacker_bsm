@@ -28,7 +28,6 @@ class ScaleVariation(Uncertainty):
         super().__init__(name, dict_entry)
         self._isFlat = False
         self.type = "weight"
-        self._correlated_process = True
         self.correlated_years = True
 
         self.name = f"ScaleVar_{instance}"

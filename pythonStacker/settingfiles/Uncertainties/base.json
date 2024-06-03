@@ -264,11 +264,6 @@
         "processes": "MCOnly",
         "type": "shape"
     },
-    "HEMIssue": {
-        "fileglob": "HEMIssue",
-        "processes": "MCOnly",
-        "type": "shape"
-    },
     "MET": {
         "fileglob": "MET",
         "processes": "MCOnly",
@@ -292,5 +287,40 @@
         "channels": "all",
         "processes": "MCOnly",
         "type": "weight"
+    },
+    "WZNjets_2": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "nominalWeight * otherVariations[:, 4]",
+        "aliasDown": "nominalWeight * otherVariations[:, 5]"
+    },
+    "WZNjets_3": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "nominalWeight * otherVariations[:, 6]",
+        "aliasDown": "nominalWeight * otherVariations[:, 7]"
+    },
+    "WZNjets_4": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "nominalWeight * otherVariations[:, 8]",
+        "aliasDown": "nominalWeight * otherVariations[:, 9]"
+    },
+    "WZNjets_5": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "nominalWeight * otherVariations[:, 10]",
+        "aliasDown": "nominalWeight * otherVariations[:, 11]"
+    },
+    "WZNjets_6": {
+        "channels": "all",
+        "processes": ["WZ"],
+        "type": "weight",
+        "aliasUp": "nominalWeight * otherVariations[:, 12]",
+        "aliasDown": "nominalWeight * otherVariations[:, 13]"
     }
 }
