@@ -1,0 +1,50 @@
+{
+    "HT_SR3L" : {
+        "range": [250.0, 1400.0],
+        "nbins": 23,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-3L"]
+    },
+    "LT_SR3L" : {
+        "range": [250.0, 1400.0],
+        "nbins": 23,
+        "axis_label": "$H_T$",
+        "branch_name": "jetPt",
+        "method_name": "sum_branch",
+        "channels": ["SR-3L"]
+    },
+    "NJets_SR3L": {
+        "range": [3.5, 12.5],
+        "nbins": 9,
+        "axis_label": "$N_{jets}$",
+        "branch_name": "nJets",
+        "method_name": "load",
+        "channels": ["SR-3L"]
+    },
+    "N_LooseBjets_SR3L": {
+        "range": [1.5, 6.5],
+        "nbins": 5,
+        "axis_label": "$N_{b}$ (Loose)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_loose",
+        "channels": ["SR-3L"]
+    },
+    "N_MedBjets_SR3L": {
+        "range": [-0.5, 5.5],
+        "nbins": 6,
+        "axis_label": "$N_{b}$ (Med)",
+        "branch_name": "bTagWP",
+        "method_name": "btag_med",
+        "channels": ["SR-3L"]
+    },
+    "N_TightBjets_SR3L": {
+        "range": [-0.5, 4.5],
+        "nbins": 5,
+        "axis_label": "$N_{b} (Tight)$",
+        "branch_name": "bTagWP",
+        "method_name": "btag_tight",
+        "channels": ["SR-3L"]
+    }
+}
