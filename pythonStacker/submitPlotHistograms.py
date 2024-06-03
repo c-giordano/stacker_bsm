@@ -9,6 +9,7 @@ def parse_arguments():
     parser = argparse.ArgumentParser(description='Script to submit plotting of histograms')
     arguments.add_settingfiles(parser)
     arguments.select_specifics(parser)
+    arguments.add_toggles(parser)
 
     args = parser.parse_args()
     return args
@@ -28,6 +29,8 @@ if __name__ == "__main__":
         channels = json.load(f)
         channellist = list(channels.keys())
 
+    if args.UseEFT:
+        basecommand += " --EFT"
     cmds = []
     for year in args.years:
         for channel in channels:
@@ -49,7 +52,7 @@ if __name__ == "__main__":
     #        cmd_tmp = cmd + f" -c {channel}"
     #        cmds.append([cmd_tmp])
 
-    if len(args.years) == 4:
+    if len(args.years) >= 4:
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
         for channel in channels:
             if args.channel is not None and channel != args.channel:

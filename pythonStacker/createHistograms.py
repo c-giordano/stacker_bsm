@@ -121,6 +121,8 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
                     output_histograms[args.channel][variable.name]["nominal"] += hist_content
                     output_histograms[args.channel][variable.name]["stat_unc"] += hist_unc
                 else:
+                    if not syst.is_process_relevant(args.process):
+                        continue
                     keys = syst.get_weight_keys()
                     hist_content_up, _, _ = prepare_histogram(data, weights[keys[0]], variable)
                     output_histograms[args.channel][variable.name][name]["Up"] += hist_content_up
@@ -137,6 +139,8 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
                         output_histograms[subchannel_name][variable.name]["nominal"] += hist_content
                         output_histograms[subchannel_name][variable.name]["stat_unc"] += hist_unc
                     else:
+                        if not syst.is_process_relevant(args.process):
+                            continue
                         keys = syst.get_weight_keys()
                         hist_content_up, _, _ = prepare_histogram(data[subchannelmasks[subchannel_name]], weights[keys[0]][subchannelmasks[subchannel_name]], variable)
                         output_histograms[subchannel_name][variable.name][name]["Up"] += hist_content_up
@@ -240,11 +244,11 @@ if __name__ == "__main__":
     # update storagepath to include channel
     storagepath_main = os.path.join(storagepath, args.channel)
     output_histograms = dict()
-    output_histograms[args.channel] = HistogramManager(storagepath_main, args.process, variables, list(systematics.keys()), year=args.years[0])
+    output_histograms[args.channel] = HistogramManager(storagepath_main, args.process, variables, list(systematics.keys()), year=args.years[0], channel=args.channel)
     for subchannel_name in channel.get_subchannels():
         channel_name = args.channel + subchannel_name
         storagepath_tmp = os.path.join(storagepath, channel_name)
-        output_histograms[subchannel_name] = HistogramManager(storagepath_tmp, args.process, variables, list(systematics.keys()), year=args.years[0])
+        output_histograms[subchannel_name] = HistogramManager(storagepath_tmp, args.process, variables, list(systematics.keys()), year=args.years[0], channel=channel_name)
 
     # TODO: get files based on process names -> processmanager can return this, depending on the sys unc?
     filesuffix = "base"

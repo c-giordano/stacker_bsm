@@ -1,7 +1,14 @@
 {
-    "pdfUncertainty": {
+    "ScaleVar": {
         "channels": "all",
         "processes": "MCOnly",
-        "type": "weight"
+        "type": "weight",
+        "corr_proc": 0
+    },
+    "ScaleVarEnvelope": {
+        "channels": "all",
+        "processes":  ["TTTT", "TTH", "TTW"],
+        "type": "envelope",
+        "corr_proc": 0
     }
 }

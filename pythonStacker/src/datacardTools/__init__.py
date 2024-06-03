@@ -1,5 +1,5 @@
 from src.configuration.Uncertainty import Uncertainty
-
+from copy import deepcopy
 
 class DatacardWriter():
     def __init__(self, filename) -> None:
@@ -65,6 +65,82 @@ class DatacardWriter():
         self.outputstring += "* autoMCStats 0 1 1\n"
 
     def add_systematic(self, systematic: Uncertainty):
+        if systematic.correlated_process:
+            self.add_systematic_correlated(systematic)
+        else:
+            self.add_systematic_uncorrelated(systematic)
+
+    def add_systematic_uncorrelated(self, systematic: Uncertainty):
+        for process, _ in self.processes:
+            if not systematic.is_process_relevant(process):
+                continue
+            
+            processname = process
+            if "sm" == processname:
+                processname = "TTTT"
+            # make a copy
+            systematic_mod = deepcopy(systematic)
+
+            # change name, change rrelevant processes
+            systematic_mod.pretty_name = systematic.pretty_name + processname
+            systematic_mod.technical_name = systematic.technical_name + processname
+            systematic_mod.name = systematic.name + processname
+            systematic_mod.processes = [process]
+            # then use nominal addition
+            self.add_systematic_correlated(systematic_mod)
+
+        # relevant = False
+        # print(systematic.technical_name)
+        # # get important processes:
+        # outputlines = {}
+        # for process, _ in self.processes:
+        #     if process == "sm" and systematic.is_process_relevant("TTTT"):
+        #         outputlines["TTTT"] = ""
+# 
+        #     if not systematic.is_process_relevant(process):
+        #         continue
+        #     outputlines[process] = ""
+# 
+        # for _, channel in self.channels.items():
+        #     if not systematic.is_channel_relevant(channel):
+        #         continue
+        #     for process, number in self.processes:
+        #         print(process)
+        #         if channel.is_process_excluded(process):
+        #             continue
+        #         is_relevant_eft_variation = ("sm" in process or "quad" in process) and systematic.is_process_relevant("TTTT")
+        #         print(process)
+        #         filled = False
+        #         if systematic.is_process_relevant(process):
+        #             if isinstance(systematic.rate, str):
+        #                 outputlines[process] += "\t{:>20s}".format(systematic.rate)
+        #             else:
+        #                 outputlines[process] += "\t{:>20.2f}".format(systematic.rate)
+        #             relevant = True
+        #             filled = True
+        #         elif is_relevant_eft_variation:
+        #             outputlines["TTTT"] += "\t{:>20.2f}".format(systematic.rate)
+        #             relevant = True
+        #             filled = True
+        #         for proc_key in outputlines.keys():
+        #             if (process == proc_key and filled) or (is_relevant_eft_variation and proc_key == "TTTT"):
+        #                 continue
+        #             # outputlines[process] += "\t{:>20s}".format("-")
+        #             outputlines[proc_key] += "\t{:>20s}".format("-")
+# 
+        # if relevant:
+        #     for proc, outputline in outputlines.items():
+        #         systematic_name = systematic.technical_name + proc
+        #         self.outputstring += "{:<23s} ".format(systematic_name)
+        #         if systematic.isFlat:
+        #             self.outputstring += "{:>6s}".format("lnN")
+        #         else:
+        #             self.outputstring += "{:>6s}".format("shape")
+# 
+        #         self.outputstring += outputline + "\n"
+# 
+
+    def add_systematic_correlated(self, systematic: Uncertainty):
         # similar to add process stuff
         systematic_line = ""
         relevant = False
@@ -75,7 +151,10 @@ class DatacardWriter():
                 if channel.is_process_excluded(process):
                     continue
                 if systematic.is_process_relevant(process):
-                    systematic_line += "\t{:>20.2f}".format(systematic.rate)
+                    if isinstance(systematic.rate, str):
+                        systematic_line += "\t{:>20s}".format(systematic.rate)
+                    else:
+                        systematic_line += "\t{:>20.2f}".format(systematic.rate)
                     relevant = True
                 else:
                     systematic_line += "\t{:>20s}".format("-")

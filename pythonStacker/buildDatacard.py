@@ -6,6 +6,7 @@ import sys
 import os
 import json
 import uproot
+import ROOT
 import awkward as ak
 
 from src.histogramTools import HistogramManager
@@ -54,13 +55,42 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
         statunc = np.zeros(len(input_histogram))
 
     # safety functions:
-    ret_th1 = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
+    ret_th1: ROOT.TH1D = cnvrt.numpy_to_TH1D(input_histogram, raw_bins, err=statunc)
+    for i in range(1, ret_th1.GetNbinsX() + 1):
+        if ret_th1.GetBinContent(i) > 0.001:
+            continue
+        ret_th1.SetBinError(i, 0.001)
+        ret_th1.SetBinContent(i, 0.001)
     rootfile[outputname] = ret_th1
 
 
 def get_pretty_channelnames(dc_settings):
     pretty_names = [channel_DC_setting["prettyname"] for _, channel_DC_setting in dc_settings["channelcontent"].items()]
     return pretty_names
+
+
+def patch_scalevar_correlations(systematics, processes):
+    if not "ScaleVarEnvelope" in systematics:
+        return
+
+    envelope_relevant_mod = list(systematics["ScaleVarEnvelope"].processes)
+    if "TTTT" in envelope_relevant_mod:
+        for process in processes:
+            if not ("sm" in process or "quad" in process):
+                continue
+            if process == "sm":
+                continue
+            envelope_relevant_mod.append(process)
+
+    systematics["ScaleVarEnvelope"].processes = envelope_relevant_mod
+    envelope_relevant = list(systematics["ScaleVarEnvelope"].processes)
+    envelope_relevant += ["nonPromptElectron", "nonPromptMuon", "ChargeMisID"]
+    
+    relevant_processes = [process for process in processes if not process in envelope_relevant]
+    for i in range(6):
+        key = f"ScaleVar_{i}"
+        systematics[key].processes = relevant_processes
+
 
 
 def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings: dict, channels: dict, processes: list, shape_systematics: dict, args: argparse.Namespace):
@@ -99,6 +129,7 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                     continue
                 if not syst.is_process_relevant(process):
                     continue
+
                 upvar = histograms[var_name][systname]["Up"]
                 if syst.weight_key_down is None:
                     downvar = histograms[var_name]["nominal"]
@@ -107,8 +138,12 @@ def nominal_datacard_creation(rootfile: uproot.WritableDirectory, datacard_setti
                 if systname == "ScaleVarEnvelope":
                     upvar, downvar = make_envelope(histograms[var_name])
 
-                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/{process}"
-                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/{process}"
+                rootpath_systname = syst.technical_name
+                if not syst.correlated_process:
+                    rootpath_systname += process
+
+                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Up/{process}"
+                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Down/{process}"
                 convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
                 convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
@@ -149,14 +184,23 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 continue
             if not syst.is_process_relevant("TTTT"):
                 continue
-            path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/sm"
-            path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/sm"
-            convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Up"], variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
-            # convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+
+            upvar = sm_histograms[channelname][var_name][systname]["Up"]
             if syst.weight_key_down is None:
-                convert_and_write_histogram(sm_histograms[channelname][var_name]["nominal"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                downvar = sm_histograms[channelname][var_name]["nominal"]
             else:
-                convert_and_write_histogram(sm_histograms[channelname][var_name][systname]["Down"], variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+                downvar = sm_histograms[channelname][var_name][systname]["Down"]
+            if systname == "ScaleVarEnvelope":
+                upvar, downvar = make_envelope(sm_histograms[channelname][var_name])
+
+            rootpath_systname = syst.technical_name
+            if not syst.correlated_process:
+                rootpath_systname += "TTTT"
+
+            path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Up/sm"
+            path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Down/sm"
+            convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
+            convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
 
     # next lin and quad terms per eft variation
     for eft_var in eft_variations:
@@ -195,38 +239,46 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                     continue
                 if not syst.is_process_relevant("TTTT"):
                     continue
-                rel_syst_up = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Up"] / sm_histograms[channelname][var_name]["nominal"], nan=1.)
-                # print("checking relsystup")
-                # print(rel_syst_up)
+
+                upvar_sm = sm_histograms[channelname][var_name][systname]["Up"]
+                if syst.weight_key_down is None:
+                    downvar_sm = sm_histograms[channelname][var_name]["nominal"]
+                else:
+                    downvar_sm = sm_histograms[channelname][var_name][systname]["Down"]
+
+                if systname == "ScaleVarEnvelope":
+                    upvar_sm, downvar_sm = make_envelope(sm_histograms[channelname][var_name])
+
+                rel_syst_up = np.nan_to_num(upvar_sm / sm_histograms[channelname][var_name]["nominal"], nan=1.)
                 rel_syst_up = np.where(np.abs(rel_syst_up) > 1e10, 1., rel_syst_up)
-                # print(rel_syst_up)
 
                 content_sm_lin_quad_syst_up = rel_syst_up * content_sm_lin_quad_nominal
                 content_quad_syst_up = rel_syst_up * content_quad_nominal
 
-
                 if syst.weight_key_down is None:
-                    # rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name]["nominal"] / sm_histograms[channelname][var_name]["nominal"])
                     content_sm_lin_quad_syst_down = content_sm_lin_quad_nominal
                     content_quad_syst_down = content_quad_nominal
                 else:
-                    rel_syst_down = np.nan_to_num(sm_histograms[channelname][var_name][systname]["Down"] / sm_histograms[channelname][var_name]["nominal"], nan=1.)
-                    # print("checking relsystdown")
-                    # print(rel_syst_down)
+                    rel_syst_down = np.nan_to_num(downvar_sm / sm_histograms[channelname][var_name]["nominal"], nan=1.)
                     rel_syst_down = np.where(np.abs(rel_syst_down) > 1e10, 1., rel_syst_down)
 
-                    # print(rel_syst_down)
                     content_sm_lin_quad_syst_down = rel_syst_down * content_sm_lin_quad_nominal
                     content_quad_syst_down = rel_syst_down * content_quad_nominal
 
-                path_to_sm_lin_quad_syst_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/sm_lin_quad_{eft_var}"
-                path_to_sm_lin_quad_syst_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/sm_lin_quad_{eft_var}"
+                rootpath_smlinquad = syst.technical_name
+                rootpath_quad = syst.technical_name
+                if not syst.correlated_process:
+                    rootpath_smlinquad += f"sm_lin_quad_{eft_var}"
+                    rootpath_quad += f"quad_{eft_var}"
+
+                path_to_sm_lin_quad_syst_up = f"{channel_DC_setting['prettyname']}/{rootpath_smlinquad}Up/sm_lin_quad_{eft_var}"
+                path_to_sm_lin_quad_syst_down = f"{channel_DC_setting['prettyname']}/{rootpath_smlinquad}Down/sm_lin_quad_{eft_var}"
                 # print(path_to_sm_lin_quad_syst_up)
                 convert_and_write_histogram(content_sm_lin_quad_syst_up, variables.get_properties(var_name), path_to_sm_lin_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_sm_lin_quad_syst_down, variables.get_properties(var_name), path_to_sm_lin_quad_syst_down, rootfile)
 
-                path_to_quad_syst_up = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Up/quad_{eft_var}"
-                path_to_quad_syst_down = f"{channel_DC_setting['prettyname']}/{syst.technical_name}Down/quad_{eft_var}"
+                path_to_quad_syst_up = f"{channel_DC_setting['prettyname']}/{rootpath_quad}Up/quad_{eft_var}"
+                path_to_quad_syst_down = f"{channel_DC_setting['prettyname']}/{rootpath_quad}Down/quad_{eft_var}"
                 convert_and_write_histogram(content_quad_syst_up, variables.get_properties(var_name), path_to_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_quad_syst_down, variables.get_properties(var_name), path_to_quad_syst_down, rootfile)
 
@@ -259,6 +311,7 @@ if __name__ == "__main__":
     shape_systematics = load_uncertainties(args.systematicsfile, allowflat=False)
     shape_systematics["nominal"] = Uncertainty("nominal", {})
     shape_systematics["stat_unc"] = Uncertainty("stat_unc", {})
+    patch_scalevar_correlations(shape_systematics, processes)
 
     if args.UseEFT:
         eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, [args.eft_operator], shape_systematics, args)
@@ -290,6 +343,16 @@ if __name__ == "__main__":
     dc_writer.add_processes(processes_write)
 
     systematics = load_uncertainties(args.systematicsfile)
+    if args.UseEFT:
+        processes.append("TTTT")
+        for proc, nb in processes_write:
+            if "quad" in proc:
+                processes.append(proc)
+
+    patch_scalevar_correlations(systematics, processes)
+    if args.UseEFT:
+        systematics["tttt_norm"] = Uncertainty("TTTTNorm", {"rate": "0.88/1.04", "processes": ["sm"]})
+
     for syst_name, syst_info in systematics.items():
         dc_writer.add_systematic(syst_info)
 

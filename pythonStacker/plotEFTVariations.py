@@ -1,7 +1,9 @@
-import argparse
-import json
-import awkward as ak
 import numpy as np
+np.finfo(np.dtype("float32"))
+np.finfo(np.dtype("float64"))
+import awkward as ak
+import json
+import argparse
 import matplotlib.pyplot as plt
 import os
 
@@ -34,6 +36,7 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
     fig, (ax_main, (ax_ratio_one, ax_ratio_two)) = fg.create_multi_ratioplot(n_subplots=2)
     binning = generate_binning(variable.range, variable.nbins)
     # first plot nominal, then start adding variations
+    print(variable.name)
     nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
     stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
 
@@ -163,6 +166,7 @@ if __name__ == "__main__":
     # contrary to plotHistograms: load uncertainties if no args.UseEFT
     # do need a selection somewhere defined for the uncertainties needed/desired
     for channel in channels:
+        print(channel)
         if args.channel is not None and channel != args.channel:
             continue
 
@@ -179,10 +183,14 @@ if __name__ == "__main__":
         histograms.load_histograms()
 
         for _, variable in variables.get_variable_objects().items():
+            if not variable.is_channel_relevant(channel):
+                continue
             lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
             main_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
 
         for subchannel in channels[channel].subchannels.keys():
+            if not variable.is_channel_relevant(channel + subchannel):
+                continue
             storagepath_tmp = os.path.join(storagepath, channel + subchannel)
 
             outputfolder = os.path.join(outputfolder_base, channel, subchannel)

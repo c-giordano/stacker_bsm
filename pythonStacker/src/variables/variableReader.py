@@ -41,7 +41,7 @@ class VariableReader:
             with open(os.path.join("settingfiles/Variables", extra_file), 'r') as file:
                 extra_data = json.load(file)
             data.update(extra_data)
-        print(data)
+
         if variables is None or variables == "all":
             self.variables = list(data.keys())
         else:

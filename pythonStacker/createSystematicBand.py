@@ -50,16 +50,21 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
         return up, down
 
     for process, hists_per_year in histograms_proc.items():
+        print(process)
         if not uncertainty.is_process_relevant(process):
+            print("skip process")
             continue
 
         var_process_up = np.zeros(variable.nbins)
         var_process_down = np.zeros(variable.nbins)
 
         for year, hists in hists_per_year.items():
+            print(year)
             # get the up and down variation:
 
             up_diff = np.array(ak.to_numpy(hists[variable.name][uncertainty.name]["Up"] - hists[variable.name]["nominal"]))
+            
+
             if uncertainty.weight_key_down is None:
                 down_diff = np.zeros(len(up_diff))
             else:
@@ -72,6 +77,9 @@ def get_uncertainty_variation_shape(variable: Variable, uncertainty: Uncertainty
             true_down_diff = np.where(down_diff < up_diff, down_diff, up_diff)
             true_down_diff[true_down_diff > 0] = 0.
 
+            print(true_up_diff / hists[variable.name]["nominal"])
+            print(uncertainty.name)
+            print(process)
             var_process_up += true_up_diff
             var_process_down -= true_down_diff
 
@@ -126,6 +134,7 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
     uncertainties_squared_up = np.zeros(variable.nbins)
     uncertainties_squared_down = np.zeros(variable.nbins)
     for name, uncertainty in uncertainties.items():
+        print(f"uncertainty {name}")
         if not uncertainty.is_channel_relevant(channel):
             print("skip channel")
             # skip irrelevant channels
@@ -150,7 +159,8 @@ def uncertaintyloop(variable: Variable, histograms_proc: dict[str, dict[str, His
 
 def variableloop(variables: VariableReader, histograms_proc: dict[str, dict[str, HistogramManager]], uncertainties: dict, channel: str):
     ret = dict()
-    for _, variable in variables.get_variable_objects().items():
+    for var_name, variable in variables.get_variable_objects().items():
+        print(var_name)
         if not variable.is_channel_relevant(channel):
             continue
         ret[variable.name] = uncertaintyloop(variable, histograms_proc, uncertainties, channel)

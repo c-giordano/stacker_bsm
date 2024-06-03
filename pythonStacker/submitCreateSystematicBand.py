@@ -38,17 +38,17 @@ if __name__ == "__main__":
             cmd += f" -c {channel}"
             cmds.append([cmd])
 
-    if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
-        cmd = basecommand + " -y 2016PreVFP 2016PostVFP"
-        for channel in channels:
-            if args.channel is not None and channel != args.channel:
-                continue
-            if channels[channel].get("isSubchannel", 0) > 0:
-                continue
-            cmd_tmp = cmd + f" -c {channel}"
-            cmds.append([cmd_tmp])
+    # if "2016PreVFP" in args.years and "2016PostVFP" in args.years:
+    #     cmd = basecommand + " -y 2016PreVFP 2016PostVFP"
+    #     for channel in channels:
+    #         if args.channel is not None and channel != args.channel:
+    #             continue
+    #         if channels[channel].get("isSubchannel", 0) > 0:
+    #             continue
+    #         cmd_tmp = cmd + f" -c {channel}"
+    #         cmds.append([cmd_tmp])
 
-    if len(args.years) == 4:
+    if len(args.years) >= 4:
         cmd = basecommand + " -y 2016PreVFP 2016PostVFP 2017 2018"
         for channel in channels:
             if args.channel is not None and channel != args.channel:
