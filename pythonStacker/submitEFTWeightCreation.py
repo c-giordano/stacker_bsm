@@ -1,5 +1,6 @@
 import argparse
 import os
+import sys
 import json
 import glob
 import src.jobSubmission.condorTools as ct
@@ -12,6 +13,10 @@ def parse_arguments():
 
     arguments.add_settingfiles(parser)
     args, args_unknown = parser.parse_known_args()
+
+    if len(args_unknown) > 0 or len(sys.argv) == 1:
+        parser.print_help()
+        parser.exit()
     return args
 
 
@@ -39,7 +44,6 @@ if __name__ == "__main__":
                 true_files = glob.glob(fileglob)
                 files.extend(true_files)
 
-            print(files)
             cmds = []
             for filename in files:
                 if process.get("hasEFT", 0) == 0:
@@ -48,9 +52,10 @@ if __name__ == "__main__":
                     cmd = "python3 createEFTWeights.py"
                     cmd += f" -f {filename}"
                     cmd += f" -e {eventclass}"
+                    cmd += f" -p {pname}"
                     cmds.append(cmd)
-            if len(cmds) == 0:
-                cmds.append("echo 'nothing to do'")
-            commandset.append(cmds)
+            if len(cmds) != 0:
+                # cmds.append("echo 'nothing to do'")
+                commandset.append(cmds)
 
     ct.submitCommandsetsAsCondorCluster("CreateEFTWeights", commandset, scriptfolder="Scripts/condor/")

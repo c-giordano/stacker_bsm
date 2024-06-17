@@ -1,6 +1,6 @@
 import argparse
 import os
-
+import sys
 
 def add_settingfiles(parser: argparse.ArgumentParser):
     # Add arguments here
@@ -46,7 +46,7 @@ def add_tmp_storage(parser: argparse.ArgumentParser):
 
 
 def add_plot_output(parser: argparse.ArgumentParser):
-    default_output = "/user/nivanden/public_html/Interpretations/Plots/"
+    default_output = f"/user/{os.getenv('USER')}/public_html/Interpretations/Plots/"
     if os.getenv("CMSSW_VERSION") is None:
         default_output = "output/"
     parser.add_argument("-o", "--output", dest="outputfolder", action="store", required=False,

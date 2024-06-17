@@ -82,7 +82,7 @@ def create_multi_ratioplot(lumi=None, wip=True, n_subplots=1):
     else:
         hep.cms.label(ax=nominal, label=label, loc=2)
 
-    return fig, (nominal, ratios)
+    return fig, axs # (nominal, ratios)
 
 
 if __name__ == "__main__":

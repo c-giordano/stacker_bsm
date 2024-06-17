@@ -42,6 +42,30 @@ def parse_arguments():
     return args
 
 
+def generate_process_name(name, processinfo):
+    pretty_name = processinfo.get("pretty_name", name)
+    if "\\" in pretty_name:
+        pretty_name = r"${}$".format(pretty_name)
+    elif "t" in pretty_name:
+        pretty_name = r"${}$".format(pretty_name)
+    return pretty_name
+
+
+def modify_yrange(axis, content, up_scale=1.8):
+    cont_max = up_scale * np.max(content)
+    cont_min = 0.
+    axis.set_ylim((cont_min, cont_max))
+
+
+def modify_yrange_updown(axis, content, up_scale=0.1, down_scale=0.02):
+    cont_max = np.max(content)
+    cont_min = np.min(content)
+    cont_diff = cont_max - cont_min
+    cont_max = cont_max + up_scale * cont_diff
+    cont_min = cont_min - down_scale * cont_diff
+    axis.set_ylim((cont_min, cont_max))
+
+
 def copy_index_html(folder):
     if os.getenv("CMSSW_VERSION"):
         outputfile = os.path.join(folder, "index.php")
@@ -86,7 +110,7 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
             content += content_tmp
 
         # then add to figure, fix label and color, as well as legend
-        pretty_name = ""  # generate_process_name(name, info)
+        pretty_name = generate_process_name(name, info)
         if shapes:
             axis.hist(binning[:-1], binning, weights=content, histtype="step", color=info["color"], label=pretty_name)
         else:
@@ -98,12 +122,43 @@ def plot_histograms_base(axis, histograms: dict, variable: Variable, processes: 
         else:
             bkg += content
 
+    modify_yrange(axis, sum_of_content)
+    if shapes:
+        axis.set_ylabel("a.u.")
+    else:
+        axis.set_ylabel("Events")
+
     return {"signal": signal, "bkg": bkg, "sum": sum_of_content, "binning": binning}
+
+
+def plot_systematics_band(axis, nominal_content, variable: Variable, storagepath: str, years: list):
+    # get binning:
+    binning = generate_binning(variable.range, variable.nbins)
+
+    # load content:
+    outputfilename = "total_systematic_"
+    if len(years) == 1:
+        outputfilename += years[0]
+    elif len(years) < 4:
+        outputfilename += "_".join(years)
+    else:
+        outputfilename += "all"
+    outputfilename += ".parquet"
+
+    path_to_unc = os.path.join(storagepath, variable.name, outputfilename)
+    uncertainty_content = ak.from_parquet(path_to_unc)
+    unc_up = np.array(ak.to_numpy(uncertainty_content["Up"]))
+    unc_down = np.array(ak.to_numpy(uncertainty_content["Down"]))
+    axis.bar(x=binning[:-1], height=unc_up + unc_down, bottom=nominal_content - unc_down, width=np.diff(binning),
+             align='edge', linewidth=0, edgecolor='#BEC6C4', alpha=1., zorder=-1, hatch="xxxx", fill=False,
+             label="Total unc.")
+    return unc_up, unc_down
 
 
 def plot_signal_bkg_ratio(axis, binning, signal, background):
     ratio_content = np.nan_to_num(np.divide(signal, background))
     axis.hist(binning[:-1], binning, weights=ratio_content, histtype="step", color="k")
+    modify_yrange_updown(axis, ratio_content)
     return {"ratio": ratio_content}
 
 
@@ -118,24 +173,30 @@ def plot_EFT_line(axis, histograms, variable: Variable, years, operator: str, no
     for year in years:
         nominal_content += np.array(ak.to_numpy(histograms[year][variable.name]["nominal"]))
 
+    all_variations = []
     for wc_factor in [1., 2.]:
         current_variation = nominal_content # nominal_content
         for year in years:
             current_variation = current_variation + wc_factor * np.array(ak.to_numpy(histograms[year][variable.name][lin_name]["Up"]))
             current_variation = current_variation + wc_factor * wc_factor * np.array(ak.to_numpy(histograms[year][variable.name][quad_name]["Up"]))
-
         pretty_eft_name = operator + f" = {wc_factor}"
-        current_variation = np.nan_to_num(current_variation / normalization_contribution, nan=1.)
+
+        current_variation = np.nan_to_num(current_variation / normalization_contribution, nan=1., posinf=1., neginf=1.)
+
         axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
                   label=pretty_eft_name, linewidth=2.)
+
+        all_variations.append(current_variation)
+    return all_variations
 
 
 def finalize_plot(figure, axes, variable: Variable, plotdir: str, plotlabel=""):
     for ax in axes:
         ax.set_xlim(variable.range)
 
-    ax[-1].set_xlabel(variable.axis_label)
-    ax[0].text(0.049, 0.77, plotlabel, transform=ax[0].transAxes)
+    axes[-1].set_xlabel(variable.axis_label)
+    axes[0].text(0.049, 0.76, plotlabel, transform=axes[0].transAxes)
+    axes[0].legend(ncols=2)
 
     figure.savefig(os.path.join(plotdir, f"{variable.name}.png"))
     figure.savefig(os.path.join(plotdir, f"{variable.name}.pdf"))
@@ -160,18 +221,41 @@ def get_lumi(years):
     return total_lumi
 
 
-def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel):
+def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel, storagepath):
     n_ratios = 0
     if args.SBRatio:
         n_ratios = 1
-    if args.EFT_ratio:
+    if args.EFT_ratio or args.EFT_fullbkg:
         n_ratios = 1
     if args.EFT_fullbkg:
         n_ratios = 2
-
+    
     lumi = get_lumi(args.years)
-    fig, axes = fg.create_multi_ratioplot(lumi, True, n_subplots=n_ratios)
-    plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    if n_ratios == 0:
+        fig, axes = fg.create_singleplot(lumi, True)
+        axes = (axes,)
+    elif n_ratios == 1:
+        fig, axes = fg.create_ratioplot(lumi, True)
+    else:
+        fig, axes = fg.create_multi_ratioplot(lumi, True, n_subplots=n_ratios)
+
+    main_plot_out = plot_histograms_base(axes[0], histograms, variable, processinfo, args.years, shapes=args.shapes)
+    if not args.no_unc:
+        plot_systematics_band(axes[0], main_plot_out["sum"], variable, storagepath, args.years)
+
+    if args.UseEFT:
+        plot_EFT_line(axes[0], histograms["TTTT_EFT"], variable, args.years, "ctt")
+
+    if args.SBRatio:
+        ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
+    if args.EFT_ratio or args.EFT_fullbkg:
+        eft_content = plot_EFT_line(axes[1], histograms["TTTT_EFT"], variable, args.years, "ctt", main_plot_out["signal"])
+        axes[1].set_ylabel(r"EFT / SM $t\bar{t}t\bar{t}$", fontsize="small")
+        modify_yrange_updown(axes[1], eft_content)
+    if args.EFT_fullbkg:
+        eft_content = plot_EFT_line(axes[2], histograms["TTTT_EFT"], variable, args.years, "ctt", main_plot_out["sum"])
+        axes[2].set_ylabel("EFT / SM", fontsize="small")
+        modify_yrange_updown(axes[2], eft_content)
 
     finalize_plot(fig, axes, variable, plotdir, channel)
 
@@ -197,7 +281,7 @@ if __name__ == "__main__":
     storagepath = os.path.join(args.storage, subbasedir)
 
     # TODO: outputfolder with year and suffix:
-    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir)
+    outputfolder_base = generate_outputfolder(args.years, args.outputfolder, subbasedir, suffix="test")
 
     for channel in channels:
         if args.channel is not None and channel != args.channel:
@@ -213,10 +297,13 @@ if __name__ == "__main__":
 
         histograms = load_prepared_histograms(processinfo, channel, variables, systematics, storagepath_tmp, args)
 
-        for _, variable in variables.get_variable_objects().items():
+        for variable_name, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
-            plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel)
+            if args.variable and args.variable != variable_name:
+                continue
+            plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel, storagepath_tmp)
+            # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel)
 
         for subchannel in channels[channel].get_subchannels():
             storagepath_tmp = os.path.join(storagepath, channel + subchannel)
@@ -232,6 +319,7 @@ if __name__ == "__main__":
             for _, variable in variables.get_variable_objects().items():
                 if not variable.is_channel_relevant(channel + subchannel):
                     continue
-                plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel+"_"+subchannel)
+                plotting_sequence(args, histograms, variable, processinfo, outputfolder, channel+"_"+subchannel, storagepath_tmp)
+                # plot_variable_base(variable, outputfolder, processinfo, histograms, storagepath=storagepath_tmp, years=args.years, drawEFT=args.UseEFT, no_uncertainty=args.no_unc, plotlabel=channel+"_"+subchannel)
 
     print("Finished!")

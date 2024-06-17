@@ -318,7 +318,17 @@ if __name__ == "__main__":
         processes = [process for process in processes if process != "TTTT"]
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     else:
-        processes_write = [[process, i + 1] for i, process in enumerate(processes)]
+        processes_write = []
+        sig_nb = -1
+        bkg_nb = 1
+        for process in processes:
+            if processfile["Processes"][process].get("isSignal", 0) > 0:
+                processes_write.append([process, sig_nb])
+                sig_nb -= 1
+            else:
+                processes_write.append([process, bkg_nb])
+                bkg_nb += 1
+        # processes_write = [[process, i + 1] for i, process in enumerate(processes)]
 
     asimov_bkg = nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
 
@@ -330,6 +340,12 @@ if __name__ == "__main__":
             variables = VariableReader(args.variablefile, [var_name])
             asimov_data = asimov_bkg[channel_DC_setting['prettyname']] + asimov_signal[channel_DC_setting['prettyname']]
             convert_and_write_histogram(asimov_data, variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_data))
+    else:
+        for channelname, channel_DC_setting in datacard_settings["channelcontent"].items():
+            asimov_data_path = f"{channel_DC_setting['prettyname']}/data_obs"
+            var_name = channel_DC_setting["variable"]
+            variables = VariableReader(args.variablefile, [var_name])
+            convert_and_write_histogram(asimov_bkg[channel_DC_setting['prettyname']], variables.get_properties(var_name), asimov_data_path, rootfile, statunc=np.sqrt(asimov_bkg[channel_DC_setting['prettyname']]))
 
     rootfile.close()
 

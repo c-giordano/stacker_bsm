@@ -10,7 +10,7 @@
     "LT_SR2L" : {
         "range": [250.0, 1400.0],
         "nbins": 23,
-        "axis_label": "$H_T$",
+        "axis_label": "$L_T$",
         "branch_name": "electronPt",
         "method_name": "sum_branch",
         "channels": ["SR-2L"]

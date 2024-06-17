@@ -13,7 +13,7 @@ from src.histogramTools import HistogramManager
 
 import src.plotTools.figureCreator as fg
 from src import generate_binning
-from plotHistograms import modify_yrange_shape, generate_outputfolder, copy_index_html
+from plotHistogramsRedo import modify_yrange_updown, generate_outputfolder, copy_index_html
 
 import plugins.eft as eft
 
@@ -32,8 +32,8 @@ def parse_arguments():
     return args
 
 
-def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
-    fig, (ax_main, (ax_ratio_one, ax_ratio_two)) = fg.create_multi_ratioplot(n_subplots=2)
+def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str, processname: str):
+    fig, (ax_main, ax_ratio_one, ax_ratio_two) = fg.create_multi_ratioplot(n_subplots=2)
     binning = generate_binning(variable.range, variable.nbins)
     # first plot nominal, then start adding variations
     print(variable.name)
@@ -76,7 +76,7 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
 
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("SM + EFT / SM")
-    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    modify_yrange_updown(ax_main, (minim, maxim), up_scale=1.4)
     ax_main.legend(ncol=2)
     ax_main.text(0.049, 0.74, plotlabel, transform=ax_main.transAxes)
 
@@ -88,12 +88,12 @@ def lin_quad_plot_EFT(variable: Variable, plotdir: str, histograms, process_info
     ax_ratio_two.set_xlabel(variable.axis_label)
 
     # fix output name
-    fig.savefig(os.path.join(plotdir, f"{variable.name}_ratios.png"))
-    fig.savefig(os.path.join(plotdir, f"{variable.name}_ratios.pdf"))
+    fig.savefig(os.path.join(plotdir, f"{processname}_{variable.name}_ratios.png"))
+    fig.savefig(os.path.join(plotdir, f"{processname}_{variable.name}_ratios.pdf"))
     plt.close(fig)
 
 
-def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str):
+def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: dict, plotlabel: str, processname: str):
     fig, ax_main = fg.create_singleplot()
 
     binning = generate_binning(variable.range, variable.nbins)
@@ -130,14 +130,14 @@ def main_plot_EFT(variable: Variable, plotdir: str, histograms, process_info: di
     ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("SM + EFT / SM")
-    modify_yrange_shape((minim, maxim), ax_main, maxscale=1.4)
+    modify_yrange_updown(ax_main, (minim, maxim), up_scale=1.4)
     ax_main.legend(ncol=2)
     ax_main.set_xlabel(variable.axis_label)
     ax_main.text(0.049, 0.77, plotlabel, transform=ax_main.transAxes)
 
     # fix output name
-    fig.savefig(os.path.join(plotdir, f"{variable.name}.png"))
-    fig.savefig(os.path.join(plotdir, f"{variable.name}.pdf"))
+    fig.savefig(os.path.join(plotdir, f"{processname}_{variable.name}.png"))
+    fig.savefig(os.path.join(plotdir, f"{processname}_{variable.name}.pdf"))
     plt.close(fig)
 
 
@@ -185,8 +185,8 @@ if __name__ == "__main__":
         for _, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(channel):
                 continue
-            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
-            main_plot_EFT(variable, outputfolder, histograms, processinfo, channel)
+            lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
+            main_plot_EFT(variable, outputfolder, histograms, processinfo, channel, args.process)
 
         for subchannel in channels[channel].subchannels.keys():
             if not variable.is_channel_relevant(channel + subchannel):
@@ -204,5 +204,5 @@ if __name__ == "__main__":
             histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics, args.years[0])
             histograms.load_histograms()
             for _, variable in variables.get_variable_objects().items():
-                lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)
-                main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel)
+                lin_quad_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)
+                main_plot_EFT(variable, outputfolder, histograms, processinfo, channel + subchannel, args.process)

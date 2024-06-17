@@ -1,0 +1,11 @@
+{
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-06-10_09-26",
+    "Processes": {
+        "TopPhilicScalarSinglet_M0p4_C1p0e00": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p4_C1p0e00*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "M=400, C=1.0"
+        }
+    }
+}

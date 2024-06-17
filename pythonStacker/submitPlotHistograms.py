@@ -18,12 +18,12 @@ def parse_arguments():
 if __name__ == "__main__":
     args = parse_arguments()
 
-    basecommand = "python3 plotHistograms.py"
+    basecommand = "python3 plotHistogramsRedo.py"
     basecommand += f" --variablefile {args.variablefile}"
     basecommand += f" --processfile {args.processfile}"
     basecommand += f" --systematicsfile {args.systematicsfile}"
     basecommand += f" --channelfile {args.channelfile}"
-    # basecommand += " --no_unc"
+    basecommand += " --no_unc"
 
     with open(args.channelfile, 'r') as f:
         channels = json.load(f)
@@ -31,6 +31,7 @@ if __name__ == "__main__":
 
     if args.UseEFT:
         basecommand += " --EFT"
+        basecommand += " --EFT_ratio --EFT_fullbkg"
     cmds = []
     for year in args.years:
         for channel in channels:

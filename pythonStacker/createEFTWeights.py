@@ -18,6 +18,7 @@ def parse_arguments():
                         help="Inputfile for which variations must be stored")
     parser.add_argument("-e", "--eventClass", dest="eventclass", action="store", default=11,
                         help="which event class to check")
+    parser.add_argument("-p", "--process", dest="process", action="store", default="TTTT_EFT")
     parser.add_argument("--storage", dest="storage", type=str,
                         default="Intermediate", help="Path at which the histograms are stored")
 
@@ -32,13 +33,16 @@ def get_eftvariations_filename(storage: str, filename: str, eventclass) -> str:
     return os.path.join(storage, "eftWeights", f"{basefilename}_evClass_{eventclass}_wgts.parquet")
 
 
-def reweight_and_write(reweighter, eventclass, tree, storage, filename):
+def reweight_and_write(reweighter, eventclass, tree, storage, filename, process):
     arrs = tree.arrays(["eftVariationsNorm"], "eventClass==" + str(eventclass), aliases={"eftVariationsNorm": "eftVariations/eftVariations[:,0]"})
     # should become a record rather than a single array, using the naming scheme I devised in the init
 
     import numpy as np
     # var = np.array([reweighter.transform_weights(entry[1:]) for entry in arrs.eftVariationsNorm])
-    var = np.transpose(np.array(reweighter.transform_weights_parallel(ak.to_numpy(arrs.eftVariationsNorm[:, 1:]))))
+    if process == "TTTT_EFT":
+        var = np.transpose(np.array(reweighter.transform_weights_parallel(ak.to_numpy(arrs.eftVariationsNorm[:, 1:]))))
+    else:
+        var = np.transpose(np.array(reweighter.transform_weights_parallel(ak.to_numpy(arrs.eftVariationsNorm))))
 
     if len(var) == 0:
         return
@@ -59,12 +63,12 @@ if __name__ == "__main__":
     reweighter = eft.eft_reweighter()
     # tree = uproot.open(args.inputfile)
 
-    tree = src.get_tree_from_file(args.inputfile, "TTTT_EFT")
+    tree = src.get_tree_from_file(args.inputfile, args.process)
     if (int(args.eventclass) == -1):
         for i in range(15):
-            reweight_and_write(reweighter, i, tree, args.storage, args.inputfile)
+            reweight_and_write(reweighter, i, tree, args.storage, args.inputfile, args.process)
     else:
         print(f"running weights for class {args.eventclass}")
-        reweight_and_write(reweighter, int(args.eventclass), tree, args.storage, args.inputfile)
+        reweight_and_write(reweighter, int(args.eventclass), tree, args.storage, args.inputfile, args.process)
 
     print("Success!")

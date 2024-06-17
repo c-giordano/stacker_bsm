@@ -1,0 +1,19 @@
+{
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-06-05_23-36",
+    "Processes": {
+        "TTTJ_EFT": {
+            "fileglobs": ["Tree_TTTJ*EFT_*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "hasEFT": 1,
+            "pretty_name": "t\\bar{t}tq"
+        },
+        "TTTW_EFT": {
+            "fileglobs": ["Tree_TTTW*EFT_*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "hasEFT": 1,
+            "pretty_name": "t\\bar{t}tW"
+        }
+    }
+}
