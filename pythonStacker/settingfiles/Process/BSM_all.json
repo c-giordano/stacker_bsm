@@ -1,11 +1,35 @@
 {
-    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-06-10_09-26",
+    "Basedir": "/pnfs/iihe/cms/store/user/nivanden/AnalysisOutput/ReducedTuples/2024-04-23_16-46_MOD",
     "Processes": {
-        "TopPhilicScalarSinglet_M0p4_C1p0e00": {
-            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p4_C1p0e00*_MCPrompt"],
+        "TopPhilicScalarSinglet_M0p4": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p4*_MCPrompt"],
             "color": "#EF3340",
             "isSignal": 1,
-            "pretty_name": "M=400, C=1.0"
+            "pretty_name": "M=400"
+        },
+        "TopPhilicScalarSinglet_M0p6": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p6*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "M=600"
+        },
+        "TopPhilicScalarSinglet_M0p8": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p8*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "M=800"
+        },
+        "TopPhilicScalarSinglet_M1p0": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M1p0*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "M=1000"
+        },
+        "TopPhilicScalarSinglet_M1p5": {
+            "fileglobs": ["Tree_*TopPhilicScalarSinglet_M1p5*_MCPrompt"],
+            "color": "#EF3340",
+            "isSignal": 1,
+            "pretty_name": "M=1500"
         }
     }
 }
