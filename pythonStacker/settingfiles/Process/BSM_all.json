@@ -17,7 +17,8 @@
             "fileglobs": ["Tree_*TopPhilicScalarSinglet_M0p8*_MCPrompt"],
             "color": "#EF3340",
             "isSignal": 1,
-            "pretty_name": "M=800"
+            "pretty_name": "M=800",
+            "hasBSM": 1
         },
         "TopPhilicScalarSinglet_M1p0": {
             "fileglobs": ["Tree_*TopPhilicScalarSinglet_M1p0*_MCPrompt"],
