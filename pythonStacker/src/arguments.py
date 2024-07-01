@@ -37,7 +37,7 @@ def add_toggles(parser: argparse.ArgumentParser):
 
 
 def add_EFT_choice(parser: argparse.ArgumentParser):
-    parser.add_argument('--EFTop', dest="eft_operator", default="cQQ1",
+    parser.add_argument('--EFTop', dest="eft_operator",nargs='+', default=["cQQ1"],
                         help="string to choose which WC to consider.")
 
 
