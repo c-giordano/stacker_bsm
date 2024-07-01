@@ -8,6 +8,7 @@ import json
 import uproot
 import ROOT
 import awkward as ak
+import itertools
 
 from src.histogramTools import HistogramManager
 from src.variables.variableReader import VariableReader, Variable
@@ -286,9 +287,19 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
                 convert_and_write_histogram(content_quad_syst_up, variables.get_properties(var_name), path_to_quad_syst_up, rootfile)
                 convert_and_write_histogram(content_quad_syst_down, variables.get_properties(var_name), path_to_quad_syst_down, rootfile)
 
-    mix_list = ["cQQ1_cQt1","cQQ1_cQt8","cQQ1_ctHIm","cQQ1_ctHRe","cQQ1_ctt","cQQ8_cQQ1","cQQ8_cQt1","cQQ8_cQt8","cQQ8_ctHIm","cQQ8_ctHRe","cQQ8_ctt","cQt1_cQt8","cQt1_ctHIm","cQt1_ctHRe","cQt1_ctt","cQt8_ctHIm","cQt8_ctHRe","ctHRe_ctHIm","ctt_cQt8","ctt_ctHIm","ctt_ctHRe"]
+
     if len(eft_variations)>=2 :
-        for eft_var in mix_list:
+        mix_list = ["cQQ1_cQt1","cQQ1_cQt8","cQQ1_ctHIm","cQQ1_ctHRe","cQQ1_ctt","cQQ8_cQQ1","cQQ8_cQt1","cQQ8_cQt8","cQQ8_ctHIm","cQQ8_ctHRe","cQQ8_ctt","cQt1_cQt8","cQt1_ctHIm","cQt1_ctHRe","cQt1_ctt","cQt8_ctHIm","cQt8_ctHRe","ctHRe_ctHIm","ctt_cQt8","ctt_ctHIm","ctt_ctHRe"]
+        combinations = list(itertools.combinations(eft_variations, 2))
+        for combi in combinations:
+            combistring = "_".join(combi)
+            if not combistring in mix_list:
+                combistring = "_".join(reversed(combi))
+                if not combistring in mix_list:
+                    print(f"ERROR: combination {combi} not found in mix_list")
+                    exit(1)
+            eft_var = combistring
+
             ret.append([f"sm_lin_quad_mixed_{eft_var}", -(1+counter)])
             counter +=1
             mixName = "EFT_"+eft_var
