@@ -12,10 +12,12 @@ Also support for loading external weights with same dimensions.
 class WeightManager():
     def __init__(self, tree: uproot.TTree, selection: str, systematics: dict[str, Uncertainty]):
         self.hasEFT = False
+        self.hasBSM = False
         aliases = self.construct_aliases(systematics)
         keys = list(aliases.keys())
         self.eft_initialized = False
-        print(aliases)
+        self.bsm_initialized = False
+        # print(aliases)
         self.weights = tree.arrays(keys, cut=selection, aliases=aliases)
 
     def construct_aliases(self, systematics: dict[str, Uncertainty]):
@@ -25,6 +27,9 @@ class WeightManager():
         for name, unc in systematics.items():
             if "EFT_" in name:
                 self.hasEFT = True
+                continue
+            if "BSM_" in name:
+                self.hasBSM = True
                 continue
             key_unc = unc.get_weight_keys()
             alias_unc = unc.get_weight_aliases()
@@ -40,12 +45,25 @@ class WeightManager():
         self.eft_initialized = True
         # TODO: extend record self.weights with this new record, or maybe not, idk
 
+
+    def add_bsmvariations(self, filepath):
+        if not self.hasBSM:
+            return
+        self.bsm_variations = ak.from_parquet(filepath)
+        self.bsm_initialized = True
+
+
     def __getitem__(self, key):
         if "EFT_" in key:
             if not self.eft_initialized:
                 print("EFT Variations were not initialized! Exiting...")
                 exit(1)
             return self["nominal"] * self.eft_variations[key]
+        if "BSM_" in key:
+            if not self.bsm_initialized:
+                print("BSM Variations were not initialized! Exiting...")
+                exit(1)
+            return self["nominal"] * self.bsm_variations[key]
         return self.weights[key]
 
     def __setitem__(self, key, value):

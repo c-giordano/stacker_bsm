@@ -16,6 +16,7 @@ from src.variables.weightManager import WeightManager
 from src.histogramTools import HistogramManager
 from src.configuration import load_uncertainties, Channel, Uncertainty
 from createEFTWeights import get_eftvariations_filename
+from createBSMWeights import get_bsmvariations_filename
 import src.arguments as arguments
 
 """
@@ -89,7 +90,7 @@ def clean_systematics(systematics: dict[str, Uncertainty], process):
     return ret
 
 
-def create_histograms_singledata(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle):
+def create_histograms_singledata(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle, globalBSMToggle):
     for filename in files:
         print(f"opening file {filename}")
         current_tree: uproot.TTree = src.get_tree_from_file(filename, args.process)
@@ -105,6 +106,9 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
         if globalEFTToggle:
             eventclass = channel.selection.split("==")[-1]
             weights.add_eftvariations(get_eftvariations_filename(args.storage, filename, eventclass))
+        if globalBSMToggle:
+            eventclass = channel.selection.split("==")[-1]
+            weights.add_bsmvariations(get_bsmvariations_filename(args.storage, filename, eventclass))
         print("Done!")
         for _, variable in variables.get_variable_objects().items():
             if not variable.is_channel_relevant(args.channel):
@@ -150,7 +154,7 @@ def create_histograms_singledata(output_histograms: dict, args, files, channel: 
                             output_histograms[subchannel_name][variable.name][name]["Down"] += hist_content_down
 
 
-def create_histogram_shapevar(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle):
+def create_histogram_shapevar(output_histograms: dict, args, files, channel: Channel, variables: VariableReader, systematics: dict, globalEFTToggle, globalBSMToggle):
     for filename in files:
         name, syst = list(systematics.items())[0]
         for variation in ["Up", "Down"]:
@@ -237,6 +241,19 @@ if __name__ == "__main__":
             }
             systematics[eft_var] = Uncertainty(eft_var, tmp_dict)
 
+    globalBSMToggle = args.UseBSM and processinfo.get("hasBSM", 0) > 0 and base_run
+    if globalBSMToggle:
+        print("USING BSM")
+        import plugins.bsm as bsm
+        bsm_variations = bsm.getBSMVariationsGroomed()
+        for bsm_var in bsm_variations:
+            tmp_dict = {
+                "processes": args.process,
+                "isBSM": 1
+            }
+            systematics[bsm_var] = Uncertainty(bsm_var, tmp_dict)
+
+
     # Now also do this for systematic variations? How though?
     # Maybe add an argument for the systematic variations to produce, can define these somewhere.
     # Should be weightvariations here? Maybe also systematic variations or something? idk let's see first for weight variations
@@ -258,14 +275,14 @@ if __name__ == "__main__":
 
     if len(files) == 0:
         # make sure nothing is written in files without content to avoid unnecessary saves
-        print("No files found for globs. Make sure this is expected!")
+        print("No files found for globs. Make sure this is expected!", file=sys.stderr)
         exit(1)
     # print(files)
     # this will not work for requiring a specifc systematic! Need to check.
     if base_run:
-        create_histograms_singledata(output_histograms, args, files, channel, variables, systematics, globalEFTToggle)
+        create_histograms_singledata(output_histograms, args, files, channel, variables, systematics, globalEFTToggle, globalBSMToggle)
     else:
-        create_histogram_shapevar(output_histograms, args, files, channel, variables, systematics, globalEFTToggle)
+        create_histogram_shapevar(output_histograms, args, files, channel, variables, systematics, globalEFTToggle, globalBSMToggle)
 
     subchannelnames = channel.get_subchannels()
     output_histograms[args.channel].save_histograms()

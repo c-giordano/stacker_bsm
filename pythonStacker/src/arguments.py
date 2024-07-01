@@ -32,6 +32,8 @@ def select_specifics(parser: argparse.ArgumentParser):
 def add_toggles(parser: argparse.ArgumentParser):
     parser.add_argument('--EFT', '--eft', dest="UseEFT", default=False, action="store_true",
                         help="toggle to include EFT variations")
+    parser.add_argument('--BSM', '--bsm', dest="UseBSM", default=False, action="store_true",
+                        help="toggle to include BSM reweighted variations.")
 
 
 def add_EFT_choice(parser: argparse.ArgumentParser):

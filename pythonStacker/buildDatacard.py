@@ -59,6 +59,9 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
     for i in range(1, ret_th1.GetNbinsX() + 1):
         if ret_th1.GetBinContent(i) > 0.001:
             continue
+        if ret_th1.GetBinContent(i) < -0.5:
+            print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.001")
+
         ret_th1.SetBinError(i, 0.001)
         ret_th1.SetBinContent(i, 0.001)
     rootfile[outputname] = ret_th1
@@ -285,6 +288,77 @@ def eft_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings:
     return ret, all_asimovdata
 
 
+def bsm_datacard_creation(rootfile: uproot.WritableDirectory, datacard_settings: dict, bsm_variations: list, shape_systematics: dict, bsm_process: dict, args: argparse.Namespace):
+    ret = []
+    bsm_process_name = list(bsm_process.keys())[0]
+    bsm_process_info = bsm_process[bsm_process_name]
+
+    for channel_num, (channelname, channel_DC_setting) in enumerate(datacard_settings["channelcontent"].items()):
+        storagepath = os.path.join(args.storage, channelname)
+        var_name = channel_DC_setting["variable"]
+        variables = VariableReader(args.variablefile, [var_name])
+
+        ### Now we need the histograms:
+        # Load nominal, stat_unc, BSM variations and systematic variations:
+        content_to_load = ["nominal", "stat_unc"]
+        content_to_load += bsm_variations
+        content_to_load += list(shape_systematics.keys())
+        histograms_bsm = HistogramManager(storagepath, bsm_process_name, variables, content_to_load, args.years[0])
+        histograms_bsm.load_histograms()
+
+        # relative size of stat unc:
+        stat_unc_rel = np.nan_to_num(histograms_bsm[var_name]["stat_unc"] / histograms_bsm[var_name]["nominal"])
+
+        ### Next, loop the existing variations.
+        for count, bsm_variation in enumerate(bsm_variations):
+            if channel_num == 0:
+                ret.append([bsm_variation, -count])
+
+            # For each variation, first write the nominal component to file:
+            path_to_histogram = f"{channel_DC_setting['prettyname']}/{bsm_variation}"
+            # recalc stat unc:
+            stat_unc = stat_unc_rel * histograms_bsm[var_name][bsm_variation]["Up"]
+            convert_and_write_histogram(histograms_bsm[var_name][bsm_variation]["Up"], variables.get_properties(var_name), path_to_histogram, rootfile, statunc=stat_unc)
+
+            # Loop systematics:
+            for systname, syst in shape_systematics.items():
+                if systname == "nominal" or systname == "stat_unc":
+                    continue
+                if not syst.is_process_relevant(bsm_process_name):
+                    continue
+
+                upvar = histograms_bsm[var_name][systname]["Up"]
+                if syst.weight_key_down is None:
+                    downvar = histograms_bsm[var_name]["nominal"]
+                else:
+                    downvar = histograms_bsm[var_name][systname]["Down"]
+                if systname == "ScaleVarEnvelope":
+                    upvar, downvar = make_envelope(histograms_bsm[var_name])
+                
+                # make them relative so that we can recast these to variations on the nominal contribution:
+                rel_syst_up = np.nan_to_num(upvar / histograms_bsm[var_name]["nominal"], nan=1.)
+                rel_syst_up = np.where(np.abs(rel_syst_up) > 1e10, 1., rel_syst_up)
+
+                content_var_syst_up = rel_syst_up * histograms_bsm[var_name][bsm_variation]["Up"]
+
+                if syst.weight_key_down is None:
+                    content_var_syst_down = histograms_bsm[var_name][bsm_variation]["Up"]
+                else:
+                    rel_syst_down = np.nan_to_num(downvar / histograms_bsm[var_name]["nominal"], nan=1.)
+                    rel_syst_down = np.where(np.abs(rel_syst_down) > 1e10, 1., rel_syst_down)
+
+                    content_var_syst_down = rel_syst_down * histograms_bsm[var_name][bsm_variation]["Up"]
+
+                rootpath_systname = syst.technical_name
+                if not syst.correlated_process:
+                    rootpath_systname += bsm_variation
+
+                path_to_histogram_systematic_up = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Up/{bsm_variation}"
+                path_to_histogram_systematic_down = f"{channel_DC_setting['prettyname']}/{rootpath_systname}Down/{bsm_variation}"
+                convert_and_write_histogram(upvar, variables.get_properties(var_name), path_to_histogram_systematic_up, rootfile)
+                convert_and_write_histogram(downvar, variables.get_properties(var_name), path_to_histogram_systematic_down, rootfile)
+    return ret
+
 if __name__ == "__main__":
     np.seterr(divide='ignore', invalid='ignore')
 
@@ -317,6 +391,16 @@ if __name__ == "__main__":
         eft_part, asimov_signal = eft_datacard_creation(rootfile, datacard_settings, [args.eft_operator], shape_systematics, args)
         processes = [process for process in processes if process != "TTTT"]
         processes_write = [[process, i + 1] for i, process in enumerate(processes)]
+    elif args.UseBSM:
+        # find BSM process in processlist:
+        for process in processes:
+            if processfile["Processes"][process].get("isSignal", 0) > 0:
+                bsm_process = {process: processfile["Processes"][process]}
+                bsm_processname = process
+                break
+        bsm_part = bsm_datacard_creation(rootfile, datacard_settings, ["BSM_Lin", "BSM_Quad", "BSM_Cubic", "BSM_Quartic"], shape_systematics, bsm_process, args)
+        processes = [process for process in processes if process != bsm_processname]
+        processes_write = [[process, i + 1] for i, process in enumerate(processes)]
     else:
         processes_write = []
         sig_nb = -1
@@ -331,6 +415,8 @@ if __name__ == "__main__":
         # processes_write = [[process, i + 1] for i, process in enumerate(processes)]
 
     asimov_bkg = nominal_datacard_creation(rootfile, datacard_settings, channels, processes, shape_systematics, args)
+    if args.UseBSM:
+        processes_write.extend(bsm_part)
 
     if args.UseEFT:
         processes_write.extend(eft_part)
