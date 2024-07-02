@@ -46,7 +46,7 @@ if __name__ == "__main__":
 
             cmds = []
             for filename in files:
-                if process.get("hasEFT", 0) == 0:
+                if process.get("hasBSM", 0) == 0:
                     continue
                 for eventclass in range(14):
                     cmd = "python3 createBSMWeights.py"
@@ -58,4 +58,4 @@ if __name__ == "__main__":
                 # cmds.append("echo 'nothing to do'")
                 commandset.append(cmds)
 
-    ct.submitCommandsetsAsCondorCluster("CreateEFTWeights", commandset, scriptfolder="Scripts/condor/")
+    ct.submitCommandsetsAsCondorCluster("CreateBSMWeights", commandset, scriptfolder="Scripts/condor/")
