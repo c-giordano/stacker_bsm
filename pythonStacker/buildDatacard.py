@@ -60,7 +60,7 @@ def convert_and_write_histogram(input_histogram, variable: Variable, outputname:
     for i in range(1, ret_th1.GetNbinsX() + 1):
         if ret_th1.GetBinContent(i) > 0.001:
             continue
-        if ret_th1.GetBinContent(i) < -0.5:
+        if ret_th1.GetBinContent(i) < -0.1:
             print(f"WARNING: Significant negative value in {outputname} bin {i}! Setting to 0.001")
 
         ret_th1.SetBinError(i, 0.001)
