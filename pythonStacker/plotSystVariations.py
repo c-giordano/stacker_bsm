@@ -48,7 +48,7 @@ def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plo
 
     binning = generate_binning(variable.range, variable.nbins)
     nominal_content = np.array(ak.to_numpy(histograms[variable.name]["nominal"]))
-    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0.)
+    stat_unc_var = np.nan_to_num(np.array(ak.to_numpy(histograms[variable.name]["stat_unc"])) / nominal_content, nan=0., posinf=1., neginf=1.)
     nominal_weights = np.ones(len(nominal_content))
     ax_main.hist(binning[:-1], binning, weights=nominal_weights, histtype="step", color="k", label="SM")
 
@@ -67,7 +67,7 @@ def plot_systematicsset(variable: Variable, plotdir: str, histograms, setnb, plo
         ax_main.hist(binning[:-1], binning, weights=upvar, histtype="step", label=f"{syst} Up", color=colors[i])
         ax_main.hist(binning[:-1], binning, weights=downvar, histtype="step", label=f"{syst} Down", color=colors[i], linestyle="dashed")
 
-    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=stat_unc_var, ecolor='k', label="stat unc.")
+    ax_main.errorbar(x=binning[:-1] + 0.5 * np.diff(binning), y=np.ones(len(nominal_content)), yerr=np.abs(stat_unc_var), ecolor='k', label="stat unc.")
     ax_main.set_xlim(variable.range)
     ax_main.set_ylabel("Unc / nom.")
     # modify_yrange_shape((minim, maxim), ax_main, minscale=0.95, maxscale=1.4)
@@ -129,4 +129,22 @@ if __name__ == "__main__":
                 continue
             for i, syst_set in enumerate(batched_systematics):
                 plot_systematicsset(variable, outputfolder, histograms, i, channel, syst_set)
+        
+
+        for subchannel in channels[channel].subchannels.keys():
+            print(subchannel)
+            storagepath_tmp = os.path.join(storagepath, channel + subchannel)
+            outputfolder = os.path.join(outputfolder_base, channel, args.process, subchannel)
+            if not os.path.exists(outputfolder):
+                os.makedirs(outputfolder)
+            copy_index_html(outputfolder)
+
+            histograms = HistogramManager(storagepath_tmp, args.process, variables, systematics_list, args.years[0])
+            histograms.load_histograms()
+            for _, variable in variables.get_variable_objects().items():
+                if not variable.is_channel_relevant(channel):
+                    continue
+                for i, syst_set in enumerate(batched_systematics):
+                    plot_systematicsset(variable, outputfolder, histograms, i, channel + subchannel, syst_set)
+    
     print("Finished!")
