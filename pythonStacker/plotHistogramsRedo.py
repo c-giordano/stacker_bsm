@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import os
 import argparse
 import json
+import itertools
 
 # Own code
 from src import generate_binning, load_prepared_histograms
@@ -38,6 +39,8 @@ def parse_arguments():
     arguments.add_tmp_storage(parser)
     arguments.add_plot_output(parser)
     arguments.add_toggles(parser)
+    arguments.add_EFT_choice(parser)
+    arguments.add_BSM_choices(parser)
     args = parser.parse_args()
     return args
 
@@ -190,6 +193,31 @@ def plot_EFT_line(axis, histograms, variable: Variable, years, operator: str, no
     return all_variations
 
 
+def plot_BSM_line(axis, histograms, variable: Variable, years, models: list, masses: list, couplings: list):
+    binning = generate_binning(variable.range, variable.nbins)
+    # nominal_content = np.zeros(variable.nbins)
+    all_variations = []
+
+    for model, mass, coupling in itertools.product(models, masses, couplings):
+        name_string = f"{model}_{mass}"
+        current_histograms = histograms[name_string]
+        current_variation = np.zeros(variable.nbins)
+        for year in years:
+            current_variation += coupling * coupling * current_histograms[year][variable.name]["BSM_Quad"]["Up"]
+            current_variation += (coupling ** 4) * current_histograms[year][variable.name]["BSM_Quartic"]["Up"]
+
+        pretty_bsm_name = model.split("Philic")[-1]
+        pretty_bsm_name.replace("Vector", "V")
+        pretty_bsm_name.replace("Singlet", "S")
+        pretty_bsm_name.replace("Octet", "O")
+        pretty_bsm_name.replace("Scalar", "S")
+        pretty_bsm_name += " " + str(mass) + " GeV"
+        axis.hist(binning[:-1], binning, weights=current_variation, histtype="step",
+                  label=pretty_bsm_name, linewidth=2.)
+        all_variations.append(current_variation)
+    return all_variations
+
+
 def finalize_plot(figure, axes, variable: Variable, plotdir: str, plotlabel=""):
     for ax in axes:
         ax.set_xlim(variable.range)
@@ -245,6 +273,8 @@ def plotting_sequence(args, histograms, variable, processinfo, plotdir, channel,
 
     if args.UseEFT:
         plot_EFT_line(axes[0], histograms["TTTT_EFT"], variable, args.years, "ctt")
+    if args.UseBSM:
+        plot_BSM_line(axes[0], histograms, variable, args.years, args.bsm_model, args.bsm_mass, args.bsm_coupling)
 
     if args.SBRatio:
         ratiocontent = plot_signal_bkg_ratio(axes[1], main_plot_out["binning"], main_plot_out["signal"], main_plot_out["bkg"])
