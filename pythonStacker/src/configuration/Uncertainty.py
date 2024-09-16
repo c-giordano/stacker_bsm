@@ -46,6 +46,10 @@ class Uncertainty:
         if (dict_entry.get("isEFT", 0) > 0) or (dict_entry.get("isBSM", 0) > 0):
             self.weight_key_up = self.name
 
+    def set_processes(self, processes):
+        self.processes = processes
+        self.reg_processes = [re.compile(process) for process in self.processes]
+
     @property
     def isFlat(self):
         return self._isFlat
